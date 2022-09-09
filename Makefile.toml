@@ -1,0 +1,3 @@
+[tasks.dev]
+command = "cargo"
+args = ["watch", "--ignore", "assets", "-x", "run"]
