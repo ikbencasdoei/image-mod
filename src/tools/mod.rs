@@ -8,7 +8,7 @@ use self::plugin::ToolIndex;
 
 mod movement;
 mod notool;
-mod pencil;
+mod pencils;
 mod plugin;
 
 #[derive(SystemLabel)]
@@ -20,7 +20,7 @@ impl bevy::prelude::Plugin for Plugin {
             .insert_resource(CurrentTool::default())
             .add_event::<ToolEvent>()
             .add_plugin(notool::Plugin)
-            .add_plugin(pencil::Plugin)
+            .add_plugin(pencils::Plugin)
             .add_plugin(movement::Plugin)
             .add_system(ui)
             .add_system(sort)
