@@ -10,7 +10,7 @@ use crate::{
 };
 
 pub trait PencilTool {
-    fn get_draw_color(&self, mouse_position: Vec2) -> [u8; 4];
+    fn get_draw_color(&mut self, mouse_position: Vec2) -> [u8; 4];
 }
 
 #[derive(Default)]
@@ -32,7 +32,7 @@ struct PencilLocal {
 }
 
 fn process<T>(
-    query: Query<(&Sprite, &T, &Transform)>,
+    mut query: Query<(&Sprite, &mut T, &Transform)>,
     mut egui_context: ResMut<EguiContext>,
     mouse_button_input: Res<Input<MouseButton>>,
     mut assets: ResMut<Assets<Image>>,
@@ -46,7 +46,7 @@ fn process<T>(
         || mouse_button_input.pressed(MouseButton::Right))
         && !egui_context.ctx_mut().wants_pointer_input()
     {
-        for (sprite, pencil, transform) in query.iter() {
+        for (sprite, mut pencil, transform) in query.iter_mut() {
             if let Some(image) = assets.get_mut(sprite.image.as_ref().unwrap()) {
                 let image_size = image.size();
 

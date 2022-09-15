@@ -45,7 +45,7 @@ impl Tool<SimplePencil> for SimplePencil {
 }
 
 impl PencilTool for SimplePencil {
-    fn get_draw_color(&self, _mouse_position: Vec2) -> [u8; 4] {
+    fn get_draw_color(&mut self, _mouse_position: Vec2) -> [u8; 4] {
         self.current_color.to_array()
     }
 }

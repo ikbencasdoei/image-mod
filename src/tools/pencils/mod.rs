@@ -7,6 +7,6 @@ mod simple;
 pub struct Plugin;
 impl bevy::prelude::Plugin for Plugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(simple::Plugin);
+        app.add_plugin(simple::Plugin).add_plugin(rainbow::Plugin);
     }
 }
