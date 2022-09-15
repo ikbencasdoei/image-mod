@@ -2,3 +2,4 @@
 /assets/
 /.vscode/
 /.cargo/
+Cargo.lock
