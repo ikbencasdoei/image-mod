@@ -75,13 +75,28 @@ fn hsv2rgb(hsv: Vec3) -> Vec3 {
 fn ui(mut egui_context: ResMut<EguiContext>, mut query: Query<&mut RainbowPencil>) {
     for mut pencil in query.iter_mut() {
         egui::Window::new("Rainbow Pencil").show(egui_context.ctx_mut(), |ui| {
-            ui.label("Hue rotation per pixel:");
+            let mut degrees = pencil.color_hsv.x % 1.0 * 360.0;
+
+            ui.label("current hue rotation:");
             ui.add(
-                egui::DragValue::new(&mut pencil.rotation_per_pixel)
-                    .speed(0.0001)
-                    .clamp_range(0.2..=0.0)
+                egui::DragValue::new(&mut degrees)
+                    .speed(1.0)
+                    .clamp_range(360.0..=0.0)
                     .suffix("°"),
             );
+
+            let mut rotation_degrees = pencil.rotation_per_pixel * 360.0;
+
+            ui.label("hue rotation per pixel:");
+            ui.add(
+                egui::DragValue::new(&mut rotation_degrees)
+                    .speed(0.01)
+                    .clamp_range(360.0..=0.0)
+                    .suffix("°"),
+            );
+
+            pencil.color_hsv.x = degrees / 360.0;
+            pencil.rotation_per_pixel = rotation_degrees / 360.0;
         });
     }
 }
