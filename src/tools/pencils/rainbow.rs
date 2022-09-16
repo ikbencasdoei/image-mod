@@ -37,7 +37,7 @@ impl Default for RainbowPencil {
 impl Tool<RainbowPencil> for RainbowPencil {
     fn get_description() -> ToolDescription {
         ToolDescription {
-            name: "4: Rainbow Pencil".to_string(),
+            name: "Rainbow Pencil".to_string(),
         }
     }
 }

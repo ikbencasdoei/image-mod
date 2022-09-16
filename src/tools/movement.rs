@@ -30,7 +30,7 @@ pub struct GrabTool;
 impl Tool<GrabTool> for GrabTool {
     fn get_description() -> ToolDescription {
         ToolDescription {
-            name: "2: grab".to_string(),
+            name: "Grab".to_string(),
         }
     }
 }

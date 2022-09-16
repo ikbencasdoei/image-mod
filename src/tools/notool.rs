@@ -17,7 +17,7 @@ pub struct NoTool;
 impl plugin::Tool<NoTool> for NoTool {
     fn get_description() -> plugin::ToolDescription {
         plugin::ToolDescription {
-            name: "1: no tool".to_string(),
+            name: "Nothing".to_string(),
         }
     }
 }

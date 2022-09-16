@@ -1,5 +1,8 @@
+use std::cmp::Ordering;
+
 use bevy::prelude::*;
 use bevy_egui::egui;
+use bevy_egui::egui::util::id_type_map::TypeId;
 use bevy_egui::EguiContext;
 
 use self::notool::NoTool;
@@ -51,11 +54,16 @@ impl Default for CurrentTool {
 
 fn sort(mut tool_collection: ResMut<ToolCollection>) {
     if tool_collection.is_changed() {
-        tool_collection
-            .tools
-            .sort_by(|a, b| a.description.name.partial_cmp(&b.description.name).unwrap());
+        tool_collection.tools.sort_by(|a, b| {
+            if a.type_id == TypeId::of::<NoTool>() {
+                Ordering::Greater
+            } else {
+                a.description.name.partial_cmp(&b.description.name).unwrap()
+            }
+        });
     }
 }
+
 fn events(
     mut current_tool: ResMut<CurrentTool>,
     tool_collection: Res<ToolCollection>,

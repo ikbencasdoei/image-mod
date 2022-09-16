@@ -39,7 +39,7 @@ impl Default for SimplePencil {
 impl Tool<SimplePencil> for SimplePencil {
     fn get_description() -> ToolDescription {
         ToolDescription {
-            name: "3: Simple Pencil".to_string(),
+            name: "Simple Pencil".to_string(),
         }
     }
 }
