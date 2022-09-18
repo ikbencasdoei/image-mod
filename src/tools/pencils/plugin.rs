@@ -14,7 +14,7 @@ use crate::{
 };
 
 pub trait PencilTool {
-    fn get_draw_color(&mut self, mouse_position: Vec2) -> [u8; 4];
+    fn get_draw_color(&mut self, mouse_position: Vec2, image: &mut ImageHelper) -> Option<Color>;
 }
 
 #[derive(Default)]
@@ -79,10 +79,14 @@ fn process<T>(
                                 let position = last_mouse_position
                                     .lerp(mouse_on_image, 1.0 / delta.length().ceil() * (i as f32));
 
-                                helper.set_pixel(position, pencil.get_draw_color(position));
+                                if let Some(color) = pencil.get_draw_color(position, &mut helper) {
+                                    helper.set_pixel(position, color).ok();
+                                }
                             }
                         }
-                        helper.set_pixel(mouse_on_image, pencil.get_draw_color(mouse_on_image));
+                        if let Some(color) = pencil.get_draw_color(mouse_on_image, &mut helper) {
+                            helper.set_pixel(mouse_on_image, color).ok();
+                        }
                     }
                     local.last_mouse_position = Some(mouse_on_image);
                 }

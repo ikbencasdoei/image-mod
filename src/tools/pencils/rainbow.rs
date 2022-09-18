@@ -4,7 +4,10 @@ use bevy::{
 };
 use bevy_egui::{egui, EguiContext};
 
-use crate::tools::plugin::{Tool, ToolDescription};
+use crate::{
+    image::ImageHelper,
+    tools::plugin::{Tool, ToolDescription},
+};
 
 use super::plugin::{PencilPlugin, PencilTool};
 
@@ -43,7 +46,7 @@ impl Tool<RainbowPencil> for RainbowPencil {
 }
 
 impl PencilTool for RainbowPencil {
-    fn get_draw_color(&mut self, position: Vec2) -> [u8; 4] {
+    fn get_draw_color(&mut self, position: Vec2, _: &mut ImageHelper) -> Option<Color> {
         let position = position.floor();
         let color = hsv2rgb(self.color_hsv);
 
@@ -55,12 +58,7 @@ impl PencilTool for RainbowPencil {
 
         self.last_pixel = Some(position);
 
-        [
-            (color.x * 255.0).round() as u8,
-            (color.y * 255.0).round() as u8,
-            (color.z * 255.0).round() as u8,
-            u8::MAX,
-        ]
+        Some(Color::from(Vec4::from((color, 1.0))))
     }
 }
 
