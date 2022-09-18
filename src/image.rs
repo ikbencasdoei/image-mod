@@ -15,11 +15,11 @@ impl<'a> ImageHelper<'a> {
         Self { image }
     }
 
-    pub fn set_pixel(&mut self, position: Vec2, color: [u8; 4]) {
+    pub fn set_pixel(&mut self, position: Vec2, color: Color) -> Result<(), &'static str> {
         let size = self.image.size();
 
         if position.x < 0. || position.x > size.x || position.y < 0. || position.y > size.y {
-            return;
+            return Err("position is outside image");
         }
 
         let (size, position) = (size.as_uvec2(), position.as_uvec2());
@@ -28,9 +28,13 @@ impl<'a> ImageHelper<'a> {
             TextureFormat::Rgba8UnormSrgb => {
                 let offset = 4;
                 let i = ((size.x * (position.y) + position.x) * offset) as usize;
-                self.image.data.splice(i..(i + offset as usize), color);
+                self.image.data.splice(
+                    i..(i + offset as usize),
+                    color.as_linear_rgba_u32().to_le_bytes(),
+                );
+                Ok(())
             }
-            _ => todo!(),
+            _ => Err("textureformat not supported"),
         }
     }
 
