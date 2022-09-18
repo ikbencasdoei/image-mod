@@ -1,6 +1,10 @@
 use std::marker::PhantomData;
 
-use bevy::{math::Vec3Swizzles, prelude::*, reflect::GetTypeRegistration};
+use bevy::{
+    math::Vec3Swizzles,
+    prelude::{Image as BevyImage, *},
+    reflect::GetTypeRegistration,
+};
 use bevy_egui::EguiContext;
 
 use crate::{
@@ -35,7 +39,7 @@ fn process<T>(
     mut query: Query<(&Sprite, &mut T, &Transform)>,
     mut egui_context: ResMut<EguiContext>,
     mouse_button_input: Res<Input<MouseButton>>,
-    mut assets: ResMut<Assets<Image>>,
+    mut assets: ResMut<Assets<BevyImage>>,
     windows: Res<Windows>,
     mut cursor_moved_events: EventReader<CursorMoved>,
     mut local: Local<PencilLocal>,

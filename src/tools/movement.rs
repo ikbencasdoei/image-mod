@@ -1,5 +1,9 @@
 use crate::viewer::Sprite;
-use bevy::{input::mouse::MouseWheel, math::Vec3Swizzles, prelude::*};
+use bevy::{
+    input::mouse::MouseWheel,
+    math::Vec3Swizzles,
+    prelude::{Image as BevyImage, *},
+};
 use bevy_egui::{egui, egui::util::id_type_map::TypeId, EguiContext};
 
 use super::{
@@ -87,7 +91,7 @@ fn zoom(
     mut mouse_wheel_events: EventReader<MouseWheel>,
     mut egui_context: ResMut<EguiContext>,
     windows: Res<Windows>,
-    assets: Res<Assets<Image>>,
+    assets: Res<Assets<BevyImage>>,
     state: Res<State>,
     mouse_button_input: Res<Input<MouseButton>>,
 ) {

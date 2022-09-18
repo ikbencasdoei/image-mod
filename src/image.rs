@@ -1,17 +1,17 @@
 use std::path::Path;
 
 use bevy::{
-    prelude::{Image, Vec2},
+    prelude::{Image as BevyImage, *},
     render::render_resource::TextureFormat,
 };
 use image::{DynamicImage, ImageBuffer};
 
 pub struct ImageHelper<'a> {
-    image: &'a mut Image,
+    image: &'a mut BevyImage,
 }
 
 impl<'a> ImageHelper<'a> {
-    pub fn new(image: &'a mut Image) -> Self {
+    pub fn new(image: &'a mut BevyImage) -> Self {
         Self { image }
     }
 

@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use bevy::{
-    prelude::*,
+    prelude::{Image as BevyImage, *},
     render::{render_resource::SamplerDescriptor, texture::ImageSampler},
 };
 
@@ -24,7 +24,7 @@ impl bevy::prelude::Plugin for Plugin {
 
 #[derive(Component, Default)]
 pub struct Sprite {
-    pub image: Option<Handle<Image>>,
+    pub image: Option<Handle<BevyImage>>,
     pub image_path: Option<PathBuf>,
     pub target_scale: Option<Vec3>,
     pub target_translation: Option<Vec3>,
@@ -35,7 +35,7 @@ fn events(
     asset_server: Res<AssetServer>,
     mut event_reader: EventReader<ui::Event>,
     mut entity: Query<(Entity, &mut Sprite)>,
-    mut assets: ResMut<Assets<Image>>,
+    mut assets: ResMut<Assets<BevyImage>>,
     mut event_writer: EventWriter<ToolEvent>,
     current_tool: Res<CurrentTool>,
 ) {
@@ -83,8 +83,8 @@ fn events(
 }
 
 fn set_filter(
-    mut events: EventReader<AssetEvent<Image>>,
-    mut assets: ResMut<Assets<Image>>,
+    mut events: EventReader<AssetEvent<BevyImage>>,
+    mut assets: ResMut<Assets<BevyImage>>,
     query: Query<&Sprite>,
 ) {
     for event in events.iter() {
