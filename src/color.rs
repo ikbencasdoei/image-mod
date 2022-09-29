@@ -28,3 +28,9 @@ impl From<[u8; 4]> for Color {
         Self(BevyColor::rgba_u8(color[0], color[1], color[2], color[3]))
     }
 }
+
+impl From<BevyColor> for Color {
+    fn from(color: BevyColor) -> Self {
+        Self(color)
+    }
+}
