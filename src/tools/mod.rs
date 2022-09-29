@@ -1,13 +1,17 @@
 use std::cmp::Ordering;
 
 use bevy::prelude::*;
-use bevy_egui::egui;
-use bevy_egui::egui::util::id_type_map::TypeId;
-use bevy_egui::EguiContext;
 
-use self::notool::NoTool;
-use self::plugin::Tool;
-use self::plugin::ToolIndex;
+use bevy_egui::{
+    egui::{self, util::id_type_map::TypeId},
+    EguiContext,
+};
+
+use self::{
+    notool::NoTool,
+    pencils::sort::PixelSorter,
+    plugin::{Tool, ToolIndex},
+};
 
 mod movement;
 mod notool;
