@@ -44,10 +44,9 @@ impl<'a> ImageHelper<'a> {
         match self.image.texture_descriptor.format {
             TextureFormat::Rgba8UnormSrgb => {
                 let i = self.get_index(position)?;
-                self.image.data.splice(
-                    i..(i + OFFSET as usize),
-                    color.as_linear_rgba_u32().to_le_bytes(),
-                );
+                self.image
+                    .data
+                    .splice(i..(i + OFFSET as usize), color.as_rgba_u32().to_le_bytes());
                 Ok(())
             }
             _ => Err("textureformat not supported"),
