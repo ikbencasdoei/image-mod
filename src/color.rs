@@ -4,6 +4,12 @@ use bevy_egui::egui::Color32;
 #[derive(Deref, DerefMut, Clone, Copy)]
 pub struct Color(BevyColor);
 
+impl Color {
+    pub fn sum(self) -> f32 {
+        self.r() + self.g() + self.b()
+    }
+}
+
 impl From<Color32> for Color {
     fn from(color: Color32) -> Self {
         let (r, g, b, a) = color.to_tuple();
