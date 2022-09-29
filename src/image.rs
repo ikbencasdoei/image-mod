@@ -6,6 +6,8 @@ use bevy::{
 };
 use image::{DynamicImage, ImageBuffer};
 
+use crate::color::Color;
+
 #[derive(Deref, DerefMut)]
 pub struct ImageHelper<'a> {
     image: &'a mut BevyImage,
@@ -64,7 +66,7 @@ impl<'a> ImageHelper<'a> {
             _ => return Err("textureformat not supported"),
         };
 
-        Ok(Color::rgba_u8(bytes[0], bytes[1], bytes[2], bytes[3]))
+        Ok(Color::from(bytes))
     }
 
     pub fn save(&self, path: impl AsRef<Path>) -> Result<(), &'static str> {

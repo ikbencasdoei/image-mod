@@ -5,6 +5,7 @@ use bevy::{
 use bevy_egui::{egui, EguiContext};
 
 use crate::{
+    color::Color,
     image::ImageHelper,
     tools::plugin::{Tool, ToolDescription},
 };

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy_egui::{EguiPlugin, EguiSettings};
 
+mod color;
 mod image;
 mod keybinds;
 mod tools;

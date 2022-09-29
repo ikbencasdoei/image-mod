@@ -2,6 +2,7 @@ use bevy::{prelude::*, reflect::FromReflect};
 use bevy_egui::{egui, egui::Color32, EguiContext};
 
 use crate::{
+    color::Color,
     image::ImageHelper,
     tools::plugin::{Tool, ToolDescription},
 };
@@ -49,8 +50,7 @@ impl Tool<SimplePencil> for SimplePencil {
 
 impl PencilTool for SimplePencil {
     fn get_draw_color(&mut self, _mouse_position: Vec2, _: &mut ImageHelper) -> Option<Color> {
-        let (r, g, b, a) = self.current_color.to_tuple();
-        Some(Color::rgba_u8(r, g, b, a))
+        Some(Color::from(self.current_color))
     }
 }
 

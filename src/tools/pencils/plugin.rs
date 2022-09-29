@@ -8,6 +8,7 @@ use bevy::{
 use bevy_egui::EguiContext;
 
 use crate::{
+    color::Color,
     image::ImageHelper,
     tools::plugin::{Tool, ToolPlugin},
     viewer::Sprite,
