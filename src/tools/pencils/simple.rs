@@ -67,10 +67,19 @@ fn input(mut query: Query<&mut SimplePencil>, mouse_button_input: Res<Input<Mous
 fn ui(mut query: Query<&mut SimplePencil>, mut egui_context: ResMut<EguiContext>) {
     for mut pencil in query.iter_mut() {
         egui::Window::new("Simple Pencil").show(egui_context.ctx_mut(), |ui| {
-            ui.label("primary color:");
-            ui.color_edit_button_srgba(&mut pencil.primary_color);
-            ui.label("secondary color:");
-            ui.color_edit_button_srgba(&mut pencil.secondary_color);
+            egui::Grid::new("")
+                .num_columns(2)
+                .spacing([40.0, 4.0])
+                .striped(true)
+                .show(ui, |ui| {
+                    ui.label("primary color:");
+                    ui.color_edit_button_srgba(&mut pencil.primary_color);
+                    ui.end_row();
+
+                    ui.label("secondary color:");
+                    ui.color_edit_button_srgba(&mut pencil.secondary_color);
+                    ui.end_row();
+                });
         });
     }
 }
