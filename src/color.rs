@@ -8,6 +8,9 @@ impl Color {
     pub fn sum(self) -> f32 {
         self.r() + self.g() + self.b()
     }
+    pub fn as_rgba_linear(self: &Color) -> Color {
+        Color(self.0.as_rgba_linear())
+    }
 }
 
 impl From<Color32> for Color {
