@@ -1,12 +1,15 @@
 use bevy::prelude::*;
 
-mod plugin;
-mod rainbow;
-mod simple;
+pub mod plugin;
+pub mod rainbow;
+pub mod simple;
+pub mod sort;
 
 pub struct Plugin;
 impl bevy::prelude::Plugin for Plugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(simple::Plugin).add_plugin(rainbow::Plugin);
+        app.add_plugin(simple::Plugin)
+            .add_plugin(rainbow::Plugin)
+            .add_plugin(sort::Plugin);
     }
 }

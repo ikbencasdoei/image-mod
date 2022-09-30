@@ -52,7 +52,7 @@ pub struct CurrentTool(Option<ToolIndex>);
 
 impl Default for CurrentTool {
     fn default() -> Self {
-        Self(Some(NoTool::get_index()))
+        Self(Some(PixelSorter::get_index()))
     }
 }
 
