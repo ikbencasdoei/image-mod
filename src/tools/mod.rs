@@ -9,7 +9,6 @@ use bevy_egui::{
 
 use self::{
     notool::NoTool,
-    pencils::sort::PixelSorter,
     plugin::{Tool, ToolIndex},
 };
 
