@@ -66,9 +66,9 @@ impl PencilTool for RainbowPencil {
 fn hsv2rgb(hsv: Vec3) -> Vec3 {
     let k = Vec4::from_array([1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0]);
     let p = ((hsv.xxx() + k.xyz()).fract() * 6.0 - k.www()).abs();
-    return hsv.z
+    hsv.z
         * k.xxx()
-            .lerp((p - k.xxx()).clamp(Vec3::ZERO, Vec3::ONE), hsv.y);
+            .lerp((p - k.xxx()).clamp(Vec3::ZERO, Vec3::ONE), hsv.y)
 }
 
 fn ui(mut egui_context: ResMut<EguiContext>, mut query: Query<&mut RainbowPencil>) {
