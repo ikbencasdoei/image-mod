@@ -76,44 +76,43 @@ fn task(mut state: Query<&mut State>, mut event_writer: EventWriter<Event>) {
 fn ui(
     mut query: Query<&mut State>,
     mut egui_context: ResMut<EguiContext>,
-    mut exit_writer: EventWriter<AppExit>,
     mut event_writer: EventWriter<Event>,
     query_sprite: Query<&super::Sprite>,
 ) {
     let pool = IoTaskPool::get();
 
     for mut state in query.iter_mut() {
-        egui::Window::new("Image").show(egui_context.ctx_mut(), |ui| {
-            if let Ok(sprite) = query_sprite.get_single() {
-                if let Some(image_path) = sprite.image_path.as_ref() {
-                    ui.label(image_path.file_name().unwrap().to_string_lossy());
+        egui::TopBottomPanel::top("panel").show(egui_context.ctx_mut(), |ui| {
+            egui::menu::bar(ui, |ui| {
+                ui.add_enabled_ui(!state.picker_open, |ui| {
+                    load_button(&mut state, ui, &mut event_writer, pool, &query_sprite);
+                });
+
+                ui.add_enabled_ui(
+                    {
+                        if let Ok(sprite) = query_sprite.get_single() {
+                            sprite.image_path.is_some()
+                        } else {
+                            false
+                        }
+                    } && !state.picker_open,
+                    |ui| {
+                        save_button(&mut state, ui, &mut event_writer, pool, &query_sprite);
+                    },
+                );
+
+                ui.separator();
+
+                if let Ok(sprite) = query_sprite.get_single() {
+                    if let Some(image_path) = sprite.image_path.as_ref() {
+                        ui.label(image_path.file_name().unwrap().to_string_lossy());
+                    } else {
+                        ui.label("no image loaded..");
+                    }
                 } else {
                     ui.label("no image loaded..");
                 }
-            } else {
-                ui.label("no image loaded..");
-            }
-
-            ui.add_enabled_ui(!state.picker_open, |ui| {
-                load_button(&mut state, ui, &mut event_writer, pool, &query_sprite);
             });
-
-            ui.add_enabled_ui(
-                {
-                    if let Ok(sprite) = query_sprite.get_single() {
-                        sprite.image_path.is_some()
-                    } else {
-                        false
-                    }
-                } && !state.picker_open,
-                |ui| {
-                    save_button(&mut state, ui, &mut event_writer, pool, &query_sprite);
-                },
-            );
-
-            if ui.button("exit").clicked() {
-                exit_writer.send(AppExit);
-            }
         });
     }
 }
@@ -125,7 +124,7 @@ fn load_button(
     pool: &IoTaskPool,
     query_sprite: &Query<&super::Sprite>,
 ) {
-    if ui.button("load img").clicked() {
+    if ui.button("load").clicked() {
         let directory = if let Ok(sprite) = query_sprite.get_single() {
             if let Some(path) = sprite.image_path.clone() {
                 path
@@ -160,7 +159,7 @@ fn save_button(
     pool: &IoTaskPool,
     query_sprite: &Query<&super::Sprite>,
 ) {
-    if ui.button("save img 💾").clicked() {
+    if ui.button("save").clicked() {
         event_writer.send(Event::PickerOpened);
         let directory = if let Ok(sprite) = query_sprite.get_single() {
             if let Some(path) = sprite.image_path.clone() {
