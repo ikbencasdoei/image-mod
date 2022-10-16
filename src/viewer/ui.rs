@@ -10,8 +10,6 @@ use bevy::{
 use bevy_egui::{egui, EguiContext};
 use rfd::AsyncFileDialog;
 
-use std::borrow::Cow;
-
 pub struct Plugin;
 
 impl bevy::prelude::Plugin for Plugin {
@@ -171,12 +169,11 @@ fn save_button(
             PathBuf::new()
         };
 
-        let file_name = if let Some(file_name) = directory.file_name() {
-            file_name.to_string_lossy()
-        } else {
-            Cow::from("")
-        }
-        .to_string();
+        let file_name = directory
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string();
 
         let future = async move {
             match AsyncFileDialog::new()
