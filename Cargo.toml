@@ -12,8 +12,14 @@ rfd = "0.10.0"
 
 [dependencies.bevy]
 version = "0.8.1"
+default-features = false
 features = [
-    "jpeg"
+    "bevy_asset",
+    "bevy_winit",
+    "render",
+    "jpeg",
+    "png",
+    "x11",
 ]
 
 [profile.dev]
