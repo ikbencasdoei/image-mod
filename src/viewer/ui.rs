@@ -3,7 +3,6 @@ use std::path::PathBuf;
 use futures_lite::future;
 
 use bevy::{
-    app::AppExit,
     prelude::*,
     tasks::{IoTaskPool, Task},
 };
