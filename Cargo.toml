@@ -1,5 +1,5 @@
 [package]
-name = "img-editor-bevy"
+name = "foto-winkel"
 version = "0.1.0"
 edition = "2021"
 authors = ["Cas Brugman <casbrugman@hotmail.nl>"]
