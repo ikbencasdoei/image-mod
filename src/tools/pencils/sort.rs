@@ -149,7 +149,7 @@ impl PencilTool for PixelSorter {
 
 fn ui(mut egui_context: ResMut<EguiContext>, mut query: Query<&mut PixelSorter>) {
     for mut pencil in query.iter_mut() {
-        egui::Window::new("Pixelsort").show(egui_context.ctx_mut(), |ui| {
+        egui::Window::new(PixelSorter::get_description().name).show(egui_context.ctx_mut(), |ui| {
             egui::Grid::new("")
                 .num_columns(2)
                 .spacing([40.0, 4.0])

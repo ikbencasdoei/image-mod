@@ -167,8 +167,11 @@ fn zoom(
 
 fn help(mut egui_context: ResMut<EguiContext>, query: Query<&GrabTool>) {
     for _ in query.iter() {
-        egui::Window::new("Grab Help").show(egui_context.ctx_mut(), |ui| {
-            ui.label("Use right and left mouse button grab the image.");
-        });
+        egui::Window::new(format!("{} Help", GrabTool::get_description().name)).show(
+            egui_context.ctx_mut(),
+            |ui| {
+                ui.label("Use right and left mouse button grab the image.");
+            },
+        );
     }
 }
