@@ -12,6 +12,7 @@ fn main() {
         .insert_resource(Msaa { samples: 4 })
         .insert_resource(WindowDescriptor {
             fit_canvas_to_parent: true,
+            title: env!("CARGO_PKG_NAME").to_string(),
             ..default()
         })
         .add_plugins(DefaultPlugins)
