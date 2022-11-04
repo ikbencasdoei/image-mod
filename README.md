@@ -14,3 +14,5 @@ A small simple image editor written in Rust using the Bevy game-engine. I made t
 
 ## Building
 Like most other Rust crates, simply `cargo run`. The libraries used should be cross-platform.
+### Linux
+For running on linux bevy requires some [dependencies](https://github.com/bevyengine/bevy/blob/main/docs/linux_dependencies.md).  
