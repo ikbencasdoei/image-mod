@@ -1,4 +1,4 @@
-use std::{ops::Deref, path::PathBuf};
+use std::path::PathBuf;
 
 use futures_lite::future;
 
