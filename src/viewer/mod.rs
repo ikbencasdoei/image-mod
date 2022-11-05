@@ -88,20 +88,26 @@ fn set_filter(
     query: Query<&Sprite>,
 ) {
     for event in events.iter() {
-        if let AssetEvent::Created { handle } = event {
-            for sprite in query.iter() {
-                if let Some(image) = &sprite.image {
-                    if image.id == handle.id {
-                        if let Some(mut image) = assets.get_mut(handle) {
-                            image.sampler_descriptor = ImageSampler::Descriptor(SamplerDescriptor {
-                                mag_filter: bevy::render::render_resource::FilterMode::Nearest,
-                                min_filter: bevy::render::render_resource::FilterMode::Linear,
-                                ..default()
-                            })
+        match event {
+            AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
+                for sprite in query.iter() {
+                    if let Some(image) = &sprite.image {
+                        if image.id == handle.id {
+                            if let Some(mut image) = assets.get_mut(handle) {
+                                image.sampler_descriptor =
+                                    ImageSampler::Descriptor(SamplerDescriptor {
+                                        mag_filter:
+                                            bevy::render::render_resource::FilterMode::Nearest,
+                                        min_filter:
+                                            bevy::render::render_resource::FilterMode::Linear,
+                                        ..default()
+                                    })
+                            }
                         }
                     }
                 }
             }
+            _ => (),
         }
     }
 }
