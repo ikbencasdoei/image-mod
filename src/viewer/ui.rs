@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{ops::Deref, path::PathBuf};
 
 use futures_lite::future;
 
@@ -74,7 +74,7 @@ fn ui(
     mut query: Query<&mut State>,
     mut egui_context: ResMut<EguiContext>,
     mut event_writer: EventWriter<Event>,
-    query_sprite: Query<&super::Sprite>,
+    mut query_sprite: Query<&mut super::Sprite>,
 ) {
     let pool = IoTaskPool::get();
 
@@ -82,7 +82,7 @@ fn ui(
         egui::TopBottomPanel::top("panel").show(egui_context.ctx_mut(), |ui| {
             egui::menu::bar(ui, |ui| {
                 ui.add_enabled_ui(!state.picker_open, |ui| {
-                    load_button(&mut state, ui, &mut event_writer, pool, &query_sprite);
+                    load_button(&mut state, ui, &mut event_writer, pool, &mut query_sprite);
                 });
 
                 ui.add_enabled_ui(
@@ -94,7 +94,7 @@ fn ui(
                         }
                     } && !state.picker_open,
                     |ui| {
-                        save_button(&mut state, ui, &mut event_writer, pool, &query_sprite);
+                        save_button(&mut state, ui, &mut event_writer, pool, &mut query_sprite);
                     },
                 );
 
@@ -104,10 +104,30 @@ fn ui(
                     if let Some(image_path) = sprite.image_path.as_ref() {
                         ui.label(image_path.file_name().unwrap().to_string_lossy());
                     } else {
-                        ui.label("no image loaded..");
+                        ui.label("no image");
                     }
                 } else {
-                    ui.label("no image loaded..");
+                    ui.label("no image");
+                }
+
+                if let Ok(sprite) = &mut query_sprite.get_single_mut() {
+                    if let Some(scale) = &mut sprite.target_scale {
+                        ui.separator();
+
+                        ui.label("scale:");
+
+                        let mut single = scale.x * 100.0;
+
+                        ui.add(
+                            egui::DragValue::new(&mut single)
+                                .clamp_range(1.0..=f32::MAX)
+                                .suffix("%")
+                                .speed(1),
+                        );
+
+                        single /= 100.0;
+                        *scale = Vec3::new(single, single, single);
+                    }
                 }
             });
         });
@@ -119,7 +139,7 @@ fn load_button(
     ui: &mut egui::Ui,
     event_writer: &mut EventWriter<Event>,
     pool: &IoTaskPool,
-    query_sprite: &Query<&super::Sprite>,
+    query_sprite: &mut Query<&mut super::Sprite>,
 ) {
     if ui.button("load").clicked() {
         let directory = if let Ok(sprite) = query_sprite.get_single() {
@@ -154,7 +174,7 @@ fn save_button(
     ui: &mut egui::Ui,
     event_writer: &mut EventWriter<Event>,
     pool: &IoTaskPool,
-    query_sprite: &Query<&super::Sprite>,
+    query_sprite: &mut Query<&mut super::Sprite>,
 ) {
     if ui.button("save").clicked() {
         event_writer.send(Event::PickerOpened);
