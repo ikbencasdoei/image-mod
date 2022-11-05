@@ -1,4 +1,4 @@
-![preview image](./preview.png)
+![preview image](./preview.jpg)
 # foto-winkel
 A small simple image editor written in Rust using the Bevy game-engine. I made this mainly to learn the tools, and possibly in the future, to implement personal image editing effects on.
 
