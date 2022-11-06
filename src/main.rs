@@ -15,6 +15,7 @@ fn main() {
             title: env!("CARGO_PKG_NAME").to_string(),
             ..default()
         })
+        .insert_resource(ClearColor(Color::DARK_GRAY))
         .add_plugins(DefaultPlugins)
         .add_plugin(EguiPlugin)
         .add_plugin(viewer::Plugin)
