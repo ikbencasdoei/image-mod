@@ -72,15 +72,11 @@ impl PencilTool for PixelSorter {
             loop {
                 let next_position = current_position - direction;
 
-                let current_color = if let Ok(color) = image.get_pixel(current_position) {
-                    color
-                } else {
+                let Ok(current_color) = image.get_pixel(current_position) else {
                     break;
                 };
 
-                let next_color = if let Ok(color) = image.get_pixel(next_position) {
-                    color
-                } else {
+                let Ok(next_color) = image.get_pixel(next_position) else {
                     break;
                 };
 
@@ -101,15 +97,11 @@ impl PencilTool for PixelSorter {
             loop {
                 let next_position = current_position + direction;
 
-                let current_color = if let Ok(color) = image.get_pixel(current_position) {
-                    color
-                } else {
+                let Ok(current_color) = image.get_pixel(current_position) else {
                     break;
                 };
 
-                let next_color = if let Ok(color) = image.get_pixel(next_position) {
-                    color
-                } else {
+                let Ok(next_color) = image.get_pixel(next_position) else {
                     break;
                 };
 
