@@ -117,8 +117,6 @@ fn ui(
                     if let Some(scale) = &mut sprite.target_scale {
                         ui.separator();
 
-                        ui.label("scale:");
-
                         let mut single = scale.x * 100.0;
 
                         ui.add(
