@@ -98,21 +98,6 @@ fn ui(
                     },
                 );
 
-                ui.separator();
-
-                {
-                    const NO_IMAGE_TEXT: &str = "(no image)";
-                    if let Ok(sprite) = query_sprite.get_single() {
-                        if let Some(image_path) = sprite.image_path.as_ref() {
-                            ui.label(image_path.to_string_lossy());
-                        } else {
-                            ui.label(NO_IMAGE_TEXT);
-                        }
-                    } else {
-                        ui.label(NO_IMAGE_TEXT);
-                    }
-                }
-
                 if let Ok(sprite) = &mut query_sprite.get_single_mut() {
                     if let Some(scale) = &mut sprite.target_scale {
                         ui.separator();
@@ -128,6 +113,21 @@ fn ui(
 
                         single /= 100.0;
                         *scale = Vec3::new(single, single, single);
+                    }
+                }
+
+                ui.separator();
+
+                {
+                    const NO_IMAGE_TEXT: &str = "(no image)";
+                    if let Ok(sprite) = query_sprite.get_single() {
+                        if let Some(image_path) = sprite.image_path.as_ref() {
+                            ui.label(image_path.to_string_lossy());
+                        } else {
+                            ui.label(NO_IMAGE_TEXT);
+                        }
+                    } else {
+                        ui.label(NO_IMAGE_TEXT);
                     }
                 }
             });
