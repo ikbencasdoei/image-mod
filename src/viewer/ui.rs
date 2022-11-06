@@ -100,14 +100,17 @@ fn ui(
 
                 ui.separator();
 
-                if let Ok(sprite) = query_sprite.get_single() {
-                    if let Some(image_path) = sprite.image_path.as_ref() {
-                        ui.label(image_path.file_name().unwrap().to_string_lossy());
+                {
+                    const NO_IMAGE_TEXT: &str = "(no image)";
+                    if let Ok(sprite) = query_sprite.get_single() {
+                        if let Some(image_path) = sprite.image_path.as_ref() {
+                            ui.label(image_path.to_string_lossy());
+                        } else {
+                            ui.label(NO_IMAGE_TEXT);
+                        }
                     } else {
-                        ui.label("no image");
+                        ui.label(NO_IMAGE_TEXT);
                     }
-                } else {
-                    ui.label("no image");
                 }
 
                 if let Ok(sprite) = &mut query_sprite.get_single_mut() {
