@@ -155,6 +155,8 @@ fn zoom(
                 }
             }
         }
+    } else {
+        mouse_wheel_events.clear();
     }
 
     for (mut transform, sprite) in query.iter_mut() {
