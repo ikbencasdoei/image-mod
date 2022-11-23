@@ -23,7 +23,7 @@ impl bevy::prelude::Plugin for Plugin {
     }
 }
 
-#[derive(Default)]
+#[derive(Resource, Default)]
 struct State {
     last_mouse_position: Option<Vec2>,
 }
@@ -81,6 +81,8 @@ fn grab(
     } else {
         state.last_mouse_position = None;
     }
+
+    cursor_moved_events.clear();
 }
 
 const ZOOM_FACTOR: f32 = 1.3;

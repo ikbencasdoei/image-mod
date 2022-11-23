@@ -34,7 +34,7 @@ impl bevy::prelude::Plugin for Plugin {
     }
 }
 
-#[derive(Default)]
+#[derive(Resource, Default)]
 pub struct ToolCollection {
     tools: Vec<ToolIndex>,
 }
@@ -46,7 +46,7 @@ pub enum ToolEvent {
     },
 }
 
-#[derive(Deref, DerefMut)]
+#[derive(Resource, Deref, DerefMut)]
 pub struct CurrentTool(Option<ToolIndex>);
 
 impl Default for CurrentTool {

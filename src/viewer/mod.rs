@@ -52,7 +52,7 @@ fn events(
                 let handle = asset_server.load(path.to_owned());
 
                 commands
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: handle.clone(),
                         ..default()
                     })
@@ -92,7 +92,7 @@ fn set_filter(
             AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
                 for sprite in query.iter() {
                     if let Some(image) = &sprite.image {
-                        if image.id == handle.id {
+                        if image.id() == handle.id() {
                             if let Some(mut image) = assets.get_mut(handle) {
                                 image.sampler_descriptor =
                                     ImageSampler::Descriptor(SamplerDescriptor {

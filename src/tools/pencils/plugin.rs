@@ -96,4 +96,6 @@ fn process<T>(
     } else {
         local.last_mouse_position = None;
     }
+
+    cursor_moved_events.clear();
 }

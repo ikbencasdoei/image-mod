@@ -35,7 +35,7 @@ pub enum Event {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn().insert(State {
+    commands.spawn(State {
         picker_open: false,
         task: None,
     });
