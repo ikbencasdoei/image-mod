@@ -10,6 +10,8 @@ mod tools;
 mod viewer;
 
 fn main() {
+    dotenvy::dotenv().ok();
+
     App::new()
         .insert_resource(Msaa { samples: 4 })
         .insert_resource(ClearColor(Color::DARK_GRAY))
