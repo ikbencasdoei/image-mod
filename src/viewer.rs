@@ -10,15 +10,11 @@ use crate::{
     tools::{CurrentTool, ToolEvent},
 };
 
-mod ui;
-
 pub struct Plugin;
 
 impl bevy::prelude::Plugin for Plugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(ui::Plugin)
-            .add_system(events)
-            .add_system(set_filter);
+        app.add_system(events).add_system(set_filter);
     }
 }
 
@@ -33,7 +29,7 @@ pub struct Sprite {
 fn events(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut event_reader: EventReader<ui::Event>,
+    mut event_reader: EventReader<crate::ui::Event>,
     mut entity: Query<(Entity, &mut Sprite)>,
     mut assets: ResMut<Assets<BevyImage>>,
     mut event_writer: EventWriter<ToolEvent>,
@@ -41,8 +37,8 @@ fn events(
 ) {
     for event in event_reader.iter() {
         match event {
-            ui::Event::PickerOpened => (),
-            ui::Event::PickedOpen(path) => {
+            crate::ui::Event::PickerOpened => (),
+            crate::ui::Event::PickedOpen(path) => {
                 for (entity, _) in entity.iter() {
                     commands.entity(entity).despawn();
                 }
@@ -67,7 +63,7 @@ fn events(
                     to: current_tool.to_owned(),
                 })
             }
-            ui::Event::PickedSave(path) => {
+            crate::ui::Event::PickedSave(path) => {
                 for (_, mut sprite) in entity.iter_mut() {
                     let image =
                         ImageHelper::new(assets.get_mut(sprite.image.as_ref().unwrap()).unwrap());

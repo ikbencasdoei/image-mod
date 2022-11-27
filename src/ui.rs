@@ -74,7 +74,7 @@ fn ui(
     mut query: Query<&mut State>,
     mut egui_context: ResMut<EguiContext>,
     mut event_writer: EventWriter<Event>,
-    mut query_sprite: Query<&mut super::Sprite>,
+    mut query_sprite: Query<&mut crate::viewer::Sprite>,
 ) {
     let pool = IoTaskPool::get();
 
@@ -140,7 +140,7 @@ fn load_button(
     ui: &mut egui::Ui,
     event_writer: &mut EventWriter<Event>,
     pool: &IoTaskPool,
-    query_sprite: &mut Query<&mut super::Sprite>,
+    query_sprite: &mut Query<&mut crate::viewer::Sprite>,
 ) {
     if ui.button("load").clicked() {
         let directory = if let Ok(sprite) = query_sprite.get_single() {
@@ -175,7 +175,7 @@ fn save_button(
     ui: &mut egui::Ui,
     event_writer: &mut EventWriter<Event>,
     pool: &IoTaskPool,
-    query_sprite: &mut Query<&mut super::Sprite>,
+    query_sprite: &mut Query<&mut crate::viewer::Sprite>,
 ) {
     if ui.button("save").clicked() {
         event_writer.send(Event::PickerOpened);

@@ -9,6 +9,7 @@ mod image;
 mod keybinds;
 mod project;
 mod tools;
+mod ui;
 mod viewer;
 
 fn main() {
@@ -28,6 +29,7 @@ fn main() {
         .add_plugin(EguiPlugin)
         .add_plugin(ProjectPlugin)
         .add_plugin(viewer::Plugin)
+        .add_plugin(ui::Plugin)
         .add_plugin(keybinds::Plugin)
         .add_plugin(tools::Plugin)
         .add_startup_system(setup)
