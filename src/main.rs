@@ -1,9 +1,11 @@
 use bevy::prelude::*;
 use bevy_egui::{EguiPlugin, EguiSettings};
+use project::ProjectPlugin;
 
 mod color;
 mod image;
 mod keybinds;
+mod project;
 mod tools;
 mod viewer;
 
@@ -20,6 +22,7 @@ fn main() {
             ..default()
         }))
         .add_plugin(EguiPlugin)
+        .add_plugin(ProjectPlugin)
         .add_plugin(viewer::Plugin)
         .add_plugin(keybinds::Plugin)
         .add_plugin(tools::Plugin)
