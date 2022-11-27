@@ -2,7 +2,11 @@ use std::path::Path;
 
 use bevy::prelude::*;
 use bevy_egui::{EguiPlugin, EguiSettings};
+use keybinds::KeyBindsPlugin;
 use project::{Project, ProjectMgr, ProjectPlugin};
+use tools::ToolBoxPlugin;
+use ui::UiPlugin;
+use view::ViewPlugin;
 
 mod color;
 mod image;
@@ -28,10 +32,10 @@ fn main() {
         }))
         .add_plugin(EguiPlugin)
         .add_plugin(ProjectPlugin)
-        .add_plugin(view::Plugin)
-        .add_plugin(ui::Plugin)
-        .add_plugin(keybinds::Plugin)
-        .add_plugin(tools::Plugin)
+        .add_plugin(ViewPlugin)
+        .add_plugin(UiPlugin)
+        .add_plugin(KeyBindsPlugin)
+        .add_plugin(ToolBoxPlugin)
         .add_startup_system(setup)
         .run();
 }

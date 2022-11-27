@@ -8,7 +8,9 @@ use bevy_egui::{
 };
 
 use self::{
-    notool::NoTool,
+    movement::MovementPlugin,
+    notool::{NoTool, NoToolPlugin},
+    pencils::PencilBoxPlugin,
     plugin::{Tool, ToolIndex},
 };
 
@@ -19,15 +21,15 @@ mod plugin;
 
 #[derive(SystemLabel)]
 struct ToolManagerLabel;
-pub struct Plugin;
-impl bevy::prelude::Plugin for Plugin {
+pub struct ToolBoxPlugin;
+impl Plugin for ToolBoxPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(ToolCollection::default())
             .insert_resource(CurrentTool::default())
             .add_event::<ToolEvent>()
-            .add_plugin(notool::Plugin)
-            .add_plugin(pencils::Plugin)
-            .add_plugin(movement::Plugin)
+            .add_plugin(NoToolPlugin)
+            .add_plugin(PencilBoxPlugin)
+            .add_plugin(MovementPlugin)
             .add_system(ui)
             .add_system(sort)
             .add_system(events.label(ToolManagerLabel));

@@ -3,9 +3,9 @@ use bevy_egui::{egui, EguiContext};
 
 use super::plugin::{self, ToolPlugin};
 
-pub struct Plugin;
+pub struct NoToolPlugin;
 
-impl bevy::prelude::Plugin for Plugin {
+impl Plugin for NoToolPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(ToolPlugin::<NoTool>::default())
             .add_system(help);

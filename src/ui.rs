@@ -9,9 +9,9 @@ use bevy::{
 use bevy_egui::{egui, EguiContext};
 use rfd::AsyncFileDialog;
 
-pub struct Plugin;
+pub struct UiPlugin;
 
-impl bevy::prelude::Plugin for Plugin {
+impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(setup)
             .add_event::<Event>()

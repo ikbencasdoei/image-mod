@@ -9,9 +9,9 @@ use crate::{
 
 use super::plugin::{PencilPlugin, PencilTool};
 
-pub struct Plugin;
+pub struct SimplePencilPlugin;
 
-impl bevy::prelude::Plugin for Plugin {
+impl Plugin for SimplePencilPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(PencilPlugin::<SimplePencil>::default())
             .add_system(input)

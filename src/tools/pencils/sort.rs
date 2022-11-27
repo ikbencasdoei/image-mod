@@ -14,9 +14,9 @@ use crate::{
 
 use super::plugin::{PencilPlugin, PencilTool};
 
-pub struct Plugin;
+pub struct SortPencilPlugin;
 
-impl bevy::prelude::Plugin for Plugin {
+impl Plugin for SortPencilPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(PencilPlugin::<PixelSorter>::default())
             .add_system(ui);

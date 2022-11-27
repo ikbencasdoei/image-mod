@@ -12,9 +12,9 @@ use crate::{
 
 use super::plugin::{PencilPlugin, PencilTool};
 
-pub struct Plugin;
+pub struct RainbowPencilPlugin;
 
-impl bevy::prelude::Plugin for Plugin {
+impl Plugin for RainbowPencilPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(PencilPlugin::<RainbowPencil>::default())
             .add_system(ui);

@@ -1,8 +1,8 @@
 use bevy::{app::AppExit, prelude::*};
 
-pub struct Plugin;
+pub struct KeyBindsPlugin;
 
-impl bevy::prelude::Plugin for Plugin {
+impl Plugin for KeyBindsPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(fullscreen).add_system(exit);
     }

@@ -11,9 +11,9 @@ use super::{
     CurrentTool,
 };
 
-pub struct Plugin;
+pub struct MovementPlugin;
 
-impl bevy::prelude::Plugin for Plugin {
+impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(State::default())
             .add_plugin(ToolPlugin::<GrabTool>::default())

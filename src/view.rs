@@ -10,9 +10,9 @@ use crate::{
     tools::{CurrentTool, ToolEvent},
 };
 
-pub struct Plugin;
+pub struct ViewPlugin;
 
-impl bevy::prelude::Plugin for Plugin {
+impl Plugin for ViewPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(events).add_system(set_filter);
     }
