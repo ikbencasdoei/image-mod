@@ -1,4 +1,4 @@
-use crate::viewer::Sprite;
+use crate::view::View;
 use bevy::{
     input::mouse::MouseWheel,
     math::Vec3Swizzles,
@@ -40,7 +40,7 @@ impl Tool<GrabTool> for GrabTool {
 }
 
 fn grab(
-    mut query: Query<(&mut Transform, &mut Sprite)>,
+    mut query: Query<(&mut Transform, &mut View)>,
     mouse_button_input: Res<Input<MouseButton>>,
     mut cursor_moved_events: EventReader<CursorMoved>,
     mut egui_context: ResMut<EguiContext>,
@@ -89,7 +89,7 @@ const ZOOM_FACTOR: f32 = 1.3;
 const ZOOM_LERP: f32 = 0.3;
 
 fn zoom(
-    mut query: Query<(&mut Transform, &mut crate::viewer::Sprite)>,
+    mut query: Query<(&mut Transform, &mut crate::view::View)>,
     mut mouse_wheel_events: EventReader<MouseWheel>,
     mut egui_context: ResMut<EguiContext>,
     windows: Res<Windows>,

@@ -19,7 +19,7 @@ impl bevy::prelude::Plugin for Plugin {
 }
 
 #[derive(Component, Default)]
-pub struct Sprite {
+pub struct View {
     pub image: Option<Handle<BevyImage>>,
     pub image_path: Option<PathBuf>,
     pub target_scale: Option<Vec3>,
@@ -30,7 +30,7 @@ fn events(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut event_reader: EventReader<crate::ui::Event>,
-    mut entity: Query<(Entity, &mut Sprite)>,
+    mut entity: Query<(Entity, &mut View)>,
     mut assets: ResMut<Assets<BevyImage>>,
     mut event_writer: EventWriter<ToolEvent>,
     current_tool: Res<CurrentTool>,
@@ -52,7 +52,7 @@ fn events(
                         texture: handle.clone(),
                         ..default()
                     })
-                    .insert(Sprite {
+                    .insert(View {
                         image: Some(handle),
                         image_path: Some(path.to_owned()),
                         ..default()
@@ -81,7 +81,7 @@ fn events(
 fn set_filter(
     mut events: EventReader<AssetEvent<BevyImage>>,
     mut assets: ResMut<Assets<BevyImage>>,
-    query: Query<&Sprite>,
+    query: Query<&View>,
 ) {
     for event in events.iter() {
         match event {

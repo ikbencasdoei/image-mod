@@ -11,7 +11,7 @@ use crate::{
     color::Color,
     image::ImageHelper,
     tools::plugin::{Tool, ToolPlugin},
-    viewer::Sprite,
+    view::View,
 };
 
 pub trait PencilTool {
@@ -37,7 +37,7 @@ struct PencilLocal {
 }
 
 fn process<T>(
-    mut query: Query<(&Sprite, &mut T, &Transform)>,
+    mut query: Query<(&View, &mut T, &Transform)>,
     mut egui_context: ResMut<EguiContext>,
     mouse_button_input: Res<Input<MouseButton>>,
     mut assets: ResMut<Assets<BevyImage>>,
