@@ -1,6 +1,8 @@
+use std::path::Path;
+
 use bevy::prelude::*;
 use bevy_egui::{EguiPlugin, EguiSettings};
-use project::ProjectPlugin;
+use project::{Project, ProjectMgr, ProjectPlugin};
 
 mod color;
 mod image;
@@ -32,7 +34,15 @@ fn main() {
         .run();
 }
 
-fn setup(mut commands: Commands, mut egui_settings: ResMut<EguiSettings>) {
+fn setup(
+    mut commands: Commands,
+    mut egui_settings: ResMut<EguiSettings>,
+    mut project_mgr: ResMut<ProjectMgr>,
+) {
     commands.spawn(Camera2dBundle::default());
     egui_settings.scale_factor = 1.5;
+
+    if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
+        project_mgr.current = Project::new_from_input_path(Path::new(&path)).ok()
+    }
 }
