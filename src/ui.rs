@@ -14,7 +14,7 @@ pub struct UiPlugin;
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(setup)
-            .add_event::<Event>()
+            .add_event::<FilePickerEvent>()
             .add_system(ui)
             .add_system(events)
             .add_system(task);
@@ -24,10 +24,10 @@ impl Plugin for UiPlugin {
 #[derive(Component)]
 pub struct State {
     picker_open: bool,
-    task: Option<Task<Event>>,
+    task: Option<Task<FilePickerEvent>>,
 }
 
-pub enum Event {
+pub enum FilePickerEvent {
     PickerOpened,
     PickedOpen(PathBuf),
     PickedSave(PathBuf),
@@ -41,12 +41,14 @@ fn setup(mut commands: Commands) {
     });
 }
 
-fn events(mut state: Query<&mut State>, mut event_reader: EventReader<Event>) {
+fn events(mut state: Query<&mut State>, mut event_reader: EventReader<FilePickerEvent>) {
     for mut i in state.iter_mut() {
         for event in event_reader.iter() {
             match event {
-                Event::PickerOpened => i.picker_open = true,
-                Event::PickedOpen(_) | Event::PickedSave(_) | Event::NothingPicked => {
+                FilePickerEvent::PickerOpened => i.picker_open = true,
+                FilePickerEvent::PickedOpen(_)
+                | FilePickerEvent::PickedSave(_)
+                | FilePickerEvent::NothingPicked => {
                     i.picker_open = false;
                 }
             }
@@ -54,7 +56,7 @@ fn events(mut state: Query<&mut State>, mut event_reader: EventReader<Event>) {
     }
 }
 
-fn task(mut state: Query<&mut State>, mut event_writer: EventWriter<Event>) {
+fn task(mut state: Query<&mut State>, mut event_writer: EventWriter<FilePickerEvent>) {
     for mut i in state.iter_mut() {
         let mut finished = false;
         if let Some(task) = &mut i.task {
@@ -73,7 +75,7 @@ fn task(mut state: Query<&mut State>, mut event_writer: EventWriter<Event>) {
 fn ui(
     mut query: Query<&mut State>,
     mut egui_context: ResMut<EguiContext>,
-    mut event_writer: EventWriter<Event>,
+    mut event_writer: EventWriter<FilePickerEvent>,
     mut query_sprite: Query<&mut crate::view::View>,
 ) {
     let pool = IoTaskPool::get();
@@ -138,7 +140,7 @@ fn ui(
 fn load_button(
     state: &mut Mut<State>,
     ui: &mut egui::Ui,
-    event_writer: &mut EventWriter<Event>,
+    event_writer: &mut EventWriter<FilePickerEvent>,
     pool: &IoTaskPool,
     query_sprite: &mut Query<&mut crate::view::View>,
 ) {
@@ -153,7 +155,7 @@ fn load_button(
             PathBuf::new()
         };
 
-        event_writer.send(Event::PickerOpened);
+        event_writer.send(FilePickerEvent::PickerOpened);
         let future = async move {
             match AsyncFileDialog::new()
                 .add_filter("image", &["png", "jpg"])
@@ -161,8 +163,8 @@ fn load_button(
                 .pick_file()
                 .await
             {
-                Some(file) => Event::PickedOpen(PathBuf::from(file)),
-                None => Event::NothingPicked,
+                Some(file) => FilePickerEvent::PickedOpen(PathBuf::from(file)),
+                None => FilePickerEvent::NothingPicked,
             }
         };
 
@@ -173,12 +175,12 @@ fn load_button(
 fn save_button(
     state: &mut Mut<State>,
     ui: &mut egui::Ui,
-    event_writer: &mut EventWriter<Event>,
+    event_writer: &mut EventWriter<FilePickerEvent>,
     pool: &IoTaskPool,
     query_sprite: &mut Query<&mut crate::view::View>,
 ) {
     if ui.button("save").clicked() {
-        event_writer.send(Event::PickerOpened);
+        event_writer.send(FilePickerEvent::PickerOpened);
         let directory = if let Ok(sprite) = query_sprite.get_single() {
             if let Some(path) = sprite.image_path.clone() {
                 path
@@ -204,8 +206,8 @@ fn save_button(
                 .save_file()
                 .await
             {
-                Some(file) => Event::PickedSave(PathBuf::from(file)),
-                None => Event::NothingPicked,
+                Some(file) => FilePickerEvent::PickedSave(PathBuf::from(file)),
+                None => FilePickerEvent::NothingPicked,
             }
         };
 

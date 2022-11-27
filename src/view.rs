@@ -8,6 +8,7 @@ use bevy::{
 use crate::{
     image::ImageHelper,
     tools::{CurrentTool, ToolEvent},
+    ui::FilePickerEvent,
 };
 
 pub struct ViewPlugin;
@@ -29,7 +30,7 @@ pub struct View {
 fn events(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut event_reader: EventReader<crate::ui::Event>,
+    mut event_reader: EventReader<FilePickerEvent>,
     mut entity: Query<(Entity, &mut View)>,
     mut assets: ResMut<Assets<BevyImage>>,
     mut event_writer: EventWriter<ToolEvent>,
@@ -37,8 +38,8 @@ fn events(
 ) {
     for event in event_reader.iter() {
         match event {
-            crate::ui::Event::PickerOpened => (),
-            crate::ui::Event::PickedOpen(path) => {
+            FilePickerEvent::PickerOpened => (),
+            FilePickerEvent::PickedOpen(path) => {
                 for (entity, _) in entity.iter() {
                     commands.entity(entity).despawn();
                 }
@@ -63,7 +64,7 @@ fn events(
                     to: current_tool.to_owned(),
                 })
             }
-            crate::ui::Event::PickedSave(path) => {
+            FilePickerEvent::PickedSave(path) => {
                 for (_, mut sprite) in entity.iter_mut() {
                     let image =
                         ImageHelper::new(assets.get_mut(sprite.image.as_ref().unwrap()).unwrap());
