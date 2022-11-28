@@ -4,7 +4,7 @@ use bevy::{
     prelude::{Color as BevyColor, Image as BevyImage, *},
     render::{render_resource::SamplerDescriptor, texture::ImageSampler},
 };
-use image::{DynamicImage, ImageError, Rgba, Rgba32FImage, RgbaImage};
+use image::{DynamicImage, ImageError, Rgba, RgbaImage};
 
 use crate::color::Color;
 
