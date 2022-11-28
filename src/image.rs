@@ -4,19 +4,19 @@ use bevy::{
     prelude::{Color as BevyColor, Image as BevyImage, *},
     render::{render_resource::SamplerDescriptor, texture::ImageSampler},
 };
-use image::{DynamicImage, ImageError, Rgba, Rgba32FImage};
+use image::{DynamicImage, ImageError, Rgba, Rgba32FImage, RgbaImage};
 
 use crate::color::Color;
 
 #[derive(Clone)]
 pub struct Image {
-    image: Rgba32FImage,
+    image: RgbaImage,
 }
 
 impl Default for Image {
     fn default() -> Self {
         Self {
-            image: Rgba32FImage::new(1, 1),
+            image: RgbaImage::new(1, 1),
         }
     }
 }
@@ -24,12 +24,12 @@ impl Default for Image {
 impl Image {
     pub fn from_dyn(image: DynamicImage) -> Self {
         Self {
-            image: image.into_rgba32f(),
+            image: image.into_rgba8(),
         }
     }
 
     pub fn into_dyn(self) -> DynamicImage {
-        DynamicImage::ImageRgba32F(self.image)
+        DynamicImage::ImageRgba8(self.image)
     }
 
     pub fn into_bevy_image(self) -> BevyImage {
@@ -45,8 +45,11 @@ impl Image {
 
     pub fn set_pixel(&mut self, position: UVec2, color: Color) -> Result<(), &str> {
         if self.contains_pixel(position) {
-            self.image
-                .put_pixel(position.x, position.y, Rgba(color.as_rgba_f32()));
+            self.image.put_pixel(
+                position.x,
+                position.y,
+                Rgba(color.as_rgba_u32().to_le_bytes()),
+            );
             Ok(())
         } else {
             Err("pixel outside image")
@@ -66,7 +69,9 @@ impl Image {
     pub fn get_pixel(&mut self, position: UVec2) -> Result<Color, &str> {
         if self.contains_pixel(position) {
             let Rgba([r, g, b, a]) = self.image.get_pixel(position.x, position.y).clone();
-            Ok(Color::from(BevyColor::rgba(r, g, b, a)))
+            Ok(Color::from(BevyColor::rgba(
+                r as f32, g as f32, b as f32, a as f32,
+            )))
         } else {
             Err("pixel outside image")
         }
