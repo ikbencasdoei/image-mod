@@ -25,16 +25,12 @@ impl Plugin for UiPlugin {
 
 #[derive(Resource)]
 pub struct State {
-    picker_open: bool,
     task: Option<Task<FilePickerEvent>>,
 }
 
 impl Default for State {
     fn default() -> Self {
-        Self {
-            picker_open: false,
-            task: None,
-        }
+        Self { task: None }
     }
 }
 
@@ -45,20 +41,8 @@ pub enum FilePickerEvent {
     NothingPicked,
 }
 
-fn events(
-    mut state: ResMut<State>,
-    mut event_reader: EventReader<FilePickerEvent>,
-    mut project: ResMut<Project>,
-) {
+fn events(mut event_reader: EventReader<FilePickerEvent>, mut project: ResMut<Project>) {
     for event in event_reader.iter() {
-        match event {
-            FilePickerEvent::PickerOpened => state.picker_open = true,
-            FilePickerEvent::PickedOpen(_)
-            | FilePickerEvent::PickedExport(_)
-            | FilePickerEvent::NothingPicked => {
-                state.picker_open = false;
-            }
-        }
         match event {
             FilePickerEvent::PickerOpened => (),
             FilePickerEvent::PickedOpen(path) => {
@@ -97,11 +81,11 @@ fn ui(
 
     egui::TopBottomPanel::top("panel").show(egui_context.ctx_mut(), |ui| {
         egui::menu::bar(ui, |ui| {
-            ui.add_enabled_ui(!state.picker_open, |ui| {
+            ui.add_enabled_ui(state.task.is_none(), |ui| {
                 load_button(&mut state, ui, &mut event_writer, pool, &project);
             });
 
-            ui.add_enabled_ui(project.path.is_some() && !state.picker_open, |ui| {
+            ui.add_enabled_ui(project.path.is_some() && state.task.is_none(), |ui| {
                 save_button(&mut state, ui, &mut event_writer, pool, &project);
             });
 
