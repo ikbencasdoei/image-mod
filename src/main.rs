@@ -3,7 +3,7 @@ use std::path::Path;
 use bevy::prelude::*;
 use bevy_egui::{EguiPlugin, EguiSettings};
 use keybinds::KeyBindsPlugin;
-use project::{Project, ProjectMgr, ProjectPlugin};
+use project::{Project, ProjectPlugin};
 use tools::ToolBoxPlugin;
 use ui::UiPlugin;
 use view::ViewPlugin;
@@ -43,12 +43,12 @@ fn main() {
 fn setup(
     mut commands: Commands,
     mut egui_settings: ResMut<EguiSettings>,
-    mut project_mgr: ResMut<ProjectMgr>,
+    mut project: ResMut<Project>,
 ) {
     commands.spawn(Camera2dBundle::default());
     egui_settings.scale_factor = 1.5;
 
     if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
-        project_mgr.current = Project::new_from_input_path(Path::new(&path)).ok()
+        *project = Project::new_from_input_path(Path::new(&path)).unwrap()
     }
 }
