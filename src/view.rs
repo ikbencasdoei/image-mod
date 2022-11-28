@@ -5,7 +5,7 @@ use bevy::{
 };
 use bevy_egui::EguiContext;
 
-use crate::{image::Image, project::Project, ui::FilePickerEvent};
+use crate::{image::Image, project::Project};
 
 pub struct ViewPlugin;
 
@@ -13,7 +13,6 @@ impl Plugin for ViewPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<State>()
             .add_startup_system(setup)
-            .add_system(events)
             .add_system(update)
             .add_system(grab)
             .add_system(zoom);
@@ -48,22 +47,6 @@ fn update(
     for handle in handles.iter() {
         let image = assets.get_mut(handle).unwrap();
         *image = project.get_output().into_bevy_image();
-    }
-}
-
-fn events(mut event_reader: EventReader<FilePickerEvent>, mut project: ResMut<Project>) {
-    for event in event_reader.iter() {
-        match event {
-            FilePickerEvent::PickerOpened => (),
-            FilePickerEvent::PickedOpen(path) => {
-                *project = Project::new_from_input_path(path).unwrap()
-            }
-            FilePickerEvent::PickedSave(path) => {
-                let image = project.get_output();
-                image.save(path).unwrap();
-            }
-            _ => (),
-        }
     }
 }
 

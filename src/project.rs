@@ -27,6 +27,10 @@ impl Project {
         })
     }
 
+    pub fn export(&self, path: impl AsRef<Path>) -> Result<(), ImageError> {
+        self.get_output().save(path)
+    }
+
     pub fn get_output(&self) -> Image {
         self.input.clone()
     }

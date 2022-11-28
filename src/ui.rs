@@ -32,7 +32,7 @@ pub struct State {
 pub enum FilePickerEvent {
     PickerOpened,
     PickedOpen(PathBuf),
-    PickedSave(PathBuf),
+    PickedExport(PathBuf),
     NothingPicked,
 }
 
@@ -43,16 +43,30 @@ fn setup(mut commands: Commands) {
     });
 }
 
-fn events(mut state: Query<&mut State>, mut event_reader: EventReader<FilePickerEvent>) {
+fn events(
+    mut state: Query<&mut State>,
+    mut event_reader: EventReader<FilePickerEvent>,
+    mut project: ResMut<Project>,
+) {
     for mut i in state.iter_mut() {
         for event in event_reader.iter() {
             match event {
                 FilePickerEvent::PickerOpened => i.picker_open = true,
                 FilePickerEvent::PickedOpen(_)
-                | FilePickerEvent::PickedSave(_)
+                | FilePickerEvent::PickedExport(_)
                 | FilePickerEvent::NothingPicked => {
                     i.picker_open = false;
                 }
+            }
+            match event {
+                FilePickerEvent::PickerOpened => (),
+                FilePickerEvent::PickedOpen(path) => {
+                    *project = Project::new_from_input_path(path).unwrap()
+                }
+                FilePickerEvent::PickedExport(path) => {
+                    project.export(path).unwrap();
+                }
+                _ => (),
             }
         }
     }
@@ -165,7 +179,7 @@ fn save_button(
     pool: &IoTaskPool,
     project: &Res<Project>,
 ) {
-    if ui.button("save").clicked() {
+    if ui.button("export").clicked() {
         event_writer.send(FilePickerEvent::PickerOpened);
         let directory = if let Some(path) = project.path.clone() {
             path
@@ -188,7 +202,7 @@ fn save_button(
                 .save_file()
                 .await
             {
-                Some(file) => FilePickerEvent::PickedSave(PathBuf::from(file)),
+                Some(file) => FilePickerEvent::PickedExport(PathBuf::from(file)),
                 None => FilePickerEvent::NothingPicked,
             }
         };
