@@ -15,7 +15,7 @@ pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup)
+        app.init_resource::<State>()
             .add_event::<FilePickerEvent>()
             .add_system(ui)
             .add_system(events)
@@ -23,10 +23,19 @@ impl Plugin for UiPlugin {
     }
 }
 
-#[derive(Component)]
+#[derive(Resource)]
 pub struct State {
     picker_open: bool,
     task: Option<Task<FilePickerEvent>>,
+}
+
+impl Default for State {
+    fn default() -> Self {
+        Self {
+            picker_open: false,
+            task: None,
+        }
+    }
 }
 
 pub enum FilePickerEvent {
@@ -36,60 +45,49 @@ pub enum FilePickerEvent {
     NothingPicked,
 }
 
-fn setup(mut commands: Commands) {
-    commands.spawn(State {
-        picker_open: false,
-        task: None,
-    });
-}
-
 fn events(
-    mut state: Query<&mut State>,
+    mut state: ResMut<State>,
     mut event_reader: EventReader<FilePickerEvent>,
     mut project: ResMut<Project>,
 ) {
-    for mut i in state.iter_mut() {
-        for event in event_reader.iter() {
-            match event {
-                FilePickerEvent::PickerOpened => i.picker_open = true,
-                FilePickerEvent::PickedOpen(_)
-                | FilePickerEvent::PickedExport(_)
-                | FilePickerEvent::NothingPicked => {
-                    i.picker_open = false;
-                }
+    for event in event_reader.iter() {
+        match event {
+            FilePickerEvent::PickerOpened => state.picker_open = true,
+            FilePickerEvent::PickedOpen(_)
+            | FilePickerEvent::PickedExport(_)
+            | FilePickerEvent::NothingPicked => {
+                state.picker_open = false;
             }
-            match event {
-                FilePickerEvent::PickerOpened => (),
-                FilePickerEvent::PickedOpen(path) => {
-                    *project = Project::new_from_input_path(path).unwrap()
-                }
-                FilePickerEvent::PickedExport(path) => {
-                    project.export(path).unwrap();
-                }
-                _ => (),
+        }
+        match event {
+            FilePickerEvent::PickerOpened => (),
+            FilePickerEvent::PickedOpen(path) => {
+                *project = Project::new_from_input_path(path).unwrap()
             }
+            FilePickerEvent::PickedExport(path) => {
+                project.export(path).unwrap();
+            }
+            _ => (),
         }
     }
 }
 
-fn task(mut state: Query<&mut State>, mut event_writer: EventWriter<FilePickerEvent>) {
-    for mut i in state.iter_mut() {
-        let mut finished = false;
-        if let Some(task) = &mut i.task {
-            if let Some(result) = future::block_on(future::poll_once(task)) {
-                finished = true;
-                event_writer.send(result);
-            }
+fn task(mut state: ResMut<State>, mut event_writer: EventWriter<FilePickerEvent>) {
+    let mut finished = false;
+    if let Some(task) = &mut state.task {
+        if let Some(result) = future::block_on(future::poll_once(task)) {
+            finished = true;
+            event_writer.send(result);
         }
+    }
 
-        if finished {
-            i.task = None;
-        }
+    if finished {
+        state.task = None;
     }
 }
 
 fn ui(
-    mut query: Query<&mut State>,
+    mut state: ResMut<State>,
     mut egui_context: ResMut<EguiContext>,
     mut event_writer: EventWriter<FilePickerEvent>,
     mut query_sprite: Query<&mut crate::view::View>,
@@ -97,52 +95,50 @@ fn ui(
 ) {
     let pool = IoTaskPool::get();
 
-    for mut state in query.iter_mut() {
-        egui::TopBottomPanel::top("panel").show(egui_context.ctx_mut(), |ui| {
-            egui::menu::bar(ui, |ui| {
-                ui.add_enabled_ui(!state.picker_open, |ui| {
-                    load_button(&mut state, ui, &mut event_writer, pool, &project);
-                });
-
-                ui.add_enabled_ui(project.path.is_some() && !state.picker_open, |ui| {
-                    save_button(&mut state, ui, &mut event_writer, pool, &project);
-                });
-
-                if let Ok(sprite) = &mut query_sprite.get_single_mut() {
-                    if let Some(scale) = &mut sprite.target_scale {
-                        ui.separator();
-
-                        let mut single = scale.x * 100.0;
-
-                        ui.add(
-                            egui::DragValue::new(&mut single)
-                                .clamp_range(1.0..=f32::MAX)
-                                .suffix("%")
-                                .speed(1),
-                        );
-
-                        single /= 100.0;
-                        *scale = Vec3::new(single, single, single);
-                    }
-                }
-
-                ui.separator();
-
-                {
-                    const NO_IMAGE_TEXT: &str = "(no image)";
-                    if let Some(image_path) = project.path.as_ref() {
-                        ui.label(image_path.to_string_lossy());
-                    } else {
-                        ui.label(NO_IMAGE_TEXT);
-                    }
-                }
+    egui::TopBottomPanel::top("panel").show(egui_context.ctx_mut(), |ui| {
+        egui::menu::bar(ui, |ui| {
+            ui.add_enabled_ui(!state.picker_open, |ui| {
+                load_button(&mut state, ui, &mut event_writer, pool, &project);
             });
+
+            ui.add_enabled_ui(project.path.is_some() && !state.picker_open, |ui| {
+                save_button(&mut state, ui, &mut event_writer, pool, &project);
+            });
+
+            if let Ok(sprite) = &mut query_sprite.get_single_mut() {
+                if let Some(scale) = &mut sprite.target_scale {
+                    ui.separator();
+
+                    let mut single = scale.x * 100.0;
+
+                    ui.add(
+                        egui::DragValue::new(&mut single)
+                            .clamp_range(1.0..=f32::MAX)
+                            .suffix("%")
+                            .speed(1),
+                    );
+
+                    single /= 100.0;
+                    *scale = Vec3::new(single, single, single);
+                }
+            }
+
+            ui.separator();
+
+            {
+                const NO_IMAGE_TEXT: &str = "(no image)";
+                if let Some(image_path) = project.path.as_ref() {
+                    ui.label(image_path.to_string_lossy());
+                } else {
+                    ui.label(NO_IMAGE_TEXT);
+                }
+            }
         });
-    }
+    });
 }
 
 fn load_button(
-    state: &mut Mut<State>,
+    state: &mut ResMut<State>,
     ui: &mut egui::Ui,
     event_writer: &mut EventWriter<FilePickerEvent>,
     pool: &IoTaskPool,
@@ -173,7 +169,7 @@ fn load_button(
 }
 
 fn save_button(
-    state: &mut Mut<State>,
+    state: &mut ResMut<State>,
     ui: &mut egui::Ui,
     event_writer: &mut EventWriter<FilePickerEvent>,
     pool: &IoTaskPool,
