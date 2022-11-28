@@ -1,19 +1,12 @@
-use std::cmp::Ordering;
-
 use bevy::prelude::*;
 
-use bevy_egui::{
-    egui::{self, util::id_type_map::TypeId},
-    EguiContext,
-};
+use bevy_egui::{egui, EguiContext};
 
 use self::{
-    notool::{NoTool, NoToolPlugin},
-    pencils::PencilBoxPlugin,
+    pencils::{simple::SimplePencil, PencilBoxPlugin},
     plugin::{Tool, ToolIndex},
 };
 
-mod notool;
 mod pencils;
 mod plugin;
 
@@ -25,7 +18,6 @@ impl Plugin for ToolBoxPlugin {
         app.insert_resource(ToolCollection::default())
             .insert_resource(CurrentTool::default())
             .add_event::<ToolEvent>()
-            .add_plugin(NoToolPlugin)
             .add_plugin(PencilBoxPlugin)
             .add_system(ui)
             .add_system(sort)
@@ -50,19 +42,15 @@ pub struct CurrentTool(Option<ToolIndex>);
 
 impl Default for CurrentTool {
     fn default() -> Self {
-        Self(Some(NoTool::get_index()))
+        Self(Some(SimplePencil::get_index()))
     }
 }
 
 fn sort(mut tool_collection: ResMut<ToolCollection>) {
     if tool_collection.is_changed() {
-        tool_collection.tools.sort_by(|a, b| {
-            if a.type_id == TypeId::of::<NoTool>() {
-                Ordering::Greater
-            } else {
-                a.description.name.partial_cmp(&b.description.name).unwrap()
-            }
-        });
+        tool_collection
+            .tools
+            .sort_by(|a, b| a.description.name.partial_cmp(&b.description.name).unwrap());
     }
 }
 
