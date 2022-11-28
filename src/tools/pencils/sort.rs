@@ -8,7 +8,7 @@ use bevy_egui::{
 
 use crate::{
     color::Color,
-    image::ImageHelper,
+    image_old::ImageHelper,
     tools::plugin::{Tool, ToolDescription},
 };
 

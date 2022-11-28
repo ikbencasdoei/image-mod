@@ -9,7 +9,7 @@ use bevy_egui::EguiContext;
 
 use crate::{
     color::Color,
-    image::ImageHelper,
+    image_old::ImageHelper,
     tools::plugin::{Tool, ToolPlugin},
     view::View,
 };
