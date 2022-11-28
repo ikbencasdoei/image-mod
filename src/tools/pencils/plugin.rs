@@ -37,7 +37,7 @@ struct PencilLocal {
 }
 
 fn process<T>(
-    mut query: Query<(&View, &mut T, &Transform)>,
+    mut query: Query<(&mut T, &Transform, &Handle<Image>), With<View>>,
     mut egui_context: ResMut<EguiContext>,
     mouse_button_input: Res<Input<MouseButton>>,
     mut assets: ResMut<Assets<BevyImage>>,
@@ -51,8 +51,8 @@ fn process<T>(
         || mouse_button_input.pressed(MouseButton::Right))
         && !egui_context.ctx_mut().wants_pointer_input()
     {
-        for (sprite, mut pencil, transform) in query.iter_mut() {
-            if let Some(image) = assets.get_mut(sprite.image.as_ref().unwrap()) {
+        for (mut pencil, transform, handle) in query.iter_mut() {
+            if let Some(image) = assets.get_mut(handle) {
                 let image_size = image.size();
 
                 let window_size = {

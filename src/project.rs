@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use bevy::prelude::*;
 use image::{DynamicImage, ImageError, RgbImage};
@@ -14,12 +14,14 @@ impl Plugin for ProjectPlugin {
 #[derive(Resource)]
 pub struct Project {
     input: DynamicImage,
+    pub path: Option<PathBuf>,
 }
 
 impl Default for Project {
     fn default() -> Self {
         Self {
             input: DynamicImage::ImageRgb8(RgbImage::new(1, 1)),
+            path: Default::default(),
         }
     }
 }
@@ -27,7 +29,8 @@ impl Default for Project {
 impl Project {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Result<Self, ImageError> {
         Ok(Self {
-            input: image::open(path)?,
+            input: image::open(path.as_ref())?,
+            path: Some(path.as_ref().to_path_buf()),
         })
     }
 

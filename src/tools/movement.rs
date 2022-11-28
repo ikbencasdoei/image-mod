@@ -89,7 +89,7 @@ const ZOOM_FACTOR: f32 = 1.3;
 const ZOOM_LERP: f32 = 0.3;
 
 fn zoom(
-    mut query: Query<(&mut Transform, &mut crate::view::View)>,
+    mut query: Query<(&mut Transform, &mut crate::view::View, &Handle<Image>)>,
     mut mouse_wheel_events: EventReader<MouseWheel>,
     mut egui_context: ResMut<EguiContext>,
     windows: Res<Windows>,
@@ -104,7 +104,7 @@ fn zoom(
     {
         for event in mouse_wheel_events.iter() {
             if event.y.is_normal() {
-                for (transform, mut sprite) in query.iter_mut() {
+                for (transform, mut sprite, handle) in query.iter_mut() {
                     let to_center_screen = state.last_mouse_position.unwrap_or_default() - {
                         let window = windows.get_primary().unwrap();
                         Vec2::new(window.width(), window.height())
@@ -113,12 +113,8 @@ fn zoom(
                     let to_center_image = to_center_screen - transform.translation.xy();
 
                     let current_size = {
-                        if let Some(image) = sprite.image.as_ref() {
-                            if let Some(image) = assets.get(image) {
-                                image.size() * transform.scale.xy()
-                            } else {
-                                Vec2::ZERO
-                            }
+                        if let Some(image) = assets.get(handle) {
+                            image.size() * transform.scale.xy()
                         } else {
                             Vec2::ZERO
                         }
@@ -159,7 +155,7 @@ fn zoom(
         mouse_wheel_events.clear();
     }
 
-    for (mut transform, sprite) in query.iter_mut() {
+    for (mut transform, sprite, _) in query.iter_mut() {
         if let Some(target_scale) = sprite.target_scale {
             transform.scale = transform.scale.lerp(target_scale, ZOOM_LERP);
         }

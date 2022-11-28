@@ -9,6 +9,8 @@ use bevy::{
 use bevy_egui::{egui, EguiContext};
 use rfd::AsyncFileDialog;
 
+use crate::project::Project;
+
 pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
@@ -77,6 +79,7 @@ fn ui(
     mut egui_context: ResMut<EguiContext>,
     mut event_writer: EventWriter<FilePickerEvent>,
     mut query_sprite: Query<&mut crate::view::View>,
+    project: Res<Project>,
 ) {
     let pool = IoTaskPool::get();
 
@@ -84,21 +87,12 @@ fn ui(
         egui::TopBottomPanel::top("panel").show(egui_context.ctx_mut(), |ui| {
             egui::menu::bar(ui, |ui| {
                 ui.add_enabled_ui(!state.picker_open, |ui| {
-                    load_button(&mut state, ui, &mut event_writer, pool, &mut query_sprite);
+                    load_button(&mut state, ui, &mut event_writer, pool, &project);
                 });
 
-                ui.add_enabled_ui(
-                    {
-                        if let Ok(sprite) = query_sprite.get_single() {
-                            sprite.image_path.is_some()
-                        } else {
-                            false
-                        }
-                    } && !state.picker_open,
-                    |ui| {
-                        save_button(&mut state, ui, &mut event_writer, pool, &mut query_sprite);
-                    },
-                );
+                ui.add_enabled_ui(project.path.is_some() && !state.picker_open, |ui| {
+                    save_button(&mut state, ui, &mut event_writer, pool, &project);
+                });
 
                 if let Ok(sprite) = &mut query_sprite.get_single_mut() {
                     if let Some(scale) = &mut sprite.target_scale {
@@ -122,12 +116,8 @@ fn ui(
 
                 {
                     const NO_IMAGE_TEXT: &str = "(no image)";
-                    if let Ok(sprite) = query_sprite.get_single() {
-                        if let Some(image_path) = sprite.image_path.as_ref() {
-                            ui.label(image_path.to_string_lossy());
-                        } else {
-                            ui.label(NO_IMAGE_TEXT);
-                        }
+                    if let Some(image_path) = project.path.as_ref() {
+                        ui.label(image_path.to_string_lossy());
                     } else {
                         ui.label(NO_IMAGE_TEXT);
                     }
@@ -142,15 +132,11 @@ fn load_button(
     ui: &mut egui::Ui,
     event_writer: &mut EventWriter<FilePickerEvent>,
     pool: &IoTaskPool,
-    query_sprite: &mut Query<&mut crate::view::View>,
+    project: &Res<Project>,
 ) {
     if ui.button("load").clicked() {
-        let directory = if let Ok(sprite) = query_sprite.get_single() {
-            if let Some(path) = sprite.image_path.clone() {
-                path
-            } else {
-                PathBuf::new()
-            }
+        let directory = if let Some(path) = project.path.clone() {
+            path
         } else {
             PathBuf::new()
         };
@@ -177,16 +163,12 @@ fn save_button(
     ui: &mut egui::Ui,
     event_writer: &mut EventWriter<FilePickerEvent>,
     pool: &IoTaskPool,
-    query_sprite: &mut Query<&mut crate::view::View>,
+    project: &Res<Project>,
 ) {
     if ui.button("save").clicked() {
         event_writer.send(FilePickerEvent::PickerOpened);
-        let directory = if let Ok(sprite) = query_sprite.get_single() {
-            if let Some(path) = sprite.image_path.clone() {
-                path
-            } else {
-                PathBuf::new()
-            }
+        let directory = if let Some(path) = project.path.clone() {
+            path
         } else {
             PathBuf::new()
         };

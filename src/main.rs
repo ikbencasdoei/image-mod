@@ -40,12 +40,7 @@ fn main() {
         .run();
 }
 
-fn setup(
-    mut commands: Commands,
-    mut egui_settings: ResMut<EguiSettings>,
-    mut project: ResMut<Project>,
-) {
-    commands.spawn(Camera2dBundle::default());
+fn setup(mut egui_settings: ResMut<EguiSettings>, mut project: ResMut<Project>) {
     egui_settings.scale_factor = 1.5;
 
     if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
