@@ -8,13 +8,11 @@ use bevy_egui::{
 };
 
 use self::{
-    movement::MovementPlugin,
     notool::{NoTool, NoToolPlugin},
     pencils::PencilBoxPlugin,
     plugin::{Tool, ToolIndex},
 };
 
-mod movement;
 mod notool;
 mod pencils;
 mod plugin;
@@ -29,7 +27,6 @@ impl Plugin for ToolBoxPlugin {
             .add_event::<ToolEvent>()
             .add_plugin(NoToolPlugin)
             .add_plugin(PencilBoxPlugin)
-            .add_plugin(MovementPlugin)
             .add_system(ui)
             .add_system(sort)
             .add_system(events.label(ToolManagerLabel));
