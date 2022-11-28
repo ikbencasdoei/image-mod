@@ -10,7 +10,6 @@ use view::ViewPlugin;
 
 mod color;
 mod image;
-mod image_old;
 mod keybinds;
 mod project;
 mod tools;

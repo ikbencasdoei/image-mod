@@ -3,7 +3,7 @@ use bevy_egui::{egui, egui::Color32, EguiContext};
 
 use crate::{
     color::Color,
-    image_old::ImageHelper,
+    image::Image,
     tools::plugin::{Tool, ToolDescription},
 };
 
@@ -49,7 +49,7 @@ impl Tool<SimplePencil> for SimplePencil {
 }
 
 impl PencilTool for SimplePencil {
-    fn get_draw_color(&mut self, _mouse_position: Vec2, _: &mut ImageHelper) -> Option<Color> {
+    fn get_draw_color(&mut self, _mouse_position: UVec2, _: &mut Image) -> Option<Color> {
         Some(Color::from(self.current_color))
     }
 }

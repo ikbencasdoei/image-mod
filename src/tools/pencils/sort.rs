@@ -1,15 +1,14 @@
 use std::f32::consts::PI;
 
+use crate::{
+    color::Color,
+    image::Image,
+    tools::plugin::{Tool, ToolDescription},
+};
 use bevy::prelude::{Color as BevyColor, *};
 use bevy_egui::{
     egui::{self},
     EguiContext,
-};
-
-use crate::{
-    color::Color,
-    image_old::ImageHelper,
-    tools::plugin::{Tool, ToolDescription},
 };
 
 use super::plugin::{PencilPlugin, PencilTool};
@@ -57,14 +56,14 @@ impl Tool<PixelSorter> for PixelSorter {
 }
 
 impl PencilTool for PixelSorter {
-    fn get_draw_color(&mut self, position: Vec2, image: &mut ImageHelper) -> Option<Color> {
+    fn get_draw_color(&mut self, position: UVec2, image: &mut Image) -> Option<Color> {
         let mut positions = Vec::<Vec2>::new();
 
         let direction = Vec2::new(self.angle.cos(), self.angle.sin());
 
-        let mut current_position = position;
+        let mut current_position = position.as_vec2();
 
-        if image.get_pixel(current_position).is_ok() {
+        if image.get_pixel(current_position.as_uvec2()).is_ok() {
             positions.push(current_position);
         }
 
@@ -72,11 +71,11 @@ impl PencilTool for PixelSorter {
             loop {
                 let next_position = current_position - direction;
 
-                let Ok(current_color) = image.get_pixel(current_position) else {
+                let Ok(current_color) = image.get_pixel(current_position.as_uvec2()) else {
                     break;
                 };
 
-                let Ok(next_color) = image.get_pixel(next_position) else {
+                let Ok(next_color) = image.get_pixel(next_position.as_uvec2()) else {
                     break;
                 };
 
@@ -93,15 +92,15 @@ impl PencilTool for PixelSorter {
         }
 
         if self.direction == SortDirection::Backward || self.direction == SortDirection::Both {
-            current_position = position;
+            current_position = position.as_vec2();
             loop {
                 let next_position = current_position + direction;
 
-                let Ok(current_color) = image.get_pixel(current_position) else {
+                let Ok(current_color) = image.get_pixel(current_position.as_uvec2()) else {
                     break;
                 };
 
-                let Ok(next_color) = image.get_pixel(next_position) else {
+                let Ok(next_color) = image.get_pixel(next_position.as_uvec2()) else {
                     break;
                 };
 
@@ -126,13 +125,13 @@ impl PencilTool for PixelSorter {
         let mut colors = Vec::<Color>::new();
 
         for position in &positions {
-            colors.push(image.get_pixel(*position).unwrap());
+            colors.push(image.get_pixel(position.as_uvec2()).unwrap());
         }
 
         colors.sort_by(|a, b| a.sum().total_cmp(&b.sum()));
 
         for (position, color) in positions.iter().zip(colors.iter()) {
-            image.set_pixel(*position, *color).ok();
+            image.set_pixel(position.as_uvec2(), *color).ok();
         }
 
         None

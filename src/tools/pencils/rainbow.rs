@@ -6,7 +6,7 @@ use bevy_egui::{egui, EguiContext};
 
 use crate::{
     color::Color,
-    image_old::ImageHelper,
+    image::Image,
     tools::plugin::{Tool, ToolDescription},
 };
 
@@ -25,7 +25,7 @@ impl Plugin for RainbowPencilPlugin {
 struct RainbowPencil {
     color_hsv: Vec3,
     rotation_per_pixel: f32,
-    last_pixel: Option<Vec2>,
+    last_pixel: Option<UVec2>,
 }
 
 impl Default for RainbowPencil {
@@ -47,8 +47,7 @@ impl Tool<RainbowPencil> for RainbowPencil {
 }
 
 impl PencilTool for RainbowPencil {
-    fn get_draw_color(&mut self, position: Vec2, _: &mut ImageHelper) -> Option<Color> {
-        let position = position.floor();
+    fn get_draw_color(&mut self, position: UVec2, _: &mut Image) -> Option<Color> {
         let color = hsv2rgb(self.color_hsv);
 
         if let Some(last_pixel) = self.last_pixel {

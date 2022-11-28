@@ -15,7 +15,7 @@ impl Plugin for ProjectPlugin {
 
 #[derive(Resource, Default)]
 pub struct Project {
-    input: Image,
+    pub input: Image,
     pub path: Option<PathBuf>,
 }
 
