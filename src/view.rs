@@ -1,10 +1,6 @@
-use bevy::{
-    prelude::*,
-    render::{render_resource::SamplerDescriptor, texture::ImageSampler},
-};
-use image::{DynamicImage, RgbImage};
+use bevy::prelude::{Image as BevyImage, *};
 
-use crate::{project::Project, ui::FilePickerEvent};
+use crate::{image::Image, project::Project, ui::FilePickerEvent};
 
 pub struct ViewPlugin;
 
@@ -22,17 +18,11 @@ pub struct View {
     pub target_translation: Option<Vec3>,
 }
 
-fn setup(mut commands: Commands, mut assets: ResMut<Assets<Image>>) {
+fn setup(mut commands: Commands, mut assets: ResMut<Assets<BevyImage>>) {
     commands.spawn(Camera2dBundle::default());
 
-    let data = DynamicImage::ImageRgb8(RgbImage::new(1, 1));
-    let mut image = Image::from_dynamic(data, true);
-    image.sampler_descriptor = ImageSampler::Descriptor(SamplerDescriptor {
-        mag_filter: bevy::render::render_resource::FilterMode::Nearest,
-        min_filter: bevy::render::render_resource::FilterMode::Linear,
-        ..default()
-    });
-    let handle = assets.add(image);
+    let image = Image::default();
+    let handle = assets.add(image.into_bevy_image());
 
     commands
         .spawn(SpriteBundle {
@@ -43,18 +33,13 @@ fn setup(mut commands: Commands, mut assets: ResMut<Assets<Image>>) {
 }
 
 fn update(
-    handles: Query<&Handle<Image>, With<View>>,
-    mut assets: ResMut<Assets<Image>>,
+    handles: Query<&Handle<BevyImage>, With<View>>,
+    mut assets: ResMut<Assets<BevyImage>>,
     project: Res<Project>,
 ) {
     for handle in handles.iter() {
         let image = assets.get_mut(handle).unwrap();
-        *image = Image::from_dynamic(project.get_output().into_dyn(), true);
-        image.sampler_descriptor = ImageSampler::Descriptor(SamplerDescriptor {
-            mag_filter: bevy::render::render_resource::FilterMode::Nearest,
-            min_filter: bevy::render::render_resource::FilterMode::Linear,
-            ..default()
-        });
+        *image = project.get_output().into_bevy_image();
     }
 }
 

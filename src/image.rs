@@ -1,6 +1,9 @@
 use std::path::Path;
 
-use bevy::prelude::{Color as BevyColor, *};
+use bevy::{
+    prelude::{Color as BevyColor, Image as BevyImage, *},
+    render::{render_resource::SamplerDescriptor, texture::ImageSampler},
+};
 use image::{DynamicImage, ImageError, Rgba, Rgba32FImage};
 
 use crate::color::Color;
@@ -27,6 +30,17 @@ impl Image {
 
     pub fn into_dyn(self) -> DynamicImage {
         DynamicImage::ImageRgba32F(self.image)
+    }
+
+    pub fn into_bevy_image(self) -> BevyImage {
+        let mut image = BevyImage::from_dynamic(self.into_dyn(), true);
+        image.sampler_descriptor = ImageSampler::Descriptor(SamplerDescriptor {
+            mag_filter: bevy::render::render_resource::FilterMode::Nearest,
+            min_filter: bevy::render::render_resource::FilterMode::Linear,
+            ..default()
+        });
+
+        image
     }
 
     pub fn set_pixel(&mut self, position: UVec2, color: Color) -> Result<(), &str> {
