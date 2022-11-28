@@ -1,15 +1,21 @@
-use std::{convert::TryFrom, path::Path};
+use std::path::Path;
 
-use bevy::{
-    prelude::{Color as BevyColor, Image as BevyImage, *},
-    render::render_resource::TextureFormat,
-};
-use image::{DynamicImage, Rgba, Rgba32FImage};
+use bevy::prelude::{Color as BevyColor, *};
+use image::{DynamicImage, ImageError, Rgba, Rgba32FImage};
 
 use crate::color::Color;
 
+#[derive(Clone)]
 pub struct Image {
     image: Rgba32FImage,
+}
+
+impl Default for Image {
+    fn default() -> Self {
+        Self {
+            image: Rgba32FImage::new(1, 1),
+        }
+    }
 }
 
 impl Image {
@@ -19,8 +25,8 @@ impl Image {
         }
     }
 
-    pub fn into_dyn(self) {
-        DynamicImage::ImageRgba32F(self.image);
+    pub fn into_dyn(self) -> DynamicImage {
+        DynamicImage::ImageRgba32F(self.image)
     }
 
     pub fn set_pixel(&mut self, position: UVec2, color: Color) -> Result<(), &str> {
@@ -50,5 +56,13 @@ impl Image {
         } else {
             Err("pixel outside image")
         }
+    }
+
+    pub fn open(path: impl AsRef<Path>) -> Result<Self, ImageError> {
+        Ok(Self::from_dyn(image::open(path)?))
+    }
+
+    pub fn save(&self, path: impl AsRef<Path>) -> Result<(), ImageError> {
+        self.image.save(path)
     }
 }

@@ -49,7 +49,7 @@ fn update(
 ) {
     for handle in handles.iter() {
         let image = assets.get_mut(handle).unwrap();
-        *image = Image::from_dynamic(project.get_output(), true);
+        *image = Image::from_dynamic(project.get_output().into_dyn(), true);
         image.sampler_descriptor = ImageSampler::Descriptor(SamplerDescriptor {
             mag_filter: bevy::render::render_resource::FilterMode::Nearest,
             min_filter: bevy::render::render_resource::FilterMode::Linear,
