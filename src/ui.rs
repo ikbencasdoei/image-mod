@@ -80,11 +80,10 @@ fn ui(
             ui.separator();
 
             {
-                const NO_IMAGE_TEXT: &str = "(no image)";
                 if let Some(image_path) = project.path.as_ref() {
                     ui.label(image_path.to_string_lossy());
                 } else {
-                    ui.label(NO_IMAGE_TEXT);
+                    ui.label("(no image)");
                 }
             }
         });
