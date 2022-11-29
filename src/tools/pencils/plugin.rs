@@ -78,14 +78,14 @@ fn process<T>(
                             if let Some(color) =
                                 pencil.get_draw_color(position.as_uvec2(), &mut image)
                             {
-                                image.set_pixel(position.as_uvec2(), color).ok();
+                                image.set_pixel(position.as_uvec2(), color).unwrap();
                             }
                         }
                     }
                     if let Some(color) =
                         pencil.get_draw_color(mouse_on_image.as_uvec2(), &mut image)
                     {
-                        image.set_pixel(mouse_on_image.as_uvec2(), color).ok();
+                        image.set_pixel(mouse_on_image.as_uvec2(), color).unwrap();
                     }
                 }
                 local.last_mouse_position = Some(mouse_on_image);

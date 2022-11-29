@@ -131,7 +131,7 @@ impl PencilTool for PixelSorter {
         colors.sort_by(|a, b| a.sum().total_cmp(&b.sum()));
 
         for (position, color) in positions.iter().zip(colors.iter()) {
-            image.set_pixel(position.as_uvec2(), *color).ok();
+            image.set_pixel(position.as_uvec2(), *color).unwrap();
         }
 
         None
