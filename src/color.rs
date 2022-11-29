@@ -1,7 +1,7 @@
 use bevy::prelude::{Color as BevyColor, *};
 use bevy_egui::egui::Color32;
 
-#[derive(Deref, DerefMut, Clone, Copy)]
+#[derive(Deref, DerefMut, Clone, Copy, Debug)]
 pub struct Color(BevyColor);
 
 impl Color {
