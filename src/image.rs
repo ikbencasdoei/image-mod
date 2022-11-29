@@ -69,9 +69,7 @@ impl Image {
     pub fn get_pixel(&mut self, position: UVec2) -> Result<Color, &str> {
         if self.contains_pixel(position) {
             let Rgba([r, g, b, a]) = self.image.get_pixel(position.x, position.y).clone();
-            Ok(Color::from(BevyColor::rgba(
-                r as f32, g as f32, b as f32, a as f32,
-            )))
+            Ok(Color::from(BevyColor::rgba_u8(r, g, b, a)))
         } else {
             Err("pixel outside image")
         }
