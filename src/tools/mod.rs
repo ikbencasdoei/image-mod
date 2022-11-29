@@ -10,31 +10,20 @@ use self::{
 mod pencils;
 mod plugin;
 
-#[derive(SystemLabel)]
-struct ToolManagerLabel;
 pub struct ToolBoxPlugin;
 impl Plugin for ToolBoxPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(ToolCollection::default())
             .insert_resource(CurrentTool::default())
-            .add_event::<ToolEvent>()
             .add_plugin(PencilBoxPlugin)
             .add_system(ui)
-            .add_system(sort)
-            .add_system(events.label(ToolManagerLabel));
+            .add_system(sort);
     }
 }
 
 #[derive(Resource, Default)]
 pub struct ToolCollection {
     tools: Vec<ToolIndex>,
-}
-
-pub enum ToolEvent {
-    Switched {
-        from: Option<ToolIndex>,
-        to: Option<ToolIndex>,
-    },
 }
 
 #[derive(Resource, Deref, DerefMut)]
@@ -54,31 +43,10 @@ fn sort(mut tool_collection: ResMut<ToolCollection>) {
     }
 }
 
-fn events(
-    mut current_tool: ResMut<CurrentTool>,
-    tool_collection: Res<ToolCollection>,
-    mut event_reader: EventReader<ToolEvent>,
-) {
-    for event in event_reader.iter() {
-        match event {
-            ToolEvent::Switched { from: _, to } => {
-                if let Some(to) = to {
-                    for index in &tool_collection.tools {
-                        if to.type_id == index.type_id {
-                            **current_tool = Some(to.to_owned());
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 fn ui(
-    current_tool: Res<CurrentTool>,
+    mut current_tool: ResMut<CurrentTool>,
     mut egui_context: ResMut<EguiContext>,
     tool_collection: Res<ToolCollection>,
-    mut event_writer: EventWriter<ToolEvent>,
 ) {
     egui::Window::new("Tools").show(egui_context.ctx_mut(), |ui| {
         for tool in tool_collection.tools.iter() {
@@ -89,10 +57,7 @@ fn ui(
                 )
                 .clicked()
             {
-                event_writer.send(ToolEvent::Switched {
-                    from: current_tool.to_owned(),
-                    to: Some(tool.to_owned()),
-                });
+                **current_tool = Some(tool.to_owned());
             };
         }
     });

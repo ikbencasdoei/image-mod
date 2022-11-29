@@ -3,7 +3,9 @@ use std::marker::PhantomData;
 use bevy::{prelude::*, reflect::GetTypeRegistration};
 use bevy_egui::egui::util::id_type_map::TypeId;
 
-use super::{ToolCollection, ToolEvent, ToolManagerLabel};
+use crate::view::View;
+
+use super::{CurrentTool, ToolCollection};
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct ToolDescription {
@@ -40,7 +42,7 @@ impl<T: Component + Default + GetTypeRegistration + Tool<T> + 'static> bevy::pre
     fn build(&self, app: &mut App) {
         app.register_type::<T>()
             .add_startup_system(setup::<T>)
-            .add_system(events::<T>.before(ToolManagerLabel));
+            .add_system(update::<T>);
     }
 }
 
@@ -48,29 +50,28 @@ fn setup<T: Tool<T> + 'static>(mut tool_collection: ResMut<ToolCollection>) {
     tool_collection.tools.push(T::get_index());
 }
 
-fn events<T: Component + Default + 'static>(
+fn update<T: Component + Default + 'static>(
     mut commands: Commands,
-    mut event_reader: EventReader<ToolEvent>,
-    query: Query<Entity, With<Sprite>>,
+    query: Query<Entity, With<View>>,
+    mut last_tool: Local<Option<ToolIndex>>,
+    current_tool: Res<CurrentTool>,
 ) {
-    for event in event_reader.iter() {
-        match event {
-            ToolEvent::Switched { from, to } => {
-                if let Some(from) = from {
-                    if from.type_id == TypeId::of::<T>() {
-                        for entity in &query {
-                            commands.entity(entity).remove::<T>();
-                        }
-                    }
-                }
-                if let Some(to) = to {
-                    if to.type_id == TypeId::of::<T>() {
-                        for entity in &query {
-                            commands.entity(entity).insert(T::default());
-                        }
-                    }
+    if **current_tool != *last_tool {
+        if let Some(from) = &*last_tool {
+            if from.type_id == TypeId::of::<T>() {
+                for entity in &query {
+                    commands.entity(entity).remove::<T>();
                 }
             }
         }
+        if let Some(to) = &**current_tool {
+            if to.type_id == TypeId::of::<T>() {
+                for entity in &query {
+                    commands.entity(entity).insert(T::default());
+                }
+            }
+        }
+
+        *last_tool = current_tool.clone();
     }
 }
