@@ -2,6 +2,7 @@ use std::path::Path;
 
 use bevy::prelude::*;
 use bevy_egui::{EguiPlugin, EguiSettings};
+use file_picker::FilePickerPlugin;
 use keybinds::KeyBindsPlugin;
 use project::{Project, ProjectPlugin};
 use tools::ToolBoxPlugin;
@@ -9,6 +10,7 @@ use ui::UiPlugin;
 use view::ViewPlugin;
 
 mod color;
+mod file_picker;
 mod image;
 mod keybinds;
 mod project;
@@ -32,6 +34,7 @@ fn main() {
         }))
         .add_plugin(EguiPlugin)
         .add_plugin(ProjectPlugin)
+        .add_plugin(FilePickerPlugin)
         .add_plugin(ViewPlugin)
         .add_plugin(UiPlugin)
         .add_plugin(KeyBindsPlugin)

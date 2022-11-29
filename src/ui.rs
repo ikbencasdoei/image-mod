@@ -1,92 +1,62 @@
 use std::path::PathBuf;
 
-use futures_lite::future;
-
-use bevy::{
-    prelude::*,
-    tasks::{IoTaskPool, Task},
-};
+use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
-use rfd::AsyncFileDialog;
 
-use crate::project::Project;
+use crate::{
+    file_picker::{FilePicker, FilePickerEvent},
+    project::Project,
+};
 
 pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<State>()
-            .add_event::<FilePickerEvent>()
-            .add_system(ui)
-            .add_system(events)
-            .add_system(task);
+        app.add_system(ui).add_system(events);
     }
-}
-
-#[derive(Resource)]
-pub struct State {
-    picker: Option<Task<FilePickerEvent>>,
-}
-
-impl Default for State {
-    fn default() -> Self {
-        Self { picker: None }
-    }
-}
-
-pub enum FilePickerEvent {
-    PickerOpened,
-    PickedOpen(PathBuf),
-    PickedExport(PathBuf),
-    NothingPicked,
 }
 
 fn events(mut event_reader: EventReader<FilePickerEvent>, mut project: ResMut<Project>) {
     for event in event_reader.iter() {
         match event {
-            FilePickerEvent::PickerOpened => (),
-            FilePickerEvent::PickedOpen(path) => {
+            FilePickerEvent::PickedLoad(path) => {
                 *project = Project::new_from_input_path(path).unwrap()
             }
-            FilePickerEvent::PickedExport(path) => {
-                project.export(path).unwrap();
-            }
-            _ => (),
+            FilePickerEvent::PickedExport(path) => project.export(path).unwrap(),
         }
-    }
-}
-
-fn task(mut state: ResMut<State>, mut event_writer: EventWriter<FilePickerEvent>) {
-    let mut finished = false;
-    if let Some(task) = &mut state.picker {
-        if let Some(result) = future::block_on(future::poll_once(task)) {
-            finished = true;
-            event_writer.send(result);
-        }
-    }
-
-    if finished {
-        state.picker = None;
     }
 }
 
 fn ui(
-    mut state: ResMut<State>,
     mut egui_context: ResMut<EguiContext>,
-    mut event_writer: EventWriter<FilePickerEvent>,
     mut query_sprite: Query<&mut crate::view::View>,
     project: Res<Project>,
+    mut file_picker: ResMut<FilePicker>,
 ) {
-    let pool = IoTaskPool::get();
-
     egui::TopBottomPanel::top("panel").show(egui_context.ctx_mut(), |ui| {
         egui::menu::bar(ui, |ui| {
-            ui.add_enabled_ui(state.picker.is_none(), |ui| {
-                load_button(&mut state, ui, &mut event_writer, pool, &project);
+            ui.add_enabled_ui(file_picker.open.is_none(), |ui| {
+                if ui.button("load").clicked() {
+                    file_picker.open_load().ok();
+                }
             });
 
-            ui.add_enabled_ui(project.path.is_some() && state.picker.is_none(), |ui| {
-                save_button(&mut state, ui, &mut event_writer, pool, &project);
+            ui.add_enabled_ui(project.path.is_some() && file_picker.open.is_none(), |ui| {
+                if ui.button("export").clicked() {
+                    let directory = if let Some(path) = project.path.clone() {
+                        path
+                    } else {
+                        PathBuf::new()
+                    };
+
+                    let file_name = directory
+                        .file_name()
+                        .unwrap_or_default()
+                        .to_string_lossy()
+                        .to_string();
+
+                    file_picker.open_export(directory, file_name).ok();
+                }
             });
 
             if let Ok(sprite) = &mut query_sprite.get_single_mut() {
@@ -119,74 +89,4 @@ fn ui(
             }
         });
     });
-}
-
-fn load_button(
-    state: &mut ResMut<State>,
-    ui: &mut egui::Ui,
-    event_writer: &mut EventWriter<FilePickerEvent>,
-    pool: &IoTaskPool,
-    project: &Res<Project>,
-) {
-    if ui.button("load").clicked() {
-        let directory = if let Some(path) = project.path.clone() {
-            path
-        } else {
-            PathBuf::new()
-        };
-
-        event_writer.send(FilePickerEvent::PickerOpened);
-        let future = async move {
-            match AsyncFileDialog::new()
-                .add_filter("image", &["png", "jpg"])
-                .set_directory(directory)
-                .pick_file()
-                .await
-            {
-                Some(file) => FilePickerEvent::PickedOpen(PathBuf::from(file)),
-                None => FilePickerEvent::NothingPicked,
-            }
-        };
-
-        state.picker = Some(pool.spawn(future));
-    }
-}
-
-fn save_button(
-    state: &mut ResMut<State>,
-    ui: &mut egui::Ui,
-    event_writer: &mut EventWriter<FilePickerEvent>,
-    pool: &IoTaskPool,
-    project: &Res<Project>,
-) {
-    if ui.button("export").clicked() {
-        event_writer.send(FilePickerEvent::PickerOpened);
-        let directory = if let Some(path) = project.path.clone() {
-            path
-        } else {
-            PathBuf::new()
-        };
-
-        let file_name = directory
-            .file_name()
-            .unwrap_or_default()
-            .to_string_lossy()
-            .to_string();
-
-        let future = async move {
-            match AsyncFileDialog::new()
-                .add_filter("png", &["png"])
-                .add_filter("jpg", &["jpg"])
-                .set_directory(directory)
-                .set_file_name(file_name.as_str())
-                .save_file()
-                .await
-            {
-                Some(file) => FilePickerEvent::PickedExport(PathBuf::from(file)),
-                None => FilePickerEvent::NothingPicked,
-            }
-        };
-
-        state.picker = Some(pool.spawn(future));
-    }
 }
