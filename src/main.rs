@@ -47,6 +47,6 @@ fn setup(mut egui_settings: ResMut<EguiSettings>, mut project: ResMut<Project>) 
     egui_settings.scale_factor = 1.5;
 
     if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
-        *project = Project::new_from_input_path(Path::new(&path)).unwrap()
+        *project = Project::new_test(Path::new(&path)).unwrap()
     }
 }
