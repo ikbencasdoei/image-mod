@@ -5,7 +5,7 @@ use bevy_egui::{EguiPlugin, EguiSettings};
 use file_picker::FilePickerPlugin;
 use keybinds::KeyBindsPlugin;
 use project::{Project, ProjectPlugin};
-use tools::ToolBoxPlugin;
+use tools::toolbox::ToolBoxPlugin;
 use ui::UiPlugin;
 use view::ViewPlugin;
 

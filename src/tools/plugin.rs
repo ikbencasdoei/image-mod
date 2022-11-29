@@ -5,7 +5,7 @@ use bevy_egui::egui::util::id_type_map::TypeId;
 
 use crate::view::View;
 
-use super::{CurrentTool, ToolCollection};
+use super::toolbox::{CurrentTool, ToolCollection};
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct ToolDescription {

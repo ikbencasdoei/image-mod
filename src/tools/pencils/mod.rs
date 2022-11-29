@@ -7,8 +7,8 @@ pub mod rainbow;
 pub mod simple;
 pub mod sort;
 
-pub struct PencilBoxPlugin;
-impl Plugin for PencilBoxPlugin {
+pub struct PencilCollection;
+impl Plugin for PencilCollection {
     fn build(&self, app: &mut App) {
         app.add_plugin(SimplePencilPlugin)
             .add_plugin(RainbowPencilPlugin)
