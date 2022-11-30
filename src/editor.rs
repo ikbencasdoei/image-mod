@@ -19,7 +19,6 @@ pub struct Editor {
     pub path: Option<PathBuf>,
     pub mods: Vec<Modification>,
     pub selected_mod: Option<ModifierIndex>,
-    pub selected_selector: Option<SelectorIndex>,
 }
 
 impl Editor {
