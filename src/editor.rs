@@ -30,14 +30,14 @@ impl Editor {
         })
     }
 
-    pub fn export(&self, path: impl AsRef<Path>) -> Result<(), ImageError> {
+    pub fn export(&mut self, path: impl AsRef<Path>) -> Result<(), ImageError> {
         self.get_output().save(path)
     }
 
-    pub fn get_output(&self) -> Image {
+    pub fn get_output(&mut self) -> Image {
         let mut output = self.input.clone();
 
-        for modifier in &self.mods {
+        for modifier in &mut self.mods {
             modifier.apply(&mut output);
         }
 

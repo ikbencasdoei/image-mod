@@ -42,7 +42,7 @@ fn setup(mut commands: Commands, mut assets: ResMut<Assets<BevyImage>>) {
 fn update(
     handles: Query<&Handle<BevyImage>, With<View>>,
     mut assets: ResMut<Assets<BevyImage>>,
-    editor: Res<Editor>,
+    mut editor: ResMut<Editor>,
 ) {
     for handle in handles.iter() {
         let image = assets.get_mut(handle).unwrap();

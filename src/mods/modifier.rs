@@ -3,6 +3,7 @@ use crate::prelude::{Image, *};
 pub struct Modification {
     modifier: Box<dyn Modifier + Send + Sync>,
     selection: Vec<Box<dyn Selection + Send + Sync>>,
+    cached: Option<Image>,
 }
 
 impl Modification {
@@ -13,6 +14,7 @@ impl Modification {
         Self {
             modifier: Box::new(modifier),
             selection: Vec::new(),
+            cached: None,
         }
     }
 
@@ -23,14 +25,20 @@ impl Modification {
         self.selection.push(Box::new(selection));
     }
 
-    pub fn apply(&self, mut output: &mut Image) {
-        let mut modifier_state = dyn_clone::clone_box(&self.modifier);
-        for selection in self.selection.iter() {
-            for position in selection.get_pixels(&output) {
-                if let Some(color) = modifier_state.get_pixel(position, &mut output) {
-                    output.set_pixel(position, color).unwrap();
+    pub fn apply(&mut self, mut output: &mut Image) {
+        if let Some(cached) = &self.cached {
+            *output = cached.clone();
+        } else {
+            let mut modifier_state = dyn_clone::clone_box(&self.modifier);
+            for selection in self.selection.iter() {
+                for position in selection.get_pixels(&output) {
+                    if let Some(color) = modifier_state.get_pixel(position, &mut output) {
+                        output.set_pixel(position, color).unwrap();
+                    }
                 }
             }
+
+            self.cached = Some(output.clone());
         }
     }
 }
