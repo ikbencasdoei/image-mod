@@ -5,6 +5,7 @@ use bevy_egui::{EguiPlugin, EguiSettings};
 use editor::{Editor, EditorPlugin};
 use file_picker::FilePickerPlugin;
 use keybinds::KeyBindsPlugin;
+use mods::collection::ModifierCollectionPlugin;
 use ui::UiPlugin;
 use view::ViewPlugin;
 
@@ -38,6 +39,7 @@ fn main() {
         .add_plugin(ViewPlugin)
         .add_plugin(UiPlugin)
         .add_plugin(KeyBindsPlugin)
+        .add_plugin(ModifierCollectionPlugin)
         .add_startup_system(setup)
         .run();
 }
@@ -46,6 +48,6 @@ fn setup(mut egui_settings: ResMut<EguiSettings>, mut editor: ResMut<Editor>) {
     egui_settings.scale_factor = 1.5;
 
     if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
-        *editor = Editor::new_test(Path::new(&path)).unwrap()
+        *editor = Editor::new_from_input_path(Path::new(&path)).unwrap()
     }
 }

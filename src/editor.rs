@@ -5,10 +5,7 @@ use image::ImageError;
 
 use crate::{
     image::Image,
-    mods::{
-        collection::filters::grayscale::GrayScaleFilter, modifier::Modification,
-        selection::CanvasSelection,
-    },
+    mods::{collection::ModifierIndex, modifier::Modification},
 };
 
 pub struct EditorPlugin;
@@ -24,6 +21,7 @@ pub struct Editor {
     pub input: Image,
     pub path: Option<PathBuf>,
     pub mods: Vec<Modification>,
+    pub selected_mod: Option<ModifierIndex>,
 }
 
 impl Editor {
@@ -33,16 +31,6 @@ impl Editor {
             path: Some(path.as_ref().to_path_buf()),
             ..default()
         })
-    }
-
-    pub fn new_test(path: impl AsRef<Path>) -> Result<Self, ImageError> {
-        let mut proj = Self::new_from_input_path(path)?;
-
-        let mut modif = Modification::new(GrayScaleFilter);
-        modif.add_selection(CanvasSelection);
-        proj.mods.push(modif);
-
-        Ok(proj)
     }
 
     pub fn export(&self, path: impl AsRef<Path>) -> Result<(), ImageError> {

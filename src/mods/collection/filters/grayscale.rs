@@ -2,7 +2,7 @@ use bevy::prelude::{Color as BevyColor, *};
 
 use crate::{color::Color, image::Image, mods::modifier::Modifier};
 
-#[derive(Clone)]
+#[derive(Clone, Default, Reflect)]
 pub struct GrayScaleFilter;
 
 impl Modifier for GrayScaleFilter {
