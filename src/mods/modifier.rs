@@ -4,12 +4,9 @@ use bevy::prelude::*;
 
 use dyn_clone::DynClone;
 
-use crate::{color::Color, image::Image};
+use crate::{color::Color, image::Image, selectors::selection::Selection};
 
-use super::{
-    collection::{ModifierCollection, ModifierIndex},
-    selectors::selection::Selection,
-};
+use super::collection::{ModifierCollection, ModifierIndex};
 
 #[derive(Default)]
 pub struct ModifierPlugin<T>(PhantomData<T>);

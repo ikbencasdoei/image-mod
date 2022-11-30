@@ -5,7 +5,8 @@ use bevy_egui::{EguiPlugin, EguiSettings};
 use editor::{Editor, EditorPlugin};
 use file_picker::FilePickerPlugin;
 use keybinds::KeyBindsPlugin;
-use mods::{collection::ModifierCollectionPlugin, selectors::collection::SelectorCollectionPlugin};
+use mods::collection::ModifierCollectionPlugin;
+use selectors::collection::SelectorCollectionPlugin;
 use ui::UiPlugin;
 use view::ViewPlugin;
 
@@ -15,6 +16,7 @@ mod file_picker;
 mod image;
 mod keybinds;
 mod mods;
+mod selectors;
 mod tools;
 mod ui;
 mod view;

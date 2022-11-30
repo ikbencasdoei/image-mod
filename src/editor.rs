@@ -5,9 +5,8 @@ use image::ImageError;
 
 use crate::{
     image::Image,
-    mods::{
-        collection::ModifierIndex, modifier::Modification, selectors::collection::SelectorIndex,
-    },
+    mods::{collection::ModifierIndex, modifier::Modification},
+    selectors::collection::SelectorIndex,
 };
 
 pub struct EditorPlugin;

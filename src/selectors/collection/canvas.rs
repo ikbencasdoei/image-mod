@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{image::Image, mods::selectors::selection::Selection};
+use crate::{image::Image, selectors::selection::Selection};
 
 #[derive(Default, Reflect)]
 pub struct CanvasSelection;
