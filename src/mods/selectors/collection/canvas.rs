@@ -1,11 +1,8 @@
 use bevy::prelude::*;
 
-use crate::image::Image;
+use crate::{image::Image, mods::selectors::selection::Selection};
 
-pub trait Selection {
-    fn get_pixels(&self, image: &Image) -> Vec<UVec2>;
-}
-
+#[derive(Default, Reflect)]
 pub struct CanvasSelection;
 
 impl Selection for CanvasSelection {

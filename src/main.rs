@@ -5,7 +5,7 @@ use bevy_egui::{EguiPlugin, EguiSettings};
 use editor::{Editor, EditorPlugin};
 use file_picker::FilePickerPlugin;
 use keybinds::KeyBindsPlugin;
-use mods::collection::ModifierCollectionPlugin;
+use mods::{collection::ModifierCollectionPlugin, selectors::collection::SelectorCollectionPlugin};
 use ui::UiPlugin;
 use view::ViewPlugin;
 
@@ -40,6 +40,7 @@ fn main() {
         .add_plugin(UiPlugin)
         .add_plugin(KeyBindsPlugin)
         .add_plugin(ModifierCollectionPlugin)
+        .add_plugin(SelectorCollectionPlugin)
         .add_startup_system(setup)
         .run();
 }

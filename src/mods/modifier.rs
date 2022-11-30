@@ -8,7 +8,7 @@ use crate::{color::Color, image::Image};
 
 use super::{
     collection::{ModifierCollection, ModifierIndex},
-    selection::Selection,
+    selectors::selection::Selection,
 };
 
 #[derive(Default)]

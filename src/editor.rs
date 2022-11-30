@@ -5,7 +5,9 @@ use image::ImageError;
 
 use crate::{
     image::Image,
-    mods::{collection::ModifierIndex, modifier::Modification},
+    mods::{
+        collection::ModifierIndex, modifier::Modification, selectors::collection::SelectorIndex,
+    },
 };
 
 pub struct EditorPlugin;
@@ -22,6 +24,7 @@ pub struct Editor {
     pub path: Option<PathBuf>,
     pub mods: Vec<Modification>,
     pub selected_mod: Option<ModifierIndex>,
+    pub selected_selector: Option<SelectorIndex>,
 }
 
 impl Editor {
