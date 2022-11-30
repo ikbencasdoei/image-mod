@@ -1,20 +1,4 @@
-use bevy::prelude::*;
-
-use dyn_clone::DynClone;
-
-use crate::prelude::{Color, Image, *};
-
-pub trait Modifier: DynClone + Reflect {
-    fn get_pixel(&mut self, position: UVec2, image: &mut Image) -> Option<Color>;
-    fn get_index() -> ModifierIndex
-    where
-        Self: Sized + Default,
-    {
-        ModifierIndex::from_type_name(Self::default().type_name())
-    }
-}
-
-dyn_clone::clone_trait_object!(Modifier);
+use crate::prelude::{Image, *};
 
 pub struct Modification {
     modifier: Box<dyn Modifier + Send + Sync>,

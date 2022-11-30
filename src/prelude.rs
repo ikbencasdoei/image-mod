@@ -6,14 +6,13 @@ pub use crate::{
     keybinds::KeyBindsPlugin,
     mods::{
         collection::filters::grayscale::GrayScaleFilter,
-        modifier::{Modification, Modifier},
-        plugin::ModifierPlugin,
+        modifier::Modification,
+        plugin::{Modifier, ModifierPlugin},
         ui::{ModifierCollection, ModifierCollectionPlugin, ModifierIndex},
     },
     selectors::{
         collection::canvas::CanvasSelection,
-        plugin::SelectorPlugin,
-        selection::Selection,
+        plugin::{Selection, SelectorPlugin},
         ui::{SelectorCollection, SelectorCollectionPlugin, SelectorIndex},
     },
     tools::{
