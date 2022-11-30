@@ -52,15 +52,37 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
             ui.label("(empty)");
         } else {
             let mut remove_mod = None;
-            for (index, modifier) in editor.mods.iter_mut().enumerate() {
-                CollapsingHeader::new(modifier.index.name.as_str())
-                    .default_open(false)
-                    .id_source(modifier.id)
-                    .show(ui, |ui| {
-                        if ui.button("remove").clicked() {
-                            remove_mod = Some(index);
-                        }
-                    });
+            for (index, modification) in editor.mods.iter_mut().enumerate() {
+                let id = ui.make_persistent_id(modification.id);
+                egui::collapsing_header::CollapsingState::load_with_default_open(
+                    ui.ctx(),
+                    id,
+                    true,
+                )
+                .show_header(ui, |ui| {
+                    ui.label(modification.index.name.as_str());
+                    if ui.button("remove").clicked() {
+                        remove_mod = Some(index);
+                    }
+                })
+                .body(|ui| {
+                    CollapsingHeader::new("selections")
+                        .default_open(false)
+                        .show(ui, |ui| {
+                            let mut remove_selection = None;
+                            for (index, selection) in modification.selection.iter_mut().enumerate()
+                            {
+                                ui.label(selection.index.name.as_str());
+                                if ui.button("remove").clicked() {
+                                    remove_selection = Some(index);
+                                }
+                            }
+
+                            if let Some(index) = remove_selection {
+                                modification.selection.remove(index);
+                            }
+                        });
+                });
             }
 
             if let Some(index) = remove_mod {
