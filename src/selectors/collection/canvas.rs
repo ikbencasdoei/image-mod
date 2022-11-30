@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::prelude::{Image, *};
 
-#[derive(Default, Reflect)]
+#[derive(Default)]
 pub struct CanvasSelection;
 
 impl Selection for CanvasSelection {

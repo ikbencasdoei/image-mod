@@ -1,16 +1,18 @@
-use std::marker::PhantomData;
+use std::{any::type_name, marker::PhantomData};
 
 use bevy::prelude::*;
 
 use crate::prelude::{Image, *};
 
-pub trait Selection: Reflect {
+pub trait Selection {
     fn get_pixels(&self, image: &Image) -> Vec<UVec2>;
     fn get_index() -> SelectorIndex
     where
         Self: Sized + Default,
     {
-        SelectorIndex::from_type_name(Self::default().type_name())
+        SelectorIndex {
+            name: type_name::<Self>().to_string(),
+        }
     }
 }
 

@@ -1,23 +1,21 @@
-use std::{any::TypeId, marker::PhantomData};
+use std::{
+    any::{type_name, TypeId},
+    marker::PhantomData,
+};
 
 use bevy::prelude::*;
 use dyn_clone::DynClone;
 
 use crate::prelude::{Color, Image, *};
 
-pub trait Modifier: DynClone + Reflect {
+pub trait Modifier: DynClone {
     fn get_pixel(&mut self, position: UVec2, image: &mut Image) -> Option<Color>;
     fn get_index() -> ModifierIndex
     where
-        Self: Sized + Default,
+        Self: Sized + Default + 'static,
     {
         ModifierIndex {
-            name: Self::default()
-                .type_name()
-                .split("::")
-                .last()
-                .unwrap()
-                .to_string(),
+            name: type_name::<Self>().split("::").last().unwrap().to_string(),
             id: TypeId::of::<Self>(),
         }
     }
@@ -37,11 +35,11 @@ where
     }
 }
 
-fn setup<T: Modifier + Default>(mut collection: ResMut<ModifierCollection>) {
+fn setup<T: Modifier + Default + 'static>(mut collection: ResMut<ModifierCollection>) {
     collection.list.push(T::get_index());
 }
 
-fn update<T: Modifier + Default>(
+fn update<T: Modifier + Default + Send + Sync + 'static>(
     mut editor: ResMut<Editor>,
     mut last: Local<Option<ModifierIndex>>,
 ) {

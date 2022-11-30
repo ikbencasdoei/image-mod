@@ -19,14 +19,6 @@ pub struct SelectorIndex {
     pub name: String,
 }
 
-impl SelectorIndex {
-    pub fn from_type_name(type_name: &str) -> Self {
-        SelectorIndex {
-            name: type_name.split("::").last().unwrap().to_string(),
-        }
-    }
-}
-
 #[derive(Resource, Default)]
 pub struct SelectorCollection {
     pub list: Vec<SelectorIndex>,
