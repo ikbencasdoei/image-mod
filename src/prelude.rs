@@ -6,7 +6,8 @@ pub use crate::{
     keybinds::KeyBindsPlugin,
     mods::{
         collection::filters::grayscale::GrayScaleFilter,
-        modifier::{Modification, Modifier, ModifierPlugin},
+        modifier::{Modification, Modifier},
+        plugin::ModifierPlugin,
         ui::{ModifierCollection, ModifierCollectionPlugin, ModifierIndex},
     },
     selectors::{
