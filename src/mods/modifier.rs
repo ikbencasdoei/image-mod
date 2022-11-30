@@ -3,9 +3,9 @@ use crate::prelude::{Image, *};
 pub struct Modification {
     pub modifier: Box<dyn Modifier + Send + Sync>,
     pub index: ModifierIndex,
-    pub selection: Vec<Selection>,
-    pub cache: Option<Image>,
     pub id: usize,
+    selection: Vec<Selection>,
+    cache: Option<Image>,
 }
 
 impl Modification {
@@ -16,9 +16,9 @@ impl Modification {
         Self {
             modifier: Box::new(modifier),
             index: M::get_index(),
+            id: rand::random(),
             selection: Vec::new(),
             cache: None,
-            id: rand::random(),
         }
     }
 
@@ -47,5 +47,14 @@ impl Modification {
 
             self.cache = Some(output.clone());
         }
+    }
+
+    pub fn get_selection(&self) -> &Vec<Selection> {
+        &self.selection
+    }
+
+    pub fn remove_selection(&mut self, index: usize) {
+        self.selection.remove(index);
+        self.cache = None;
     }
 }

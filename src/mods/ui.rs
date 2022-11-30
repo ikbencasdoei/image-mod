@@ -70,7 +70,8 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                         .default_open(true)
                         .show(ui, |ui| {
                             let mut remove_selection = None;
-                            for (index, selection) in modification.selection.iter_mut().enumerate()
+                            for (index, selection) in
+                                modification.get_selection().iter().enumerate()
                             {
                                 ui.label(selection.index.name.as_str());
                                 if ui.button("remove").clicked() {
@@ -79,7 +80,7 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                             }
 
                             if let Some(index) = remove_selection {
-                                modification.selection.remove(index);
+                                modification.remove_selection(index);
                             }
                         });
                 });
