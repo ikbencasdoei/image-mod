@@ -42,7 +42,7 @@ fn ui(
     collection: Res<ModifierCollection>,
     mut editor: ResMut<Editor>,
 ) {
-    egui::Window::new("Tools").show(egui_context.ctx_mut(), |ui| {
+    egui::Window::new("Modifiers").show(egui_context.ctx_mut(), |ui| {
         for modifier in collection.list.iter() {
             if ui
                 .radio(
