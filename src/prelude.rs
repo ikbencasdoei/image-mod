@@ -5,15 +5,15 @@ pub use crate::{
     image::Image,
     keybinds::KeyBindsPlugin,
     mods::{
-        collection::{ModifierCollectionPlugin, ModifierIndex},
-        modifier::{Modification, Modifier},
+        collection::filters::grayscale::GrayScaleFilter,
+        modifier::{Modification, Modifier, ModifierPlugin},
+        ui::{ModifierCollection, ModifierCollectionPlugin, ModifierIndex},
     },
     selectors::{
-        collection::{
-            canvas::CanvasSelection, SelectorCollection, SelectorCollectionPlugin, SelectorIndex,
-        },
+        collection::canvas::CanvasSelection,
         plugin::SelectorPlugin,
         selection::Selection,
+        ui::{SelectorCollection, SelectorCollectionPlugin, SelectorIndex},
     },
     tools::{
         pencils::{

@@ -6,8 +6,6 @@ use dyn_clone::DynClone;
 
 use crate::prelude::{Color, Image, *};
 
-use super::collection::{ModifierCollection, ModifierIndex};
-
 #[derive(Default)]
 pub struct ModifierPlugin<T>(PhantomData<T>);
 
