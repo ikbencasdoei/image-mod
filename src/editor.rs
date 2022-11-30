@@ -6,22 +6,22 @@ use image::ImageError;
 
 use crate::{color::Color, image::Image};
 
-pub struct ProjectPlugin;
+pub struct EditorPlugin;
 
-impl Plugin for ProjectPlugin {
+impl Plugin for EditorPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Project>();
+        app.init_resource::<Editor>();
     }
 }
 
 #[derive(Resource, Default)]
-pub struct Project {
+pub struct Editor {
     pub input: Image,
     pub path: Option<PathBuf>,
     pub mods: Vec<Modification>,
 }
 
-impl Project {
+impl Editor {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Result<Self, ImageError> {
         Ok(Self {
             input: Image::open(path.as_ref())?,

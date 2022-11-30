@@ -4,8 +4,8 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
 use crate::{
+    editor::Editor,
     file_picker::{FilePicker, FilePickerEvent},
-    project::Project,
 };
 
 pub struct UiPlugin;
@@ -16,13 +16,13 @@ impl Plugin for UiPlugin {
     }
 }
 
-fn events(mut event_reader: EventReader<FilePickerEvent>, mut project: ResMut<Project>) {
+fn events(mut event_reader: EventReader<FilePickerEvent>, mut editor: ResMut<Editor>) {
     for event in event_reader.iter() {
         match event {
             FilePickerEvent::PickedLoad(path) => {
-                *project = Project::new_from_input_path(path).unwrap()
+                *editor = Editor::new_from_input_path(path).unwrap()
             }
-            FilePickerEvent::PickedExport(path) => project.export(path).unwrap(),
+            FilePickerEvent::PickedExport(path) => editor.export(path).unwrap(),
         }
     }
 }
@@ -30,7 +30,7 @@ fn events(mut event_reader: EventReader<FilePickerEvent>, mut project: ResMut<Pr
 fn ui(
     mut egui_context: ResMut<EguiContext>,
     mut query_sprite: Query<&mut crate::view::View>,
-    project: Res<Project>,
+    editor: Res<Editor>,
     mut file_picker: ResMut<FilePicker>,
 ) {
     egui::TopBottomPanel::top("panel").show(egui_context.ctx_mut(), |ui| {
@@ -41,9 +41,9 @@ fn ui(
                 }
             });
 
-            ui.add_enabled_ui(project.path.is_some() && file_picker.open.is_none(), |ui| {
+            ui.add_enabled_ui(editor.path.is_some() && file_picker.open.is_none(), |ui| {
                 if ui.button("export").clicked() {
-                    let directory = if let Some(path) = project.path.clone() {
+                    let directory = if let Some(path) = editor.path.clone() {
                         path
                     } else {
                         PathBuf::new()
@@ -80,7 +80,7 @@ fn ui(
             ui.separator();
 
             {
-                if let Some(image_path) = project.path.as_ref() {
+                if let Some(image_path) = editor.path.as_ref() {
                     ui.label(image_path.to_string_lossy());
                 } else {
                     ui.label("(no image)");

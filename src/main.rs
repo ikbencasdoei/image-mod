@@ -2,18 +2,18 @@ use std::path::Path;
 
 use bevy::prelude::*;
 use bevy_egui::{EguiPlugin, EguiSettings};
+use editor::{Editor, EditorPlugin};
 use file_picker::FilePickerPlugin;
 use keybinds::KeyBindsPlugin;
-use project::{Project, ProjectPlugin};
 use tools::toolbox::ToolBoxPlugin;
 use ui::UiPlugin;
 use view::ViewPlugin;
 
 mod color;
+mod editor;
 mod file_picker;
 mod image;
 mod keybinds;
-mod project;
 mod tools;
 mod ui;
 mod view;
@@ -33,7 +33,7 @@ fn main() {
             ..default()
         }))
         .add_plugin(EguiPlugin)
-        .add_plugin(ProjectPlugin)
+        .add_plugin(EditorPlugin)
         .add_plugin(FilePickerPlugin)
         .add_plugin(ViewPlugin)
         .add_plugin(UiPlugin)
@@ -43,10 +43,10 @@ fn main() {
         .run();
 }
 
-fn setup(mut egui_settings: ResMut<EguiSettings>, mut project: ResMut<Project>) {
+fn setup(mut egui_settings: ResMut<EguiSettings>, mut editor: ResMut<Editor>) {
     egui_settings.scale_factor = 1.5;
 
     if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
-        *project = Project::new_test(Path::new(&path)).unwrap()
+        *editor = Editor::new_test(Path::new(&path)).unwrap()
     }
 }

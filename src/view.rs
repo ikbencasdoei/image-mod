@@ -5,7 +5,7 @@ use bevy::{
 };
 use bevy_egui::EguiContext;
 
-use crate::{image::Image, project::Project};
+use crate::{editor::Editor, image::Image};
 
 pub struct ViewPlugin;
 
@@ -42,11 +42,11 @@ fn setup(mut commands: Commands, mut assets: ResMut<Assets<BevyImage>>) {
 fn update(
     handles: Query<&Handle<BevyImage>, With<View>>,
     mut assets: ResMut<Assets<BevyImage>>,
-    project: Res<Project>,
+    editor: Res<Editor>,
 ) {
     for handle in handles.iter() {
         let image = assets.get_mut(handle).unwrap();
-        *image = project.get_output().into_bevy_image();
+        *image = editor.get_output().into_bevy_image();
     }
 }
 

@@ -5,8 +5,8 @@ use bevy_egui::EguiContext;
 
 use crate::{
     color::Color,
+    editor::Editor,
     image::Image,
-    project::Project,
     tools::plugin::{Tool, ToolPlugin},
     view::View,
 };
@@ -40,7 +40,7 @@ fn process<T>(
     windows: Res<Windows>,
     mut cursor_moved_events: EventReader<CursorMoved>,
     mut local: Local<PencilLocal>,
-    mut project: ResMut<Project>,
+    mut editor: ResMut<Editor>,
 ) where
     T: Component + PencilTool,
 {
@@ -49,7 +49,7 @@ fn process<T>(
         && !egui_context.ctx_mut().wants_pointer_input()
     {
         for (mut pencil, transform) in query.iter_mut() {
-            let mut image = &mut project.input;
+            let mut image = &mut editor.input;
             let image_size = image.size().as_vec2();
 
             let window_size = {
