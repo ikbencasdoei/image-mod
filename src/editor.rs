@@ -18,7 +18,7 @@ pub struct Editor {
     pub input: Image,
     pub path: Option<PathBuf>,
     pub mods: Vec<Modification>,
-    pub selected_index: Option<ModifierIndex>,
+    pub add_index: Option<ModifierIndex>,
 }
 
 impl Editor {
@@ -44,9 +44,21 @@ impl Editor {
         output
     }
 
-    pub fn receive_mod(&mut self, modifier: impl Modifier + Default + Send + Sync + 'static) {
-        let mut new = Modification::new(modifier);
-        new.add_selection(CanvasSelection);
-        self.mods.push(new)
+    pub fn receive_mod(
+        &mut self,
+        index: ModifierIndex,
+        modifier: impl Modifier + Default + Send + Sync + 'static,
+    ) {
+        if Some(index) == self.add_index.take() {
+            let mut new = Modification::new(modifier);
+            new.add_selection(CanvasSelection);
+            self.mods.push(new);
+        } else {
+            panic!("diffrent modifier received")
+        }
+    }
+
+    pub fn add_mod(&mut self, index: &ModifierIndex) {
+        self.add_index = Some(index.clone());
     }
 }

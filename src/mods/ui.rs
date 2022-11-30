@@ -39,18 +39,8 @@ fn add_ui(
 ) {
     egui::Window::new("Add Modifier").show(egui_context.ctx_mut(), |ui| {
         for modifier in collection.list.iter() {
-            if ui
-                .radio(
-                    editor.selected_index == Some(modifier.to_owned()),
-                    modifier.name.to_owned(),
-                )
-                .clicked()
-            {
-                if editor.selected_index == Some(modifier.to_owned()) {
-                    editor.selected_index = None;
-                } else {
-                    editor.selected_index = Some(modifier.clone());
-                }
+            if ui.button(modifier.name.as_str()).clicked() {
+                editor.add_mod(modifier)
             }
         }
     });
