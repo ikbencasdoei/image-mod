@@ -67,7 +67,7 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                 })
                 .body(|ui| {
                     CollapsingHeader::new("selections")
-                        .default_open(false)
+                        .default_open(true)
                         .show(ui, |ui| {
                             let mut remove_selection = None;
                             for (index, selection) in modification.selection.iter_mut().enumerate()
