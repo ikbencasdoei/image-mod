@@ -44,7 +44,7 @@ impl Editor {
         output
     }
 
-    pub fn receive_mod(&mut self, modifier: impl Modifier + Send + Sync + 'static) {
+    pub fn receive_mod(&mut self, modifier: impl Modifier + Default + Send + Sync + 'static) {
         let mut new = Modification::new(modifier);
         new.add_selection(CanvasSelection);
         self.mods.push(new)

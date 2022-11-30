@@ -2,6 +2,7 @@ use crate::prelude::{Image, *};
 
 pub struct Modification {
     modifier: Box<dyn Modifier + Send + Sync>,
+    index: ModifierIndex,
     selection: Vec<Box<dyn Selection + Send + Sync>>,
     cached: Option<Image>,
 }
@@ -9,10 +10,11 @@ pub struct Modification {
 impl Modification {
     pub fn new<M>(modifier: M) -> Self
     where
-        M: Modifier + Send + Sync + 'static,
+        M: Modifier + Default + Send + Sync + 'static,
     {
         Self {
             modifier: Box::new(modifier),
+            index: M::get_index(),
             selection: Vec::new(),
             cached: None,
         }
