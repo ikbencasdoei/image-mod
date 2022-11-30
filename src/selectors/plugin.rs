@@ -11,7 +11,7 @@ pub trait Selector {
         Self: Sized + Default,
     {
         SelectorIndex {
-            name: type_name::<Self>().to_string(),
+            name: type_name::<Self>().split("::").last().unwrap().to_string(),
         }
     }
 }
