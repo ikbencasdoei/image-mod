@@ -12,7 +12,7 @@ pub use crate::{
     },
     selectors::{
         collection::canvas::CanvasSelection,
-        plugin::{Selection, SelectorPlugin},
+        plugin::{Selection, Selector, SelectorPlugin},
         ui::{SelectorCollection, SelectorCollectionPlugin, SelectorIndex},
     },
     tools::{

@@ -5,7 +5,7 @@ use crate::prelude::{Image, *};
 #[derive(Default)]
 pub struct CanvasSelection;
 
-impl Selection for CanvasSelection {
+impl Selector for CanvasSelection {
     fn get_pixels(&self, image: &Image) -> Vec<UVec2> {
         let size = image.size();
 
