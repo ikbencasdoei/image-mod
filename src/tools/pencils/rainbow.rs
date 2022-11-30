@@ -4,11 +4,7 @@ use bevy::{
 };
 use bevy_egui::{egui, EguiContext};
 
-use crate::{
-    color::Color,
-    image::Image,
-    tools::plugin::{Tool, ToolDescription},
-};
+use crate::prelude::{Color, Image, *};
 
 use super::plugin::{PencilPlugin, PencilTool};
 

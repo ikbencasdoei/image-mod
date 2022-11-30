@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use self::{rainbow::RainbowPencilPlugin, simple::SimplePencilPlugin, sort::SortPencilPlugin};
+use crate::prelude::*;
 
 pub mod plugin;
 pub mod rainbow;

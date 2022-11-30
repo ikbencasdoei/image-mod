@@ -3,10 +3,8 @@ use std::path::PathBuf;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
-use crate::{
-    editor::Editor,
-    file_picker::{FilePicker, FilePickerEvent},
-};
+use crate::prelude::*;
+
 
 pub struct UiPlugin;
 

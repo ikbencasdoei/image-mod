@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use bevy::prelude::*;
 
-use super::{collection::SelectorCollection, selection::Selection};
+use crate::prelude::*;
 
 #[derive(Default)]
 pub struct SelectorPlugin<T>(PhantomData<T>);

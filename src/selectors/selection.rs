@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 
-use crate::image::Image;
-
-use super::collection::SelectorIndex;
+use crate::prelude::{Image, *};
 
 pub trait Selection: Reflect {
     fn get_pixels(&self, image: &Image) -> Vec<UVec2>;

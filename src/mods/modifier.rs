@@ -4,7 +4,7 @@ use bevy::prelude::*;
 
 use dyn_clone::DynClone;
 
-use crate::{color::Color, image::Image, selectors::selection::Selection};
+use crate::prelude::{Color, Image, *};
 
 use super::collection::{ModifierCollection, ModifierIndex};
 

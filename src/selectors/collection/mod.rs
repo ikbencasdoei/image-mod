@@ -1,11 +1,7 @@
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
-use crate::editor::Editor;
-
-use self::canvas::CanvasSelection;
-
-use super::plugin::SelectorPlugin;
+use crate::prelude::*;
 
 pub mod canvas;
 

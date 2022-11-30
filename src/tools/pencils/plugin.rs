@@ -3,13 +3,7 @@ use std::marker::PhantomData;
 use bevy::{math::Vec3Swizzles, prelude::*, reflect::GetTypeRegistration};
 use bevy_egui::EguiContext;
 
-use crate::{
-    color::Color,
-    editor::Editor,
-    image::Image,
-    tools::plugin::{Tool, ToolPlugin},
-    view::View,
-};
+use crate::prelude::{Color, Image, *};
 
 pub trait PencilTool {
     fn get_draw_color(&mut self, mouse_position: UVec2, image: &mut Image) -> Option<Color>;

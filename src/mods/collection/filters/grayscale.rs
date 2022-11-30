@@ -1,6 +1,6 @@
 use bevy::prelude::{Color as BevyColor, *};
 
-use crate::{color::Color, image::Image, mods::modifier::Modifier};
+use crate::prelude::{Color, Image, *};
 
 #[derive(Clone, Default, Reflect)]
 pub struct GrayScaleFilter;

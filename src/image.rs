@@ -6,7 +6,7 @@ use bevy::{
 };
 use image::{DynamicImage, ImageError, Rgba, RgbaImage};
 
-use crate::color::Color;
+use crate::prelude::Color;
 
 #[derive(Clone)]
 pub struct Image {

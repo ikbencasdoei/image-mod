@@ -5,7 +5,7 @@ use bevy::{
 };
 use bevy_egui::EguiContext;
 
-use crate::{editor::Editor, image::Image};
+use crate::prelude::{Image, *};
 
 pub struct ViewPlugin;
 

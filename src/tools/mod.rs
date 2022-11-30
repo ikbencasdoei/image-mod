@@ -1,3 +1,3 @@
-mod pencils;
-mod plugin;
+pub mod pencils;
+pub mod plugin;
 pub mod toolbox;

@@ -1,13 +1,7 @@
 use bevy::{prelude::*, reflect::FromReflect};
 use bevy_egui::{egui, egui::Color32, EguiContext};
 
-use crate::{
-    color::Color,
-    image::Image,
-    tools::plugin::{Tool, ToolDescription},
-};
-
-use super::plugin::{PencilPlugin, PencilTool};
+use crate::prelude::{Color, Image, *};
 
 pub struct SimplePencilPlugin;
 

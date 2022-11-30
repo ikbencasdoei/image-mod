@@ -3,11 +3,7 @@ use std::path::{Path, PathBuf};
 use bevy::prelude::*;
 use image::ImageError;
 
-use crate::{
-    image::Image,
-    mods::{collection::ModifierIndex, modifier::Modification},
-    selectors::collection::SelectorIndex,
-};
+use crate::prelude::{Image, *};
 
 pub struct EditorPlugin;
 
