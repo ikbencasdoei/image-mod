@@ -33,10 +33,25 @@ where
     T: Modifier + Default + Send + Sync + 'static,
 {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup::<T>);
+        app.add_startup_system(setup::<T>).add_system(update::<T>);
     }
 }
 
 fn setup<T: Modifier + Default>(mut collection: ResMut<ModifierCollection>) {
     collection.list.push(T::get_index());
+}
+
+fn update<T: Modifier + Default>(
+    mut editor: ResMut<Editor>,
+    mut last: Local<Option<ModifierIndex>>,
+) {
+    if editor.selected_index != *last {
+        if let Some(index) = editor.selected_index.clone() {
+            if index.id == TypeId::of::<T>() {
+                editor.receive_mod(T::default())
+            }
+        }
+    }
+
+    *last = editor.selected_index.clone();
 }
