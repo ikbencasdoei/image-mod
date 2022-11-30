@@ -14,6 +14,7 @@ mod editor;
 mod file_picker;
 mod image;
 mod keybinds;
+mod mods;
 mod tools;
 mod ui;
 mod view;
