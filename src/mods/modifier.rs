@@ -4,7 +4,7 @@ pub struct Modification {
     pub modifier: Box<dyn Modifier + Send + Sync>,
     pub index: ModifierIndex,
     pub selection: Vec<Selection>,
-    pub cached: Option<Image>,
+    pub cache: Option<Image>,
     pub id: usize,
 }
 
@@ -17,7 +17,7 @@ impl Modification {
             modifier: Box::new(modifier),
             index: M::get_index(),
             selection: Vec::new(),
-            cached: None,
+            cache: None,
             id: rand::random(),
         }
     }
@@ -33,7 +33,7 @@ impl Modification {
     }
 
     pub fn apply(&mut self, mut output: &mut Image) {
-        if let Some(cached) = &self.cached {
+        if let Some(cached) = &self.cache {
             *output = cached.clone();
         } else {
             let mut modifier_state = dyn_clone::clone_box(&self.modifier);
@@ -45,7 +45,7 @@ impl Modification {
                 }
             }
 
-            self.cached = Some(output.clone());
+            self.cache = Some(output.clone());
         }
     }
 }
