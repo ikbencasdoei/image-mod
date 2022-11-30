@@ -1,10 +1,11 @@
 use crate::prelude::{Image, *};
 
 pub struct Modification {
-    modifier: Box<dyn Modifier + Send + Sync>,
-    index: ModifierIndex,
-    selection: Vec<Box<dyn Selection + Send + Sync>>,
-    cached: Option<Image>,
+    pub modifier: Box<dyn Modifier + Send + Sync>,
+    pub index: ModifierIndex,
+    pub selection: Vec<Box<dyn Selection + Send + Sync>>,
+    pub cached: Option<Image>,
+    pub id: usize,
 }
 
 impl Modification {
@@ -17,6 +18,7 @@ impl Modification {
             index: M::get_index(),
             selection: Vec::new(),
             cached: None,
+            id: rand::random(),
         }
     }
 
