@@ -1,7 +1,6 @@
-use std::marker::PhantomData;
+use std::{any::TypeId, marker::PhantomData};
 
 use bevy::{prelude::*, reflect::GetTypeRegistration};
-use bevy_egui::egui::util::id_type_map::TypeId;
 
 use crate::view::View;
 
