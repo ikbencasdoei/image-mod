@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use std::{any::TypeId, marker::PhantomData};
 
 use bevy::prelude::*;
 use dyn_clone::DynClone;
@@ -11,7 +11,15 @@ pub trait Modifier: DynClone + Reflect {
     where
         Self: Sized + Default,
     {
-        ModifierIndex::from_type_name(Self::default().type_name())
+        ModifierIndex {
+            name: Self::default()
+                .type_name()
+                .split("::")
+                .last()
+                .unwrap()
+                .to_string(),
+            id: TypeId::of::<Self>(),
+        }
     }
 }
 

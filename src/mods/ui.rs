@@ -1,3 +1,5 @@
+use std::any::TypeId;
+
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
@@ -18,14 +20,7 @@ impl Plugin for ModifierCollectionPlugin {
 #[derive(PartialEq, Clone)]
 pub struct ModifierIndex {
     pub name: String,
-}
-
-impl ModifierIndex {
-    pub fn from_type_name(type_name: &str) -> Self {
-        ModifierIndex {
-            name: type_name.split("::").last().unwrap().to_string(),
-        }
-    }
+    pub id: TypeId,
 }
 
 #[derive(Resource, Default)]
@@ -42,15 +37,15 @@ fn ui(
         for modifier in collection.list.iter() {
             if ui
                 .radio(
-                    editor.selected_mod == Some(modifier.to_owned()),
+                    editor.selected_index == Some(modifier.to_owned()),
                     modifier.name.to_owned(),
                 )
                 .clicked()
             {
-                if editor.selected_mod == Some(modifier.to_owned()) {
-                    editor.selected_mod = None;
+                if editor.selected_index == Some(modifier.to_owned()) {
+                    editor.selected_index = None;
                 } else {
-                    editor.selected_mod = Some(modifier.clone());
+                    editor.selected_index = Some(modifier.clone());
                 }
             };
         }
