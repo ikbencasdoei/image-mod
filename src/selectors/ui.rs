@@ -31,11 +31,17 @@ fn ui(
     collection: Res<SelectorCollection>,
     mut editor: ResMut<Editor>,
 ) {
-    egui::Window::new("Selectors").show(egui_context.ctx_mut(), |ui| {
-        for index in collection.list.iter() {
-            if ui.button(index.name.to_owned()).clicked() {
-                editor.add_selection(index);
+    egui::Window::new("Add selection").show(egui_context.ctx_mut(), |ui| {
+        ui.add_enabled_ui(editor.get_selected_mod().is_some(), |ui| {
+            for index in collection.list.iter() {
+                if ui
+                    .button(index.name.to_owned())
+                    .on_disabled_hover_text("First select an modifier")
+                    .clicked()
+                {
+                    editor.add_selection(index);
+                }
             }
-        }
+        });
     });
 }
