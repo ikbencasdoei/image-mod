@@ -19,6 +19,8 @@ pub struct Editor {
     pub path: Option<PathBuf>,
     pub mods: Vec<Modification>,
     pub add_mod_index: Option<ModifierIndex>,
+    pub add_sel_index: Option<SelectorIndex>,
+    pub selected_mod: Option<usize>,
 }
 
 impl Editor {
@@ -60,5 +62,25 @@ impl Editor {
 
     pub fn add_mod(&mut self, index: &ModifierIndex) {
         self.add_mod_index = Some(index.clone());
+    }
+
+    pub fn receive_sel(
+        &mut self,
+        index: SelectorIndex,
+        selection: impl Selector + Default + Send + Sync + 'static,
+    ) {
+        if Some(index) == self.add_sel_index.take() {
+            if let Some(selected) = self.selected_mod {
+                if let Some(modifier) = self.mods.get_mut(selected) {
+                    modifier.add_selection(selection);
+                }
+            }
+        } else {
+            panic!("diffrent selector received")
+        }
+    }
+
+    pub fn add_selection(&mut self, index: &SelectorIndex) {
+        self.add_sel_index = Some(index.clone());
     }
 }

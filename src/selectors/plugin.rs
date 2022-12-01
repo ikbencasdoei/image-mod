@@ -1,4 +1,7 @@
-use std::{any::type_name, marker::PhantomData};
+use std::{
+    any::{type_name, TypeId},
+    marker::PhantomData,
+};
 
 use bevy::prelude::*;
 
@@ -29,10 +32,25 @@ where
     T: Selector + Default + Send + Sync + 'static,
 {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup::<T>);
+        app.add_startup_system(setup::<T>).add_system(update::<T>);
     }
 }
 
 fn setup<T: Selector + Default>(mut collection: ResMut<SelectorCollection>) {
     collection.list.push(T::get_index());
+}
+
+fn update<T: Selector + Default + Send + Sync + 'static>(
+    mut editor: ResMut<Editor>,
+    mut last: Local<Option<SelectorIndex>>,
+) {
+    if editor.add_sel_index != *last {
+        if let Some(index) = editor.add_mod_index.clone() {
+            if index.id == TypeId::of::<T>() {
+                editor.receive_sel(T::get_index(), T::default())
+            }
+        }
+    }
+
+    *last = editor.add_sel_index.clone();
 }

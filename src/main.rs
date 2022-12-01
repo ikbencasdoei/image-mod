@@ -38,6 +38,7 @@ fn main() {
         .add_plugin(UiPlugin)
         .add_plugin(KeyBindsPlugin)
         .add_plugin(ModifierCollectionPlugin)
+        .add_plugin(SelectorCollectionPlugin)
         .add_startup_system(setup)
         .run();
 }
