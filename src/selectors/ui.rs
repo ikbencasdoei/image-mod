@@ -1,3 +1,5 @@
+use std::any::TypeId;
+
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
@@ -16,6 +18,7 @@ impl Plugin for SelectorCollectionPlugin {
 #[derive(PartialEq, Clone)]
 pub struct SelectorIndex {
     pub name: String,
+    pub id: TypeId,
 }
 
 #[derive(Resource, Default)]

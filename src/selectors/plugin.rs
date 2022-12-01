@@ -11,10 +11,11 @@ pub trait Selector {
     fn get_pixels(&self, image: &Image) -> Vec<UVec2>;
     fn get_index() -> SelectorIndex
     where
-        Self: Sized + Default,
+        Self: Sized + Default + 'static,
     {
         SelectorIndex {
             name: type_name::<Self>().split("::").last().unwrap().to_string(),
+            id: TypeId::of::<Self>(),
         }
     }
 }
@@ -36,7 +37,7 @@ where
     }
 }
 
-fn setup<T: Selector + Default>(mut collection: ResMut<SelectorCollection>) {
+fn setup<T: Selector + Default + 'static>(mut collection: ResMut<SelectorCollection>) {
     collection.list.push(T::get_index());
 }
 
