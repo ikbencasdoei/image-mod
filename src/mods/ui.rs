@@ -52,7 +52,7 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
             ui.label("(empty)");
         } else {
             let mut remove_mod = None;
-            let mut selected_mod = editor.selected_mod;
+            let mut selected_mod = editor.get_selected_mod();
             for modification in editor.iter_mut_mods().rev() {
                 let id = ui.make_persistent_id(modification.id);
                 egui::collapsing_header::CollapsingState::load_with_default_open(
@@ -99,8 +99,8 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                 editor.remove_mod(index);
             }
 
-            if let Some(index) = selected_mod {
-                editor.selected_mod = Some(index);
+            if let Some(id) = selected_mod {
+                editor.select_mod(id).ok();
             }
         }
     });

@@ -24,7 +24,7 @@ pub struct Editor {
     mods: Vec<Modification>,
     pub add_mod_index: Option<ModifierIndex>,
     pub add_sel_index: Option<SelectorIndex>,
-    pub selected_mod: Option<Uuid>,
+    selected_mod: Option<Uuid>,
 }
 
 impl Editor {
@@ -119,5 +119,18 @@ impl Editor {
 
     pub fn get_mods(&self) -> &Vec<Modification> {
         &self.mods
+    }
+
+    pub fn select_mod(&mut self, id: Uuid) -> Result<(), &str> {
+        if self.get_mod_index(id).is_some() {
+            self.selected_mod = Some(id);
+            Ok(())
+        } else {
+            Err("modifier doesnt exist")
+        }
+    }
+
+    pub fn get_selected_mod(&self) -> Option<Uuid> {
+        self.selected_mod
     }
 }
