@@ -19,6 +19,13 @@ pub trait Modifier: DynClone {
             id: TypeId::of::<Self>(),
         }
     }
+
+    fn changed(&self, old: &Self) -> bool
+    where
+        Self: Sized + PartialEq + 'static,
+    {
+        self != old
+    }
 }
 
 dyn_clone::clone_trait_object!(Modifier);
