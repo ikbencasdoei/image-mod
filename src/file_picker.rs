@@ -30,11 +30,7 @@ impl FilePicker {
     pub fn open_load(&mut self) -> Result<(), &str> {
         let dialog = FileDialog::new().add_filter("image", &["png", "jpg"]);
 
-        self.spawn(|| {
-            dialog
-                .pick_file()
-                .map(|path| FilePickerEvent::PickedLoad(path.to_path_buf()))
-        })?;
+        self.spawn(|| dialog.pick_file().map(FilePickerEvent::PickedLoad))?;
 
         Ok(())
     }
@@ -51,11 +47,7 @@ impl FilePicker {
             .set_directory(directory)
             .set_file_name(&file_name);
 
-        self.spawn(move || {
-            dialog
-                .save_file()
-                .map(|path| FilePickerEvent::PickedExport(path.to_path_buf()))
-        })?;
+        self.spawn(move || dialog.save_file().map(FilePickerEvent::PickedExport))?;
 
         Ok(())
     }
@@ -76,10 +68,8 @@ impl FilePicker {
 
 fn system(mut state: ResMut<FilePicker>, mut event_writer: EventWriter<FilePickerEvent>) {
     if state.open.is_some() && state.open.as_ref().unwrap().is_finished() {
-        if let Ok(result) = state.open.take().unwrap().join() {
-            if let Some(event) = result {
-                event_writer.send(event);
-            }
+        if let Ok(Some(event)) = state.open.take().unwrap().join() {
+            event_writer.send(event);
         }
     }
 }

@@ -43,7 +43,7 @@ fn process<T>(
         && !egui_context.ctx_mut().wants_pointer_input()
     {
         for (mut pencil, transform) in query.iter_mut() {
-            let mut image = &mut editor.input;
+            let image = &mut editor.input;
             let image_size = image.size().as_vec2();
 
             let window_size = {
@@ -69,16 +69,12 @@ fn process<T>(
                             let position = last_mouse_position
                                 .lerp(mouse_on_image, 1.0 / delta.length().ceil() * (i as f32));
 
-                            if let Some(color) =
-                                pencil.get_draw_color(position.as_uvec2(), &mut image)
-                            {
+                            if let Some(color) = pencil.get_draw_color(position.as_uvec2(), image) {
                                 image.set_pixel(position.as_uvec2(), color).unwrap();
                             }
                         }
                     }
-                    if let Some(color) =
-                        pencil.get_draw_color(mouse_on_image.as_uvec2(), &mut image)
-                    {
+                    if let Some(color) = pencil.get_draw_color(mouse_on_image.as_uvec2(), image) {
                         image.set_pixel(mouse_on_image.as_uvec2(), color).unwrap();
                     }
                 }
