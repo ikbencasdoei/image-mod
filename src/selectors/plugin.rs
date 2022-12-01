@@ -46,7 +46,7 @@ fn update<T: Selector + Default + Send + Sync + 'static>(
     mut last: Local<Option<SelectorIndex>>,
 ) {
     if editor.add_sel_index != *last {
-        if let Some(index) = editor.add_mod_index.clone() {
+        if let Some(index) = editor.add_sel_index.clone() {
             if index.id == TypeId::of::<T>() {
                 editor.receive_sel(T::get_index(), T::default())
             }
