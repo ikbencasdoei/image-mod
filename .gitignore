@@ -2,5 +2,4 @@
 /assets/
 /.vscode/
 /.cargo/
-Cargo.lock
 .env
