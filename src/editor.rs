@@ -18,7 +18,7 @@ pub struct Editor {
     pub input: Image,
     pub path: Option<PathBuf>,
     pub mods: Vec<Modification>,
-    pub add_index: Option<ModifierIndex>,
+    pub add_mod_index: Option<ModifierIndex>,
 }
 
 impl Editor {
@@ -49,7 +49,7 @@ impl Editor {
         index: ModifierIndex,
         modifier: impl Modifier + Default + Send + Sync + 'static,
     ) {
-        if Some(index) == self.add_index.take() {
+        if Some(index) == self.add_mod_index.take() {
             let mut new = Modification::new(modifier);
             new.add_selection(CanvasSelection);
             self.mods.push(new);
@@ -59,6 +59,6 @@ impl Editor {
     }
 
     pub fn add_mod(&mut self, index: &ModifierIndex) {
-        self.add_index = Some(index.clone());
+        self.add_mod_index = Some(index.clone());
     }
 }
