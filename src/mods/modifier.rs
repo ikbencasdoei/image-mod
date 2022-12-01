@@ -1,9 +1,11 @@
+use uuid::Uuid;
+
 use crate::prelude::{Image, *};
 
 pub struct Modification {
     pub modifier: Box<dyn Modifier + Send + Sync>,
     pub index: ModifierIndex,
-    pub id: usize,
+    pub id: Uuid,
     selection: Vec<Selection>,
     cache: Option<Image>,
 }
@@ -16,7 +18,7 @@ impl Modification {
         Self {
             modifier: Box::new(modifier),
             index: M::get_index(),
-            id: rand::random(),
+            id: Uuid::new_v4(),
             selection: Vec::new(),
             cache: None,
         }

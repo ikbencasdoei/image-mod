@@ -5,6 +5,7 @@ use std::{
 
 use bevy::prelude::*;
 use image::ImageError;
+use uuid::Uuid;
 
 use crate::prelude::{Image, *};
 
@@ -23,7 +24,7 @@ pub struct Editor {
     mods: Vec<Modification>,
     pub add_mod_index: Option<ModifierIndex>,
     pub add_sel_index: Option<SelectorIndex>,
-    pub selected_mod: Option<usize>,
+    pub selected_mod: Option<Uuid>,
 }
 
 impl Editor {
@@ -73,8 +74,8 @@ impl Editor {
         selection: impl Selector + Default + Send + Sync + 'static,
     ) {
         if Some(index) == self.add_sel_index.take() {
-            if let Some(selected) = self.selected_mod {
-                if let Some(modifier) = self.mods.get_mut(selected) {
+            if let Some(id) = self.selected_mod {
+                if let Some(modifier) = self.get_mod(id) {
                     modifier.add_selection(selection);
                 }
             }
@@ -83,16 +84,30 @@ impl Editor {
         }
     }
 
+    fn get_mod(&mut self, id: Uuid) -> Option<&mut Modification> {
+        self.mods.iter_mut().find(|item| item.id == id)
+    }
+
+    fn get_mod_index(&mut self, id: Uuid) -> Option<usize> {
+        self.mods
+            .iter()
+            .enumerate()
+            .find(|item| item.1.id == id)
+            .map(|item| item.0)
+    }
+
     pub fn add_selection(&mut self, index: &SelectorIndex) {
         self.add_sel_index = Some(index.clone());
     }
 
-    pub fn remove_mod(&mut self, index: usize) {
-        self.mods.remove(index);
+    pub fn remove_mod(&mut self, id: Uuid) {
+        if let Some(index) = self.get_mod_index(id) {
+            self.mods.remove(index);
 
-        if let Some(selected) = self.selected_mod {
-            if selected == index {
-                self.selected_mod = None;
+            if let Some(selected) = self.selected_mod {
+                if selected == id {
+                    self.selected_mod = None;
+                }
             }
         }
     }
