@@ -1,4 +1,7 @@
-use std::path::{Path, PathBuf};
+use std::{
+    path::{Path, PathBuf},
+    slice::IterMut,
+};
 
 use bevy::prelude::*;
 use image::ImageError;
@@ -17,7 +20,7 @@ impl Plugin for EditorPlugin {
 pub struct Editor {
     pub input: Image,
     pub path: Option<PathBuf>,
-    pub mods: Vec<Modification>,
+    mods: Vec<Modification>,
     pub add_mod_index: Option<ModifierIndex>,
     pub add_sel_index: Option<SelectorIndex>,
     pub selected_mod: Option<usize>,
@@ -82,5 +85,23 @@ impl Editor {
 
     pub fn add_selection(&mut self, index: &SelectorIndex) {
         self.add_sel_index = Some(index.clone());
+    }
+
+    pub fn remove_mod(&mut self, index: usize) {
+        self.mods.remove(index);
+
+        if let Some(selected) = self.selected_mod {
+            if selected == index {
+                self.selected_mod = None;
+            }
+        }
+    }
+
+    pub fn iter_mut_mods(&mut self) -> IterMut<'_, Modification> {
+        self.mods.iter_mut()
+    }
+
+    pub fn get_mods(&self) -> &Vec<Modification> {
+        &self.mods
     }
 }

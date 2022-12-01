@@ -48,12 +48,12 @@ fn add_ui(
 
 fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
     egui::Window::new("Modifiers").show(egui_context.ctx_mut(), |ui| {
-        if editor.mods.is_empty() {
+        if editor.get_mods().is_empty() {
             ui.label("(empty)");
         } else {
             let mut remove_mod = None;
             let mut selected_mod = editor.selected_mod;
-            for (index, modification) in editor.mods.iter_mut().enumerate() {
+            for (index, modification) in editor.iter_mut_mods().enumerate() {
                 let id = ui.make_persistent_id(modification.id);
                 egui::collapsing_header::CollapsingState::load_with_default_open(
                     ui.ctx(),
@@ -96,7 +96,7 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
             }
 
             if let Some(index) = remove_mod {
-                editor.mods.remove(index);
+                editor.remove_mod(index);
             }
 
             if let Some(index) = selected_mod {
