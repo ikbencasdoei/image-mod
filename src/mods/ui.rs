@@ -53,7 +53,7 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
         } else {
             let mut remove_mod = None;
             let mut selected_mod = editor.selected_mod;
-            for modification in editor.iter_mut_mods() {
+            for modification in editor.iter_mut_mods().rev() {
                 let id = ui.make_persistent_id(modification.id);
                 egui::collapsing_header::CollapsingState::load_with_default_open(
                     ui.ctx(),
