@@ -5,7 +5,6 @@ use bevy_egui::{egui, EguiContext};
 
 use crate::prelude::*;
 
-
 pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
@@ -17,9 +16,7 @@ impl Plugin for UiPlugin {
 fn events(mut event_reader: EventReader<FilePickerEvent>, mut editor: ResMut<Editor>) {
     for event in event_reader.iter() {
         match event {
-            FilePickerEvent::PickedLoad(path) => {
-                *editor = Editor::new_from_input_path(path).unwrap()
-            }
+            FilePickerEvent::PickedLoad(path) => *editor = Editor::new_from_input_path(path),
             FilePickerEvent::PickedExport(path) => editor.export(path).unwrap(),
         }
     }

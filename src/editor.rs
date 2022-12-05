@@ -4,7 +4,6 @@ use std::{
 };
 
 use bevy::prelude::*;
-use image::ImageError;
 use uuid::Uuid;
 
 use crate::prelude::{Image, *};
@@ -19,21 +18,21 @@ impl Plugin for EditorPlugin {
 
 #[derive(Resource, Default)]
 pub struct Editor {
-    pub input: Option<Image>,
-    pub path: Option<PathBuf>,
     mods: Vec<Modification>,
+    pub path: Option<PathBuf>,
     pub add_mod_index: Option<ModifierIndex>,
     pub add_sel_index: Option<SelectorIndex>,
     selected_mod: Option<Uuid>,
 }
 
 impl Editor {
-    pub fn new_from_input_path(path: impl AsRef<Path>) -> Result<Self, ImageError> {
-        Ok(Self {
-            input: Some(Image::open(path.as_ref())?),
-            path: Some(path.as_ref().to_path_buf()),
+    pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
+        Self {
+            mods: vec![Modification::new(Source {
+                path: path.as_ref().to_path_buf(),
+            })],
             ..default()
-        })
+        }
     }
 
     pub fn export(&mut self, path: impl AsRef<Path>) -> Result<(), String> {
@@ -45,13 +44,19 @@ impl Editor {
     }
 
     pub fn get_output(&mut self) -> Option<Image> {
-        let mut output = &mut self.input.clone();
+        let mut reversed: Vec<&mut Modification> = self.mods.iter_mut().rev().collect();
 
-        for modifier in &mut self.mods {
-            modifier.apply(&mut output);
+        let (modification, inputs) = if reversed.len() >= 1 {
+            reversed.split_at_mut(1)
+        } else {
+            (reversed.as_mut_slice(), &mut [] as &mut [&mut Modification])
+        };
+
+        if let Some(modification) = modification.get_mut(0) {
+            modification.get_output(inputs)
+        } else {
+            None
         }
-
-        output.clone()
     }
 
     pub fn receive_mod(

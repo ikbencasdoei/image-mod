@@ -8,7 +8,6 @@ pub struct Modification {
     pub id: Uuid,
     modifier: Box<dyn Modifier + Send + Sync>,
     selection: Vec<Selection>,
-    cache: Option<Image>,
 }
 
 impl Modification {
@@ -21,7 +20,6 @@ impl Modification {
             id: Uuid::new_v4(),
             modifier: Box::new(modifier),
             selection: Vec::new(),
-            cache: None,
         }
     }
 
@@ -43,18 +41,24 @@ impl Modification {
         selection
     }
 
-    pub fn apply(&mut self, output: &mut Option<Image>) {
-        if self.cache.is_some() {
-            *output = self.cache.clone();
+    pub fn get_output(&mut self, inputs: &mut [&mut Modification]) -> Option<Image> {
+        let (dependency, inputs) = if inputs.len() >= 1 {
+            inputs.split_at_mut(1)
         } else {
-            let mut state = dyn_clone::clone_box(&self.modifier);
+            (inputs, &mut [] as &mut [&mut Modification])
+        };
 
-            state.apply(output, self.get_pixels(&output));
+        let mut input = if let Some(modification) = dependency.get_mut(0) {
+            modification.get_output(inputs)
+        } else {
+            None
+        };
 
-            if output.is_some() {
-                self.cache = output.clone();
-            }
-        }
+        let mut state = dyn_clone::clone_box(&self.modifier);
+        let pixels = self.get_pixels(&input);
+        state.apply(&mut input, pixels);
+
+        input
     }
 
     pub fn get_selection(&self) -> &Vec<Selection> {
@@ -63,6 +67,5 @@ impl Modification {
 
     pub fn remove_selection(&mut self, index: usize) {
         self.selection.remove(index);
-        self.cache = None;
     }
 }

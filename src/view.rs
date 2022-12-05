@@ -44,11 +44,13 @@ fn update(
     mut assets: ResMut<Assets<BevyImage>>,
     mut editor: ResMut<Editor>,
 ) {
-    if let Some(output) = editor.get_output() {
-        for handle in handles.iter() {
-            let image = assets.get_mut(handle).unwrap();
-            *image = output.clone().into_bevy_image();
-        }
+    for handle in handles.iter() {
+        let image = assets.get_mut(handle).unwrap();
+        *image = editor
+            .get_output()
+            .unwrap_or_default()
+            .clone()
+            .into_bevy_image();
     }
 }
 
