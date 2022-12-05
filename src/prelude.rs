@@ -5,7 +5,7 @@ pub use crate::{
     image::Image,
     keybinds::KeyBindsPlugin,
     mods::{
-        collection::filters::grayscale::GrayScaleFilter,
+        collection::{filters::grayscale::GrayScaleFilter, source::Source},
         modifier::Modification,
         plugin::{Modifier, ModifierPlugin},
         ui::{ModifierCollection, ModifierCollectionPlugin, ModifierIndex},
