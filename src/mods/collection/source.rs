@@ -11,6 +11,6 @@ pub struct Source {
 
 impl Modifier for Source {
     fn apply(&mut self, input: &mut Option<Image>, _: Vec<UVec2>) {
-        *input = Some(Image::open(&self.path).unwrap());
+        *input = Image::open(&self.path).ok()
     }
 }
