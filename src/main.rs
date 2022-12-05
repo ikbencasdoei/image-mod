@@ -13,7 +13,6 @@ mod keybinds;
 mod mods;
 mod prelude;
 mod selectors;
-mod tools;
 mod ui;
 mod view;
 

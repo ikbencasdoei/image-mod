@@ -15,15 +15,6 @@ pub use crate::{
         plugin::{Selection, Selector, SelectorPlugin},
         ui::{SelectorCollection, SelectorCollectionPlugin, SelectorIndex},
     },
-    tools::{
-        pencils::{
-            plugin::{PencilPlugin, PencilTool},
-            rainbow::RainbowPencilPlugin,
-            simple::SimplePencilPlugin,
-            sort::SortPencilPlugin,
-        },
-        plugin::{Tool, ToolDescription, ToolIndex, ToolPlugin},
-    },
     ui::UiPlugin,
     view::{View, ViewPlugin},
 };
