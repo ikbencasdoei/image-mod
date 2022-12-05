@@ -6,10 +6,11 @@ use std::{
 use bevy::prelude::*;
 use dyn_clone::DynClone;
 
-use crate::prelude::{Color, Image, *};
+use crate::prelude::{Image, *};
 
 pub trait Modifier: DynClone {
-    fn get_pixel(&mut self, position: UVec2, image: &mut Image) -> Option<Color>;
+    fn apply(&mut self, input: &mut Option<Image>, selection: Vec<UVec2>);
+
     fn get_index() -> ModifierIndex
     where
         Self: Sized + Default + 'static,

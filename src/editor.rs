@@ -19,7 +19,7 @@ impl Plugin for EditorPlugin {
 
 #[derive(Resource, Default)]
 pub struct Editor {
-    pub input: Image,
+    pub input: Option<Image>,
     pub path: Option<PathBuf>,
     mods: Vec<Modification>,
     pub add_mod_index: Option<ModifierIndex>,
@@ -30,24 +30,24 @@ pub struct Editor {
 impl Editor {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Result<Self, ImageError> {
         Ok(Self {
-            input: Image::open(path.as_ref())?,
+            input: Some(Image::open(path.as_ref())?),
             path: Some(path.as_ref().to_path_buf()),
             ..default()
         })
     }
 
     pub fn export(&mut self, path: impl AsRef<Path>) -> Result<(), ImageError> {
-        self.get_output().save(path)
+        self.get_output().unwrap().save(path)
     }
 
-    pub fn get_output(&mut self) -> Image {
-        let mut output = self.input.clone();
+    pub fn get_output(&mut self) -> Option<Image> {
+        let mut output = &mut self.input.clone();
 
         for modifier in &mut self.mods {
             modifier.apply(&mut output);
         }
 
-        output
+        output.clone()
     }
 
     pub fn receive_mod(

@@ -8,7 +8,7 @@ use bevy::prelude::*;
 use crate::prelude::{Image, *};
 
 pub trait Selector {
-    fn get_pixels(&self, image: &Image) -> Vec<UVec2>;
+    fn get_pixels(&self, image: &Option<Image>) -> Vec<UVec2>;
     fn get_index() -> SelectorIndex
     where
         Self: Sized + Default + 'static,

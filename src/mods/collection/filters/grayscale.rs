@@ -6,12 +6,16 @@ use crate::prelude::{Color, Image, *};
 pub struct GrayScaleFilter;
 
 impl Modifier for GrayScaleFilter {
-    fn get_pixel(&mut self, position: UVec2, image: &mut Image) -> Option<Color> {
-        if let Ok(pixel) = image.get_pixel(position) {
-            let sum = pixel.sum() / 4.0;
-            Some(Color::from(BevyColor::rgb(sum, sum, sum)))
-        } else {
-            None
+    fn apply(&mut self, input: &mut Option<Image>, selection: Vec<UVec2>) {
+        if let Some(image) = input {
+            for position in selection {
+                if let Ok(pixel) = image.get_pixel(position) {
+                    let sum = pixel.sum() / 4.0;
+                    image
+                        .set_pixel(position, Color::from(BevyColor::rgb(sum, sum, sum)))
+                        .ok();
+                }
+            }
         }
     }
 

@@ -34,20 +34,21 @@ impl Modification {
         });
     }
 
-    pub fn apply(&mut self, output: &mut Image) {
-        if let Some(cached) = &self.cache {
-            *output = cached.clone();
+    pub fn apply(&mut self, output: &mut Option<Image>) {
+        if self.cache.is_some() {
+            *output = self.cache.clone();
         } else {
-            let mut modifier_state = dyn_clone::clone_box(&self.modifier);
-            for selection in self.selection.iter() {
-                for position in selection.selector.get_pixels(output) {
-                    if let Some(color) = modifier_state.get_pixel(position, output) {
-                        output.set_pixel(position, color).unwrap();
-                    }
-                }
+            let mut state = dyn_clone::clone_box(&self.modifier);
+            let mut selection = Vec::new();
+            for selector in self.selection.iter() {
+                selection.extend_from_slice(&selector.selector.get_pixels(output));
             }
 
-            self.cache = Some(output.clone());
+            state.apply(output, selection);
+
+            if output.is_some() {
+                self.cache = output.clone();
+            }
         }
     }
 
