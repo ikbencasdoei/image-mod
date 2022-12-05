@@ -16,6 +16,7 @@ impl Plugin for ModifierCollectionPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<ModifierCollection>()
             .add_plugin(ModifierPlugin::<GrayScaleFilter>::default())
+            .add_plugin(ModifierPlugin::<Source>::default())
             .add_system(add_ui)
             .add_system(edit_ui);
     }
