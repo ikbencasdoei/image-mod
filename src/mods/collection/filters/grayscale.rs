@@ -18,8 +18,4 @@ impl Modifier for GrayScaleFilter {
             }
         }
     }
-
-    fn changed(&self) -> bool {
-        false
-    }
 }

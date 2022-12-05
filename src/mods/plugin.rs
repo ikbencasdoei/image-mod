@@ -20,8 +20,6 @@ pub trait Modifier: DynClone {
             id: TypeId::of::<Self>(),
         }
     }
-
-    fn changed(&self) -> bool;
 }
 
 dyn_clone::clone_trait_object!(Modifier);
