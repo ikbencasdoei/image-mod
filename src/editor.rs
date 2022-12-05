@@ -36,8 +36,12 @@ impl Editor {
         })
     }
 
-    pub fn export(&mut self, path: impl AsRef<Path>) -> Result<(), ImageError> {
-        self.get_output().unwrap().save(path)
+    pub fn export(&mut self, path: impl AsRef<Path>) -> Result<(), String> {
+        if let Some(output) = self.get_output() {
+            output.save(path).map_err(|err| err.to_string())
+        } else {
+            Err("no output to save".to_string())
+        }
     }
 
     pub fn get_output(&mut self) -> Option<Image> {
