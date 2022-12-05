@@ -1,3 +1,4 @@
+use bevy::prelude::UVec2;
 use uuid::Uuid;
 
 use crate::prelude::{Image, *};
@@ -34,17 +35,21 @@ impl Modification {
         });
     }
 
+    pub fn get_pixels(&self, image: &Option<Image>) -> Vec<UVec2> {
+        let mut selection = Vec::new();
+        for selector in self.selection.iter() {
+            selection.extend_from_slice(&selector.selector.get_pixels(image));
+        }
+        selection
+    }
+
     pub fn apply(&mut self, output: &mut Option<Image>) {
         if self.cache.is_some() {
             *output = self.cache.clone();
         } else {
             let mut state = dyn_clone::clone_box(&self.modifier);
-            let mut selection = Vec::new();
-            for selector in self.selection.iter() {
-                selection.extend_from_slice(&selector.selector.get_pixels(output));
-            }
 
-            state.apply(output, selection);
+            state.apply(output, self.get_pixels(&output));
 
             if output.is_some() {
                 self.cache = output.clone();
