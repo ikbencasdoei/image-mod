@@ -3,9 +3,9 @@ use uuid::Uuid;
 use crate::prelude::{Image, *};
 
 pub struct Modification {
-    pub modifier: Box<dyn Modifier + Send + Sync>,
     pub index: ModifierIndex,
     pub id: Uuid,
+    modifier: Box<dyn Modifier + Send + Sync>,
     selection: Vec<Selection>,
     cache: Option<Image>,
 }
@@ -16,9 +16,9 @@ impl Modification {
         M: Modifier + Default + Send + Sync + 'static,
     {
         Self {
-            modifier: Box::new(modifier),
             index: M::get_index(),
             id: Uuid::new_v4(),
+            modifier: Box::new(modifier),
             selection: Vec::new(),
             cache: None,
         }
