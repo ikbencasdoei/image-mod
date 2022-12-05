@@ -31,6 +31,7 @@ impl Editor {
             mods: vec![Modification::new(Source {
                 path: path.as_ref().to_path_buf(),
             })],
+            path: Some(path.as_ref().to_path_buf()),
             ..default()
         }
     }
