@@ -8,6 +8,7 @@ pub struct Modification {
     pub id: Uuid,
     modifier: Box<dyn Modifier + Send + Sync>,
     selection: Vec<Selection>,
+    pub cache: Option<ModCache>,
 }
 
 impl Modification {
@@ -20,6 +21,7 @@ impl Modification {
             id: Uuid::new_v4(),
             modifier: Box::new(modifier),
             selection: Vec::new(),
+            cache: None,
         }
     }
 
@@ -41,24 +43,48 @@ impl Modification {
         selection
     }
 
-    pub fn get_output(&mut self, inputs: &mut [&mut Modification]) -> Option<Image> {
+    pub fn get_output(&mut self, inputs: &mut [&mut Modification]) -> ModOutput {
         let (dependency, inputs) = if inputs.len() >= 1 {
             inputs.split_at_mut(1)
         } else {
             (inputs, &mut [] as &mut [&mut Modification])
         };
 
-        let mut input = if let Some(modification) = dependency.get_mut(0) {
+        let modification = dependency.get_mut(0);
+
+        let input = if let Some(modification) = modification {
             modification.get_output(inputs)
         } else {
-            None
+            ModOutput::NoOutput
         };
 
-        let mut state = dyn_clone::clone_box(&self.modifier);
-        let pixels = self.get_pixels(&input);
-        state.apply(&mut input, pixels);
+        let output = match input {
+            ModOutput::Modified(input) => ModOutput::Modified(self.apply(input)),
+            ModOutput::Cached(_) | ModOutput::NoOutput => {
+                if let Some(cache) = &self.cache {
+                    if cache.changed(&*self.modifier) {
+                        ModOutput::Modified(self.apply(input.get_output()))
+                    } else {
+                        ModOutput::Cached(cache.image.clone())
+                    }
+                } else {
+                    ModOutput::Modified(self.apply(input.get_output()))
+                }
+            }
+        };
 
-        input
+        output
+    }
+
+    fn apply(&mut self, input: Option<Image>) -> Option<Image> {
+        let mut state = dyn_clone::clone(&self.modifier);
+        let pixels = self.get_pixels(&input);
+        let output = state.apply(input, pixels);
+        self.cache = Some(ModCache {
+            modifier: dyn_clone::clone(&self.modifier),
+            image: output.clone(),
+        });
+        output
     }
 
     pub fn get_selection(&self) -> &Vec<Selection> {
@@ -67,5 +93,32 @@ impl Modification {
 
     pub fn remove_selection(&mut self, index: usize) {
         self.selection.remove(index);
+    }
+}
+
+pub enum ModOutput {
+    Modified(Option<Image>),
+    Cached(Option<Image>),
+    NoOutput,
+}
+
+impl ModOutput {
+    pub fn get_output(self) -> Option<Image> {
+        match self {
+            ModOutput::Modified(option) => option,
+            ModOutput::Cached(option) => option,
+            ModOutput::NoOutput => None,
+        }
+    }
+}
+
+pub struct ModCache {
+    modifier: Box<dyn Modifier + Send + Sync>,
+    image: Option<Image>,
+}
+
+impl ModCache {
+    fn changed(&self, modifier: &dyn Modifier) -> bool {
+        !self.modifier.eq(modifier as &dyn DynPartialEq)
     }
 }

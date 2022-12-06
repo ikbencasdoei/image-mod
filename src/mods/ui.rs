@@ -80,6 +80,9 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                         }
                     })
                     .body(|ui| {
+                        if modification.cache.is_some() {
+                            ui.label("cached");
+                        }
                         CollapsingHeader::new(format!(
                             "selections ({})",
                             modification.get_selection().len()

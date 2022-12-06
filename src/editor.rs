@@ -54,7 +54,7 @@ impl Editor {
         };
 
         if let Some(modification) = modification.get_mut(0) {
-            modification.get_output(inputs)
+            modification.get_output(inputs).get_output()
         } else {
             None
         }
