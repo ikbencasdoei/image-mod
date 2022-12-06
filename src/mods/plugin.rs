@@ -1,5 +1,5 @@
 use std::{
-    any::{type_name, TypeId},
+    any::{type_name, Any, TypeId},
     marker::PhantomData,
 };
 
@@ -8,7 +8,7 @@ use dyn_clone::DynClone;
 
 use crate::prelude::{Image, *};
 
-pub trait Modifier: DynClone {
+pub trait Modifier: DynClone + DynPartialEq {
     fn apply(&mut self, input: &mut Option<Image>, selection: Vec<UVec2>);
 
     fn get_index() -> ModifierIndex
@@ -23,6 +23,31 @@ pub trait Modifier: DynClone {
 }
 
 dyn_clone::clone_trait_object!(Modifier);
+
+pub trait DynPartialEq {
+    fn eq(&self, other: &dyn DynPartialEq) -> bool;
+    fn as_any(&self) -> &dyn Any;
+}
+
+impl PartialEq for dyn DynPartialEq + '_ {
+    fn eq(&self, other: &dyn DynPartialEq) -> bool {
+        DynPartialEq::eq(self, other)
+    }
+}
+
+impl<T: PartialEq + 'static> DynPartialEq for T {
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn eq(&self, other: &dyn DynPartialEq) -> bool {
+        if let Some(other) = other.as_any().downcast_ref::<Self>() {
+            self.eq(other)
+        } else {
+            false
+        }
+    }
+}
 
 #[derive(Default)]
 pub struct ModifierPlugin<T>(PhantomData<T>);

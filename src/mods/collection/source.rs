@@ -4,7 +4,7 @@ use bevy::prelude::*;
 
 use crate::prelude::{Image, *};
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, PartialEq)]
 pub struct Source {
     pub path: PathBuf,
 }

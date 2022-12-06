@@ -1,3 +1,6 @@
+#![feature(trait_upcasting)]
+#![allow(incomplete_features)]
+
 use std::path::Path;
 
 use bevy::prelude::{Color, *};
