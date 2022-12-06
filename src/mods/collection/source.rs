@@ -10,7 +10,7 @@ pub struct Source {
 }
 
 impl Modifier for Source {
-    fn apply(&mut self, input: &mut Option<Image>, _: Vec<UVec2>) {
-        *input = Image::open(&self.path).ok()
+    fn apply(&mut self, _: Option<Image>, _: Vec<UVec2>) -> Option<Image> {
+        Image::open(&self.path).ok()
     }
 }
