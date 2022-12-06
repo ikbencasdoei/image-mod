@@ -60,6 +60,11 @@ impl Editor {
         }
     }
 
+    pub fn insert_mod(&mut self, modifier: Modification) {
+        self.selected_mod = Some(modifier.id);
+        self.mods.push(modifier);
+    }
+
     pub fn receive_mod(
         &mut self,
         index: ModifierIndex,
@@ -68,8 +73,7 @@ impl Editor {
         if Some(index) == self.add_mod_index.take() {
             let mut new = Modification::new(modifier);
             new.add_selection(CanvasSelection);
-            self.selected_mod = Some(new.id);
-            self.mods.push(new);
+            self.insert_mod(new)
         } else {
             panic!("diffrent modifier received")
         }
