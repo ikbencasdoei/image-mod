@@ -33,6 +33,7 @@ impl Modification {
             selector: Box::new(selection),
             index: S::get_index(),
         });
+        self.cache = None;
     }
 
     pub fn get_pixels(&self, image: &Option<Image>) -> Vec<UVec2> {
@@ -90,6 +91,7 @@ impl Modification {
 
     pub fn remove_selection(&mut self, index: usize) {
         self.selection.remove(index);
+        self.cache = None;
     }
 }
 
