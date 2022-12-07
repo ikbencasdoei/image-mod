@@ -75,9 +75,11 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                         {
                             selected_mod = Some(modification.id);
                         }
-                        if ui.button("remove").clicked() {
-                            remove_mod = Some(modification.id);
-                        }
+                        ui.menu_button("remove", |ui| {
+                            if ui.button("sure?").clicked() {
+                                remove_mod = Some(modification.id);
+                            }
+                        });
                     })
                     .body(|ui| {
                         if modification.cache.is_some() {
@@ -95,9 +97,11 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                                 modification.get_selection().iter().enumerate()
                             {
                                 ui.label(selection.index.name.as_str());
-                                if ui.button("remove").clicked() {
-                                    remove_selection = Some(index);
-                                }
+                                ui.menu_button("remove", |ui| {
+                                    if ui.button("sure?").clicked() {
+                                        remove_selection = Some(index);
+                                    }
+                                });
                             }
 
                             if let Some(index) = remove_selection {
