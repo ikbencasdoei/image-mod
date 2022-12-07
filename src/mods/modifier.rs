@@ -58,31 +58,28 @@ impl Modification {
             ModOutput::NoOutput
         };
 
-        let output = match input {
-            ModOutput::Modified(input) => ModOutput::Modified(self.apply(input)),
-            ModOutput::Cached(_) | ModOutput::NoOutput => {
-                if let Some(cache) = &self.cache {
-                    if cache.changed(&*self.modifier) {
-                        ModOutput::Modified(self.apply(input.get_output()))
-                    } else {
-                        ModOutput::Cached(cache.image.clone())
+        if let Some(cache) = &self.cache {
+            if !cache.changed(&*self.modifier) {
+                if cache.last_input == input.is_some() {
+                    if let ModOutput::Cached(_) | ModOutput::NoOutput = input {
+                        return ModOutput::Cached(cache.image.clone());
                     }
-                } else {
-                    ModOutput::Modified(self.apply(input.get_output()))
                 }
             }
-        };
+        }
 
-        output
+        ModOutput::Modified(self.apply(input.get_output()))
     }
 
     fn apply(&mut self, input: Option<Image>) -> Option<Image> {
+        let last_input = input.is_some();
         let mut state = dyn_clone::clone(&self.modifier);
         let pixels = self.get_pixels(&input);
         let output = state.apply(input, pixels);
         self.cache = Some(ModCache {
             modifier: dyn_clone::clone(&self.modifier),
             image: output.clone(),
+            last_input,
         });
         output
     }
@@ -110,11 +107,20 @@ impl ModOutput {
             ModOutput::NoOutput => None,
         }
     }
+
+    pub fn is_some(&self) -> bool {
+        match self {
+            ModOutput::Modified(option) => option.is_some(),
+            ModOutput::Cached(option) => option.is_some(),
+            ModOutput::NoOutput => false,
+        }
+    }
 }
 
 pub struct ModCache {
     modifier: Box<dyn Modifier + Send + Sync>,
     image: Option<Image>,
+    last_input: bool,
 }
 
 impl ModCache {
