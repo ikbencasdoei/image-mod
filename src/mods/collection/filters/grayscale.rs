@@ -10,9 +10,12 @@ impl Modifier for GrayScaleFilter {
         if let Some(image) = &mut input {
             for position in selection {
                 if let Ok(pixel) = image.get_pixel(position) {
-                    let sum = pixel.sum() / 4.0;
+                    let sum = pixel.sum() / 3.0;
                     image
-                        .set_pixel(position, Color::from(BevyColor::rgb(sum, sum, sum)))
+                        .set_pixel(
+                            position,
+                            Color::from(BevyColor::rgba(sum, sum, sum, pixel.a())),
+                        )
                         .ok();
                 }
             }
