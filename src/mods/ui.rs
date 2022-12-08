@@ -78,6 +78,7 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                         ui.menu_button("remove", |ui| {
                             if ui.button("sure?").clicked() {
                                 remove_mod = Some(modification.id);
+                                ui.close_menu();
                             }
                         });
                     })
@@ -100,6 +101,7 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                                 ui.menu_button("remove", |ui| {
                                     if ui.button("sure?").clicked() {
                                         remove_selection = Some(index);
+                                        ui.close_menu();
                                     }
                                 });
                             }
