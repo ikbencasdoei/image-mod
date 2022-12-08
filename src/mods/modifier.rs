@@ -6,7 +6,7 @@ use crate::prelude::{Image, *};
 pub struct Modification {
     pub index: ModifierIndex,
     pub id: Uuid,
-    modifier: Box<dyn Modifier + Send + Sync>,
+    pub modifier: Box<dyn Modifier + Send + Sync>,
     selection: Vec<Selection>,
     pub cache: Option<ModCache>,
 }

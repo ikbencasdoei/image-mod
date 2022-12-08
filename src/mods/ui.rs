@@ -10,6 +10,8 @@ use crate::editor::Editor;
 
 use crate::prelude::*;
 
+use super::collection::filters::color::ColorFilter;
+
 pub struct ModifierCollectionPlugin;
 
 impl Plugin for ModifierCollectionPlugin {
@@ -17,6 +19,7 @@ impl Plugin for ModifierCollectionPlugin {
         app.init_resource::<ModifierCollection>()
             .add_plugin(ModifierPlugin::<GrayScaleFilter>::default())
             .add_plugin(ModifierPlugin::<Source>::default())
+            .add_plugin(ModifierPlugin::<ColorFilter>::default())
             .add_system(add_ui)
             .add_system(edit_ui);
     }
@@ -86,6 +89,9 @@ fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
                         if modification.cache.is_some() {
                             ui.label("cached");
                         }
+
+                        modification.modifier.view(ui);
+
                         CollapsingHeader::new(format!(
                             "selections ({})",
                             modification.get_selection().len()
