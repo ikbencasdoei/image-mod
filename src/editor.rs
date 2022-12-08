@@ -28,10 +28,8 @@ pub struct Editor {
 impl Editor {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
         Self {
-            mods: vec![Modification::new(Source {
-                path: path.as_ref().to_path_buf(),
-            })],
             path: Some(path.as_ref().to_path_buf()),
+            mods: vec![Modification::new(Source::new(path))],
             ..default()
         }
     }
