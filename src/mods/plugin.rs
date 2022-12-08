@@ -4,6 +4,7 @@ use std::{
 };
 
 use bevy::prelude::*;
+use bevy_egui::egui::Ui;
 use dyn_clone::DynClone;
 
 use crate::prelude::{Image, *};
@@ -20,6 +21,8 @@ pub trait Modifier: DynClone + DynPartialEq {
             id: TypeId::of::<Self>(),
         }
     }
+
+    fn view(&mut self, _ui: &mut Ui) {}
 }
 
 dyn_clone::clone_trait_object!(Modifier);
