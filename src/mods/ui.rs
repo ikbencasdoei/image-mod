@@ -68,6 +68,7 @@ fn show_selections(ui: &mut Ui, modification: &mut Modification, collection: &Se
                 for index in collection.list.iter() {
                     if ui.button(index.name.to_owned()).clicked() {
                         modification.add_selection_from_index(index.clone());
+                        ui.close_menu();
                     }
                 }
             });
@@ -173,7 +174,8 @@ pub fn mods_ui(
                 ui.menu_button("add modifier", |ui| {
                     for modifier in mod_collection.list.iter() {
                         if ui.button(modifier.name.as_str()).clicked() {
-                            editor.add_mod(modifier)
+                            editor.add_mod(modifier);
+                            ui.close_menu();
                         }
                     }
                 })
