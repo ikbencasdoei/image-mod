@@ -164,7 +164,7 @@ pub fn mods_ui(
 ) {
     let name = "Modifiers";
 
-    egui::SidePanel::right(name)
+    egui::SidePanel::left(name)
         .resizable(true)
         .show(egui_context.ctx_mut(), |ui| {
             ui.vertical_centered(|ui| {
