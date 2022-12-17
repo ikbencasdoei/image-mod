@@ -5,6 +5,7 @@ use bevy_egui::{
     egui::{self, CollapsingHeader, Id},
     EguiContext,
 };
+use dyn_clone::DynClone;
 
 use crate::editor::Editor;
 
@@ -25,10 +26,29 @@ impl Plugin for ModifierCollectionPlugin {
     }
 }
 
-#[derive(PartialEq, Clone)]
+pub trait Instance: Fn() -> Box<dyn Modifier + Send + Sync + 'static> + DynClone {
+    fn instance(&self) -> Box<dyn Modifier + Send + Sync>;
+}
+
+impl<T: Fn() -> Box<dyn Modifier + Send + Sync + 'static> + DynClone> Instance for T {
+    fn instance(&self) -> Box<dyn Modifier + Send + Sync> {
+        self()
+    }
+}
+
+dyn_clone::clone_trait_object!(Instance);
+
+#[derive(Clone)]
 pub struct ModifierIndex {
     pub name: String,
     pub id: TypeId,
+    pub instance: Box<dyn Instance + Send + Sync + 'static>,
+}
+
+impl PartialEq for ModifierIndex {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
 }
 
 #[derive(Resource, Default)]

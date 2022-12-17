@@ -20,7 +20,6 @@ impl Plugin for EditorPlugin {
 pub struct Editor {
     mods: Vec<Modification>,
     pub path: Option<PathBuf>,
-    pub add_mod_index: Option<ModifierIndex>,
     pub add_sel_index: Option<SelectorIndex>,
     selected_mod: Option<Uuid>,
 }
@@ -63,22 +62,10 @@ impl Editor {
         self.mods.push(modifier);
     }
 
-    pub fn receive_mod(
-        &mut self,
-        index: ModifierIndex,
-        modifier: impl Modifier + Default + Send + Sync + 'static,
-    ) {
-        if Some(index) == self.add_mod_index.take() {
-            let mut new = Modification::new(modifier);
-            new.add_selection(CanvasSelection);
-            self.insert_mod(new)
-        } else {
-            panic!("diffrent modifier received")
-        }
-    }
-
     pub fn add_mod(&mut self, index: &ModifierIndex) {
-        self.add_mod_index = Some(index.clone());
+        let mut new = Modification::new_from_index(index.clone());
+        new.add_selection(CanvasSelection);
+        self.insert_mod(new)
     }
 
     pub fn receive_sel(

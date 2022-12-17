@@ -25,6 +25,18 @@ impl Modification {
         }
     }
 
+    pub fn new_from_index(index: ModifierIndex) -> Self {
+        let modifier = index.instance.instance();
+
+        Self {
+            index: index,
+            id: Uuid::new_v4(),
+            modifier,
+            selection: Vec::new(),
+            cache: None,
+        }
+    }
+
     pub fn add_selection<S>(&mut self, selection: S)
     where
         S: Selector + Default + Send + Sync + 'static,

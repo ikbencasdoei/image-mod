@@ -14,11 +14,12 @@ pub trait Modifier: DynClone + DynPartialEq {
 
     fn get_index() -> ModifierIndex
     where
-        Self: Sized + Default + 'static,
+        Self: Sized + Default + Send + Sync + 'static,
     {
         ModifierIndex {
             name: type_name::<Self>().split("::").last().unwrap().to_string(),
             id: TypeId::of::<Self>(),
+            instance: Box::new(|| Box::new(Self::default())),
         }
     }
 
@@ -60,25 +61,12 @@ where
     T: Modifier + Default + Send + Sync + 'static,
 {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup::<T>).add_system(update::<T>);
+        app.add_startup_system(setup::<T>);
     }
 }
 
-fn setup<T: Modifier + Default + 'static>(mut collection: ResMut<ModifierCollection>) {
-    collection.list.push(T::get_index());
-}
-
-fn update<T: Modifier + Default + Send + Sync + 'static>(
-    mut editor: ResMut<Editor>,
-    mut last: Local<Option<ModifierIndex>>,
+fn setup<T: Modifier + Default + Send + Sync + 'static>(
+    mut collection: ResMut<ModifierCollection>,
 ) {
-    if editor.add_mod_index != *last {
-        if let Some(index) = editor.add_mod_index.clone() {
-            if index.id == TypeId::of::<T>() {
-                editor.receive_mod(T::get_index(), T::default())
-            }
-        }
-    }
-
-    *last = editor.add_mod_index.clone();
+    collection.list.push(T::get_index());
 }
