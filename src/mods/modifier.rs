@@ -26,7 +26,7 @@ impl Modification {
     }
 
     pub fn new_from_index(index: ModifierIndex) -> Self {
-        let modifier = index.instance.instance();
+        let modifier = index.instancer.instance();
 
         Self {
             index: index,

@@ -19,7 +19,7 @@ pub trait Modifier: DynClone + DynPartialEq {
         ModifierIndex {
             name: type_name::<Self>().split("::").last().unwrap().to_string(),
             id: TypeId::of::<Self>(),
-            instance: Box::new(|| Box::new(Self::default())),
+            instancer: Box::new(|| Box::new(Self::default())),
         }
     }
 

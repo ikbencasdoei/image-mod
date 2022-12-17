@@ -26,23 +26,23 @@ impl Plugin for ModifierCollectionPlugin {
     }
 }
 
-pub trait Instance: Fn() -> Box<dyn Modifier + Send + Sync + 'static> + DynClone {
+pub trait ModInstancer: Fn() -> Box<dyn Modifier + Send + Sync + 'static> + DynClone {
     fn instance(&self) -> Box<dyn Modifier + Send + Sync>;
 }
 
-impl<T: Fn() -> Box<dyn Modifier + Send + Sync + 'static> + DynClone> Instance for T {
+impl<T: Fn() -> Box<dyn Modifier + Send + Sync + 'static> + DynClone> ModInstancer for T {
     fn instance(&self) -> Box<dyn Modifier + Send + Sync> {
         self()
     }
 }
 
-dyn_clone::clone_trait_object!(Instance);
+dyn_clone::clone_trait_object!(ModInstancer);
 
 #[derive(Clone)]
 pub struct ModifierIndex {
     pub name: String,
     pub id: TypeId,
-    pub instance: Box<dyn Instance + Send + Sync + 'static>,
+    pub instancer: Box<dyn ModInstancer + Send + Sync + 'static>,
 }
 
 impl PartialEq for ModifierIndex {
