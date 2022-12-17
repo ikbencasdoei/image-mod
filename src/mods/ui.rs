@@ -56,7 +56,7 @@ pub struct ModifierCollection {
     pub list: Vec<ModifierIndex>,
 }
 
-fn show_selections(ui: &mut Ui, modification: &mut Modification) {
+fn show_selections(ui: &mut Ui, modification: &mut Modification, collection: &SelectorCollection) {
     let id = ui.make_persistent_id(modification.id);
     egui::collapsing_header::CollapsingState::load_with_default_open(ui.ctx(), id, true)
         .show_header(ui, |ui| {
@@ -64,6 +64,13 @@ fn show_selections(ui: &mut Ui, modification: &mut Modification) {
                 "selections ({})",
                 modification.get_selection().len()
             ));
+            ui.menu_button("add", |ui| {
+                for index in collection.list.iter() {
+                    if ui.button(index.name.to_owned()).clicked() {
+                        modification.add_selection_from_index(index.clone());
+                    }
+                }
+            });
         })
         .body(|ui| {
             let mut remove_selection = None;
@@ -90,6 +97,7 @@ fn show_modifier(
     modification: &mut Modification,
     index: usize,
     selected: &mut Option<Uuid>,
+    sel_collection: &SelectorCollection,
 ) -> bool {
     let mut remove = false;
     let id = ui.make_persistent_id(modification.id);
@@ -120,20 +128,20 @@ fn show_modifier(
 
             modification.modifier.view(ui);
 
-            show_selections(ui, modification);
+            show_selections(ui, modification, sel_collection);
         });
 
     remove
 }
 
-fn show_mods(ui: &mut Ui, editor: &mut Editor) {
+fn show_mods(ui: &mut Ui, editor: &mut Editor, sel_collection: &SelectorCollection) {
     if editor.get_mods().is_empty() {
         ui.label("(empty)");
     } else {
         let mut remove_mod = None;
         let mut selected_mod = editor.get_selected_mod();
         for (i, modification) in editor.iter_mut_mods().enumerate().rev() {
-            if show_modifier(ui, modification, i, &mut selected_mod) {
+            if show_modifier(ui, modification, i, &mut selected_mod, sel_collection) {
                 remove_mod = Some(modification.id);
             }
         }
@@ -152,6 +160,7 @@ pub fn mods_ui(
     mut egui_context: ResMut<EguiContext>,
     mut editor: ResMut<Editor>,
     mod_collection: Res<ModifierCollection>,
+    sel_collection: Res<SelectorCollection>,
 ) {
     let name = "Modifiers";
 
@@ -170,6 +179,6 @@ pub fn mods_ui(
                 })
             });
             ui.separator();
-            show_mods(ui, &mut editor)
+            show_mods(ui, &mut editor, &sel_collection)
         });
 }
