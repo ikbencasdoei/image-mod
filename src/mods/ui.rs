@@ -68,12 +68,14 @@ fn show_selections(ui: &mut Ui, modification: &mut Modification) {
         .body(|ui| {
             let mut remove_selection = None;
             for (index, selection) in modification.get_selection().iter().enumerate() {
-                ui.label(selection.index.name.as_str());
-                ui.menu_button("remove", |ui| {
-                    if ui.button("sure?").clicked() {
-                        remove_selection = Some(index);
-                        ui.close_menu();
-                    }
+                ui.horizontal(|ui| {
+                    ui.label(selection.index.name.as_str());
+                    ui.menu_button("remove", |ui| {
+                        if ui.button("sure?").clicked() {
+                            remove_selection = Some(index);
+                            ui.close_menu();
+                        }
+                    });
                 });
             }
 
