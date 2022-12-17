@@ -48,6 +48,14 @@ impl Modification {
         self.cache = None;
     }
 
+    pub fn add_selection_from_index(&mut self, index: SelectorIndex) {
+        self.selection.push(Selection {
+            selector: index.instancer.instance(),
+            index: index,
+        });
+        self.cache = None;
+    }
+
     pub fn get_pixels(&self, image: &Option<Image>) -> Vec<UVec2> {
         let mut selection = Vec::new();
         for selector in self.selection.iter() {

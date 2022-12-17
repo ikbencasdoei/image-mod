@@ -20,7 +20,6 @@ impl Plugin for EditorPlugin {
 pub struct Editor {
     mods: Vec<Modification>,
     pub path: Option<PathBuf>,
-    pub add_sel_index: Option<SelectorIndex>,
     selected_mod: Option<Uuid>,
 }
 
@@ -68,22 +67,6 @@ impl Editor {
         self.insert_mod(new)
     }
 
-    pub fn receive_sel(
-        &mut self,
-        index: SelectorIndex,
-        selection: impl Selector + Default + Send + Sync + 'static,
-    ) {
-        if Some(index) == self.add_sel_index.take() {
-            if let Some(id) = self.selected_mod {
-                if let Some(modifier) = self.get_mod(id) {
-                    modifier.add_selection(selection);
-                }
-            }
-        } else {
-            panic!("diffrent selector received")
-        }
-    }
-
     fn get_mod(&mut self, id: Uuid) -> Option<&mut Modification> {
         self.mods.iter_mut().find(|item| item.id == id)
     }
@@ -97,7 +80,11 @@ impl Editor {
     }
 
     pub fn add_selection(&mut self, index: &SelectorIndex) {
-        self.add_sel_index = Some(index.clone());
+        if let Some(id) = self.selected_mod {
+            if let Some(modifier) = self.get_mod(id) {
+                modifier.add_selection_from_index(index.clone());
+            }
+        }
     }
 
     pub fn remove_mod(&mut self, id: Uuid) {

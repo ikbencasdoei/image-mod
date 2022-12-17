@@ -11,11 +11,12 @@ pub trait Selector {
     fn get_pixels(&self, image: &Option<Image>) -> Vec<UVec2>;
     fn get_index() -> SelectorIndex
     where
-        Self: Sized + Default + 'static,
+        Self: Sized + Default + Send + Sync + 'static,
     {
         SelectorIndex {
             name: type_name::<Self>().split("::").last().unwrap().to_string(),
             id: TypeId::of::<Self>(),
+            instancer: Box::new(|| Box::new(Self::default())),
         }
     }
 }
@@ -33,25 +34,12 @@ where
     T: Selector + Default + Send + Sync + 'static,
 {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup::<T>).add_system(update::<T>);
+        app.add_startup_system(setup::<T>);
     }
 }
 
-fn setup<T: Selector + Default + 'static>(mut collection: ResMut<SelectorCollection>) {
-    collection.list.push(T::get_index());
-}
-
-fn update<T: Selector + Default + Send + Sync + 'static>(
-    mut editor: ResMut<Editor>,
-    mut last: Local<Option<SelectorIndex>>,
+fn setup<T: Selector + Default + Send + Sync + 'static>(
+    mut collection: ResMut<SelectorCollection>,
 ) {
-    if editor.add_sel_index != *last {
-        if let Some(index) = editor.add_sel_index.clone() {
-            if index.id == TypeId::of::<T>() {
-                editor.receive_sel(T::get_index(), T::default())
-            }
-        }
-    }
-
-    *last = editor.add_sel_index.clone();
+    collection.list.push(T::get_index());
 }
