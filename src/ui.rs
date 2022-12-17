@@ -60,12 +60,17 @@ fn ui(
 
                     let mut single = scale.x * 100.0;
 
-                    ui.add(
-                        egui::DragValue::new(&mut single)
-                            .clamp_range(1.0..=f32::MAX)
-                            .suffix("%")
-                            .speed(1),
-                    );
+                    if ui
+                        .add(
+                            egui::DragValue::new(&mut single)
+                                .clamp_range(1.0..=f32::MAX)
+                                .suffix("%")
+                                .speed(1),
+                        )
+                        .secondary_clicked()
+                    {
+                        single = 100.0;
+                    }
 
                     single /= 100.0;
                     *scale = Vec3::new(single, single, single);
