@@ -2,13 +2,13 @@ use std::any::TypeId;
 
 use bevy::prelude::*;
 use bevy_egui::{
-    egui::{self, CollapsingHeader, Id, Ui},
+    egui::{self, Ui},
     EguiContext,
 };
 use dyn_clone::DynClone;
 use uuid::Uuid;
 
-use crate::editor::Editor;
+use crate::{editor::Editor, ui::MenuBarSystemLabel};
 
 use crate::prelude::*;
 
@@ -22,8 +22,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(ModifierPlugin::<GrayScaleFilter>::default())
             .add_plugin(ModifierPlugin::<Source>::default())
             .add_plugin(ModifierPlugin::<ColorFilter>::default())
-            .add_system(add_ui)
-            .add_system(edit_ui);
+            .add_system(mods_ui.after(MenuBarSystemLabel));
     }
 }
 
@@ -57,43 +56,31 @@ pub struct ModifierCollection {
     pub list: Vec<ModifierIndex>,
 }
 
-fn add_ui(
-    mut egui_context: ResMut<EguiContext>,
-    collection: Res<ModifierCollection>,
-    mut editor: ResMut<Editor>,
-) {
-    egui::Window::new("Add Modifier").show(egui_context.ctx_mut(), |ui| {
-        for modifier in collection.list.iter() {
-            if ui.button(modifier.name.as_str()).clicked() {
-                editor.add_mod(modifier)
-            }
-        }
-    });
-}
-
 fn show_selections(ui: &mut Ui, modification: &mut Modification) {
-    CollapsingHeader::new(format!(
-        "selections ({})",
-        modification.get_selection().len()
-    ))
-    .default_open(true)
-    .enabled(!modification.get_selection().is_empty())
-    .show(ui, |ui| {
-        let mut remove_selection = None;
-        for (index, selection) in modification.get_selection().iter().enumerate() {
-            ui.label(selection.index.name.as_str());
-            ui.menu_button("remove", |ui| {
-                if ui.button("sure?").clicked() {
-                    remove_selection = Some(index);
-                    ui.close_menu();
-                }
-            });
-        }
+    let id = ui.make_persistent_id(modification.id);
+    egui::collapsing_header::CollapsingState::load_with_default_open(ui.ctx(), id, true)
+        .show_header(ui, |ui| {
+            ui.label(format!(
+                "selections ({})",
+                modification.get_selection().len()
+            ));
+        })
+        .body(|ui| {
+            let mut remove_selection = None;
+            for (index, selection) in modification.get_selection().iter().enumerate() {
+                ui.label(selection.index.name.as_str());
+                ui.menu_button("remove", |ui| {
+                    if ui.button("sure?").clicked() {
+                        remove_selection = Some(index);
+                        ui.close_menu();
+                    }
+                });
+            }
 
-        if let Some(index) = remove_selection {
-            modification.remove_selection(index);
-        }
-    });
+            if let Some(index) = remove_selection {
+                modification.remove_selection(index);
+            }
+        });
 }
 
 fn show_modifier(
@@ -104,6 +91,7 @@ fn show_modifier(
 ) -> bool {
     let mut remove = false;
     let id = ui.make_persistent_id(modification.id);
+
     egui::collapsing_header::CollapsingState::load_with_default_open(ui.ctx(), id, true)
         .show_header(ui, |ui| {
             ui.label(format!("#{index}"));
@@ -158,9 +146,28 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor) {
     }
 }
 
-fn edit_ui(mut egui_context: ResMut<EguiContext>, mut editor: ResMut<Editor>) {
+pub fn mods_ui(
+    mut egui_context: ResMut<EguiContext>,
+    mut editor: ResMut<Editor>,
+    mod_collection: Res<ModifierCollection>,
+) {
     let name = "Modifiers";
-    egui::Window::new(format!("{name} ({})", editor.get_mods().len()))
-        .id(Id::new(name))
-        .show(egui_context.ctx_mut(), |ui| show_mods(ui, &mut *editor));
+
+    egui::SidePanel::right(name)
+        .resizable(true)
+        .show(egui_context.ctx_mut(), |ui| {
+            ui.vertical_centered(|ui| {
+                ui.heading(format!("{name} ({})", editor.get_mods().len()));
+                ui.separator();
+                ui.menu_button("add modifier", |ui| {
+                    for modifier in mod_collection.list.iter() {
+                        if ui.button(modifier.name.as_str()).clicked() {
+                            editor.add_mod(modifier)
+                        }
+                    }
+                })
+            });
+            ui.separator();
+            show_mods(ui, &mut editor)
+        });
 }

@@ -9,7 +9,8 @@ pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(ui).add_system(events);
+        app.add_system(ui.label(MenuBarSystemLabel))
+            .add_system(events);
     }
 }
 
@@ -21,6 +22,9 @@ fn events(mut event_reader: EventReader<FilePickerEvent>, mut editor: ResMut<Edi
         }
     }
 }
+
+#[derive(SystemLabel)]
+pub struct MenuBarSystemLabel;
 
 fn ui(
     mut egui_context: ResMut<EguiContext>,
