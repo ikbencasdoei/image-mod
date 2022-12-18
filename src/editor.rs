@@ -20,7 +20,6 @@ impl Plugin for EditorPlugin {
 pub struct Editor {
     mods: Vec<Modification>,
     pub path: Option<PathBuf>,
-    selected_mod: Option<Uuid>,
 }
 
 impl Editor {
@@ -57,7 +56,6 @@ impl Editor {
     }
 
     pub fn insert_mod(&mut self, modifier: Modification) {
-        self.selected_mod = Some(modifier.id);
         self.mods.push(modifier);
     }
 
@@ -65,10 +63,6 @@ impl Editor {
         let mut new = Modification::new_from_index(index.clone());
         new.add_selection(CanvasSelection);
         self.insert_mod(new)
-    }
-
-    fn get_mod(&mut self, id: Uuid) -> Option<&mut Modification> {
-        self.mods.iter_mut().find(|item| item.id == id)
     }
 
     fn get_mod_index(&mut self, id: Uuid) -> Option<usize> {
@@ -79,23 +73,9 @@ impl Editor {
             .map(|item| item.0)
     }
 
-    pub fn add_selection(&mut self, index: &SelectorIndex) {
-        if let Some(id) = self.selected_mod {
-            if let Some(modifier) = self.get_mod(id) {
-                modifier.add_selection_from_index(index.clone());
-            }
-        }
-    }
-
     pub fn remove_mod(&mut self, id: Uuid) {
         if let Some(index) = self.get_mod_index(id) {
             self.mods.remove(index);
-
-            if let Some(selected) = self.selected_mod {
-                if selected == id {
-                    self.selected_mod = None;
-                }
-            }
 
             if let Some(modification) = self.mods.get_mut(index + 1) {
                 modification.cache = None;
@@ -109,18 +89,5 @@ impl Editor {
 
     pub fn get_mods(&self) -> &Vec<Modification> {
         &self.mods
-    }
-
-    pub fn select_mod(&mut self, id: Uuid) -> Result<(), &str> {
-        if self.get_mod_index(id).is_some() {
-            self.selected_mod = Some(id);
-            Ok(())
-        } else {
-            Err("modifier doesnt exist")
-        }
-    }
-
-    pub fn get_selected_mod(&self) -> Option<Uuid> {
-        self.selected_mod
     }
 }
