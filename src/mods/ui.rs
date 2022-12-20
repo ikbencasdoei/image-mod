@@ -6,6 +6,7 @@ use bevy_egui::{
     EguiContext,
 };
 use dyn_clone::DynClone;
+use uuid::Uuid;
 
 use crate::{editor::Editor, ui::MenuBarSystemLabel};
 
@@ -21,7 +22,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(ModifierPlugin::<GrayScaleFilter>::default())
             .add_plugin(ModifierPlugin::<Source>::default())
             .add_plugin(ModifierPlugin::<ColorFilter>::default())
-            .add_system(mods_ui.after(MenuBarSystemLabel));
+            .add_system(mods_ui.after(MenuBarSystemLabel))
             .add_system(current_mod_ui.after(mods_ui));
     }
 }
@@ -97,6 +98,7 @@ fn show_modifier(
     ui: &mut Ui,
     modification: &mut Modification,
     index: usize,
+    selected: &mut Option<Uuid>,
     sel_collection: &SelectorCollection,
 ) -> bool {
     let mut remove = false;
@@ -104,7 +106,16 @@ fn show_modifier(
 
     egui::collapsing_header::CollapsingState::load_with_default_open(ui.ctx(), id, true)
         .show_header(ui, |ui| {
-            ui.label(format!("#{index} {}", modification.index.name.as_str()));
+            ui.label(format!("#{index}"));
+            if ui
+                .toggle_value(
+                    &mut (*selected == Some(modification.id)),
+                    modification.index.name.as_str(),
+                )
+                .clicked()
+            {
+                *selected = Some(modification.id);
+            }
             ui.menu_button("remove", |ui| {
                 if ui.button("sure?").clicked() {
                     remove = true;
@@ -130,8 +141,9 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor, sel_collection: &SelectorCollecti
         ui.label("(empty)");
     } else {
         let mut remove_mod = None;
+        let mut selected_mod = editor.get_selected_mod();
         for (i, modification) in editor.iter_mut_mods().enumerate().rev() {
-            if show_modifier(ui, modification, i, sel_collection) {
+            if show_modifier(ui, modification, i, &mut selected_mod, sel_collection) {
                 remove_mod = Some(modification.id);
             }
         }
@@ -139,10 +151,14 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor, sel_collection: &SelectorCollecti
         if let Some(index) = remove_mod {
             editor.remove_mod(index);
         }
+
+        if let Some(id) = selected_mod {
+            editor.select_mod(id).ok();
+        }
     }
 }
 
-fn mods_ui(
+pub fn mods_ui(
     mut egui_context: ResMut<EguiContext>,
     mut editor: ResMut<Editor>,
     mod_collection: Res<ModifierCollection>,
