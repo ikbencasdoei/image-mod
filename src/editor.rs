@@ -62,8 +62,7 @@ impl Editor {
     }
 
     pub fn add_mod(&mut self, index: &ModifierIndex) {
-        let mut new = Modification::new_from_index(index.clone());
-        new.add_selection(CanvasSelection);
+        let new = Modification::new_from_index(index.clone());
         self.insert_mod(new)
     }
 
@@ -120,7 +119,26 @@ impl Editor {
         }
     }
 
-    pub fn get_selected_mod(&self) -> Option<Uuid> {
+    pub fn get_selected_mod(&mut self) -> Option<&mut Modification> {
+        self.selected_mod.map(|id| self.get_mod(id)).flatten()
+    }
+
+    pub fn get_selected_mod_id(&self) -> Option<Uuid> {
         self.selected_mod
+    }
+
+    pub fn use_mod(&mut self, index: &ModifierIndex) {
+        let mut to_remove = None;
+        if let Some(modification) = self.get_selected_mod() {
+            if modification.get_selection().is_empty() {
+                to_remove = Some(modification.id)
+            }
+        }
+
+        if let Some(id) = to_remove {
+            self.remove_mod(id);
+        }
+
+        self.add_mod(index);
     }
 }

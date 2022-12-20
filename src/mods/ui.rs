@@ -141,7 +141,7 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor, sel_collection: &SelectorCollecti
         ui.label("(empty)");
     } else {
         let mut remove_mod = None;
-        let mut selected_mod = editor.get_selected_mod();
+        let mut selected_mod = editor.get_selected_mod_id();
         for (i, modification) in editor.iter_mut_mods().enumerate().rev() {
             if show_modifier(ui, modification, i, &mut selected_mod, sel_collection) {
                 remove_mod = Some(modification.id);
@@ -204,18 +204,27 @@ fn current_mod_ui(
                     });
                     ui.separator();
                     egui::ScrollArea::vertical().show(ui, |ui| {
-                        for modifier in mod_collection.list.iter() {
-                            ui.radio_value(
-                                &mut editor.selected_mod,
-                                Some(modifier.clone()),
-                                &modifier.name,
-                            );
+                        for index in mod_collection.list.iter() {
+                            if ui
+                                .radio(
+                                    editor.get_selected_mod().map(|modifier| &modifier.index)
+                                        == Some(index),
+                                    &index.name,
+                                )
+                                .clicked()
+                            {
+                                editor.use_mod(index)
+                            }
                         }
                     });
                     ui.separator();
                 });
             egui::ScrollArea::vertical().show(ui, |ui| {
-                ui.heading("");
+                if let Some(modification) = editor.get_selected_mod() {
+                    modification.modifier.view(ui);
+                } else {
+                    ui.label("no selected modifier");
+                }
             });
         });
 }
