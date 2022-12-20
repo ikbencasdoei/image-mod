@@ -207,7 +207,9 @@ fn current_mod_ui(
                         for index in mod_collection.list.iter() {
                             if ui
                                 .radio(
-                                    editor.get_selected_mod().map(|modifier| &modifier.index)
+                                    editor
+                                        .get_selected_mod_mut()
+                                        .map(|modifier| &modifier.index)
                                         == Some(index),
                                     &index.name,
                                 )
@@ -220,7 +222,7 @@ fn current_mod_ui(
                     ui.separator();
                 });
             egui::ScrollArea::vertical().show(ui, |ui| {
-                if let Some(modification) = editor.get_selected_mod() {
+                if let Some(modification) = editor.get_selected_mod_mut() {
                     modification.modifier.view(ui);
                 } else {
                     ui.label("no selected modifier");

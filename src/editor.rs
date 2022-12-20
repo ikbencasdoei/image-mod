@@ -66,8 +66,12 @@ impl Editor {
         self.insert_mod(new)
     }
 
-    fn get_mod(&mut self, id: Uuid) -> Option<&mut Modification> {
+    fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Modification> {
         self.mods.iter_mut().find(|item| item.id == id)
+    }
+
+    fn get_mod(&self, id: Uuid) -> Option<&Modification> {
+        self.mods.iter().find(|item| item.id == id)
     }
 
     fn get_mod_index(&mut self, id: Uuid) -> Option<usize> {
@@ -80,7 +84,7 @@ impl Editor {
 
     pub fn add_selection(&mut self, index: &SelectorIndex) {
         if let Some(id) = self.selected_mod {
-            if let Some(modifier) = self.get_mod(id) {
+            if let Some(modifier) = self.get_mod_mut(id) {
                 modifier.add_selection_from_index(index.clone());
             }
         }
@@ -119,7 +123,11 @@ impl Editor {
         }
     }
 
-    pub fn get_selected_mod(&mut self) -> Option<&mut Modification> {
+    pub fn get_selected_mod_mut(&mut self) -> Option<&mut Modification> {
+        self.selected_mod.map(|id| self.get_mod_mut(id)).flatten()
+    }
+
+    pub fn get_selected_mod(&self) -> Option<&Modification> {
         self.selected_mod.map(|id| self.get_mod(id)).flatten()
     }
 
@@ -129,7 +137,7 @@ impl Editor {
 
     pub fn use_mod(&mut self, index: &ModifierIndex) {
         let mut to_remove = None;
-        if let Some(modification) = self.get_selected_mod() {
+        if let Some(modification) = self.get_selected_mod_mut() {
             if modification.get_selection().is_empty() {
                 to_remove = Some(modification.id)
             }
