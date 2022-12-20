@@ -12,7 +12,7 @@ use crate::{editor::Editor, ui::MenuBarSystemLabel};
 
 use crate::prelude::*;
 
-use super::collection::filters::color::ColorFilter;
+use super::collection::color::ColorFilter;
 
 pub struct ModifierCollectionPlugin;
 
