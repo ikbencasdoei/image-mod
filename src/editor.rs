@@ -20,6 +20,7 @@ impl Plugin for EditorPlugin {
 pub struct Editor {
     mods: Vec<Modification>,
     pub path: Option<PathBuf>,
+    pub selected_mod: Option<ModifierIndex>,
 }
 
 impl Editor {

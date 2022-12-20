@@ -2,7 +2,7 @@ use std::any::TypeId;
 
 use bevy::prelude::*;
 use bevy_egui::{
-    egui::{self, Ui},
+    egui::{self, Frame, Ui},
     EguiContext,
 };
 use dyn_clone::DynClone;
@@ -22,6 +22,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(ModifierPlugin::<Source>::default())
             .add_plugin(ModifierPlugin::<ColorFilter>::default())
             .add_system(mods_ui.after(MenuBarSystemLabel));
+            .add_system(current_mod_ui.after(mods_ui));
     }
 }
 
@@ -166,5 +167,39 @@ fn mods_ui(
             });
             ui.separator();
             show_mods(ui, &mut editor, &sel_collection)
+        });
+}
+
+fn current_mod_ui(
+    mut egui_context: ResMut<EguiContext>,
+    mod_collection: Res<ModifierCollection>,
+    mut editor: ResMut<Editor>,
+) {
+    let name = "Tools";
+    egui::SidePanel::left(name)
+        .resizable(true)
+        .show(egui_context.ctx_mut(), |ui| {
+            egui::TopBottomPanel::top("list")
+                .resizable(true)
+                .frame(Frame { ..default() })
+                .show_inside(ui, |ui| {
+                    ui.vertical_centered(|ui| {
+                        ui.heading(format!("{name}"));
+                    });
+                    ui.separator();
+                    egui::ScrollArea::vertical().show(ui, |ui| {
+                        for modifier in mod_collection.list.iter() {
+                            ui.radio_value(
+                                &mut editor.selected_mod,
+                                Some(modifier.clone()),
+                                &modifier.name,
+                            );
+                        }
+                    });
+                    ui.separator();
+                });
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                ui.heading("");
+            });
         });
 }
