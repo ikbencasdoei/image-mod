@@ -149,4 +149,18 @@ impl Editor {
 
         self.add_mod(index);
     }
+
+    pub fn get_when_selected<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
+        self.get_selected_mod()
+            .map(|modification| modification.get_modifier())
+            .flatten()
+    }
+
+    pub fn get_when_selected_mut<T: Modifier + Default + Send + Sync + 'static>(
+        &mut self,
+    ) -> Option<&mut T> {
+        self.get_selected_mod_mut()
+            .map(|modification| modification.get_modifier_mut())
+            .flatten()
+    }
 }

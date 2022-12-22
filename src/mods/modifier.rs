@@ -113,6 +113,30 @@ impl Modification {
         self.selection.remove(index);
         self.cache = None;
     }
+
+    pub fn get_modifier<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
+        if self.index == T::get_index() {
+            unsafe {
+                let ptr: *const _ = &*self.modifier;
+                Some(&*ptr.cast())
+            }
+        } else {
+            None
+        }
+    }
+
+    pub fn get_modifier_mut<T: Modifier + Default + Send + Sync + 'static>(
+        &mut self,
+    ) -> Option<&mut T> {
+        if self.index == T::get_index() {
+            unsafe {
+                let ptr: *mut _ = &mut *self.modifier;
+                Some(&mut *ptr.cast())
+            }
+        } else {
+            None
+        }
+    }
 }
 
 pub enum ModOutput {
