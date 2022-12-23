@@ -66,6 +66,18 @@ impl Image {
         UVec2::new(x, y)
     }
 
+    pub fn coords(&self) -> Vec<UVec2> {
+        let mut vec = Vec::new();
+        let size = self.size();
+
+        for x in 0..size.x {
+            for y in 0..size.y {
+                vec.push(UVec2::new(x, y));
+            }
+        }
+        vec
+    }
+
     pub fn get_pixel(&self, position: UVec2) -> Result<Color, &str> {
         if self.contains_pixel(position) {
             let Rgba([r, g, b, a]) = *self.image.get_pixel(position.x, position.y);
