@@ -130,10 +130,12 @@ impl Editor {
     pub fn use_mod(&mut self, index: &ModifierIndex) {
         let mut to_remove = None;
         if let Some(modification) = self.get_selected_mod_mut() {
-            // if modification.get_selection().is_empty() {
-            //     to_remove = Some(modification.id)
-            // }
-            todo!();
+            if modification
+                .modifier
+                .eq(&*modification.index.instancer.instance() as &dyn DynPartialEq)
+            {
+                to_remove = Some(modification.id)
+            }
         }
 
         if let Some(id) = to_remove {
