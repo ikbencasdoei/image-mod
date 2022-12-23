@@ -82,14 +82,6 @@ impl Editor {
             .map(|item| item.0)
     }
 
-    pub fn add_selection(&mut self, index: &SelectorIndex) {
-        if let Some(id) = self.selected_mod {
-            if let Some(modifier) = self.get_mod_mut(id) {
-                modifier.add_selection_from_index(index.clone());
-            }
-        }
-    }
-
     pub fn remove_mod(&mut self, id: Uuid) {
         if let Some(index) = self.get_mod_index(id) {
             self.mods.remove(index);
@@ -138,9 +130,10 @@ impl Editor {
     pub fn use_mod(&mut self, index: &ModifierIndex) {
         let mut to_remove = None;
         if let Some(modification) = self.get_selected_mod_mut() {
-            if modification.get_selection().is_empty() {
-                to_remove = Some(modification.id)
-            }
+            // if modification.get_selection().is_empty() {
+            //     to_remove = Some(modification.id)
+            // }
+            todo!();
         }
 
         if let Some(id) = to_remove {

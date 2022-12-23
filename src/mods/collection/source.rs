@@ -3,7 +3,6 @@ use std::{
     str::FromStr,
 };
 
-use bevy::prelude::*;
 use bevy_egui::egui::{TextEdit, Ui};
 
 use crate::prelude::{Image, *};
@@ -22,7 +21,7 @@ impl Source {
 }
 
 impl Modifier for Source {
-    fn apply(&mut self, _: Option<Image>, _: Vec<UVec2>) -> Option<Image> {
+    fn apply(&mut self, _: Option<Image>) -> Option<Image> {
         Image::open(&self.path).ok()
     }
 

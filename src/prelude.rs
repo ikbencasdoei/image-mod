@@ -10,11 +10,6 @@ pub use crate::{
         plugin::{DynPartialEq, Modifier, ModifierPlugin},
         ui::{ModifierCollection, ModifierCollectionPlugin, ModifierIndex},
     },
-    selectors::{
-        collection::canvas::CanvasSelection,
-        plugin::{Selection, Selector, SelectorPlugin},
-        ui::{SelectorCollection, SelectorCollectionPlugin, SelectorIndex},
-    },
     ui::UiPlugin,
     view::{View, ViewPlugin},
 };

@@ -1,4 +1,3 @@
-use bevy::prelude::UVec2;
 use uuid::Uuid;
 
 use crate::prelude::{Image, *};
@@ -7,7 +6,6 @@ pub struct Modification {
     pub index: ModifierIndex,
     pub id: Uuid,
     pub modifier: Box<dyn Modifier + Send + Sync>,
-    selection: Vec<Selection>,
     pub cache: Option<ModCache>,
 }
 
@@ -20,7 +18,6 @@ impl Modification {
             index: M::get_index(),
             id: Uuid::new_v4(),
             modifier: Box::new(modifier),
-            selection: Vec::new(),
             cache: None,
         }
     }
@@ -32,36 +29,8 @@ impl Modification {
             index: index,
             id: Uuid::new_v4(),
             modifier,
-            selection: Vec::new(),
             cache: None,
         }
-    }
-
-    pub fn add_selection<S>(&mut self, selection: S)
-    where
-        S: Selector + Default + Send + Sync + 'static,
-    {
-        self.selection.push(Selection {
-            selector: Box::new(selection),
-            index: S::get_index(),
-        });
-        self.cache = None;
-    }
-
-    pub fn add_selection_from_index(&mut self, index: SelectorIndex) {
-        self.selection.push(Selection {
-            selector: index.instancer.instance(),
-            index: index,
-        });
-        self.cache = None;
-    }
-
-    pub fn get_pixels(&self, image: &Option<Image>) -> Vec<UVec2> {
-        let mut selection = Vec::new();
-        for selector in self.selection.iter() {
-            selection.extend_from_slice(&selector.selector.get_pixels(image));
-        }
-        selection
     }
 
     pub fn get_output(&mut self, inputs: &mut [&mut Modification]) -> ModOutput {
@@ -95,23 +64,13 @@ impl Modification {
     fn apply(&mut self, input: Option<Image>) -> Option<Image> {
         let last_input = input.is_some();
         let mut state = dyn_clone::clone(&self.modifier);
-        let pixels = self.get_pixels(&input);
-        let output = state.apply(input, pixels);
+        let output = state.apply(input);
         self.cache = Some(ModCache {
             modifier: dyn_clone::clone(&self.modifier),
             image: output.clone(),
             last_input,
         });
         output
-    }
-
-    pub fn get_selection(&self) -> &Vec<Selection> {
-        &self.selection
-    }
-
-    pub fn remove_selection(&mut self, index: usize) {
-        self.selection.remove(index);
-        self.cache = None;
     }
 
     pub fn get_modifier<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {

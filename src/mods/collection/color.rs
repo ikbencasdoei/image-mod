@@ -9,8 +9,10 @@ pub struct ColorFilter {
 }
 
 impl Modifier for ColorFilter {
-    fn apply(&mut self, mut input: Option<Image>, selection: Vec<UVec2>) -> Option<Image> {
+    fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
         if let Some(image) = &mut input {
+            let selection = [];
+            todo!();
             for position in selection {
                 image.set_pixel(position, Color::from(self.color)).ok();
             }

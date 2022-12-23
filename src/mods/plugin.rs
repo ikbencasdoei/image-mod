@@ -10,7 +10,7 @@ use dyn_clone::DynClone;
 use crate::prelude::{Image, *};
 
 pub trait Modifier: DynClone + DynPartialEq {
-    fn apply(&mut self, input: Option<Image>, selection: Vec<UVec2>) -> Option<Image>;
+    fn apply(&mut self, input: Option<Image>) -> Option<Image>;
 
     fn get_index() -> ModifierIndex
     where
