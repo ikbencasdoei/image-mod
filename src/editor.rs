@@ -127,24 +127,6 @@ impl Editor {
         self.selected_mod
     }
 
-    pub fn use_mod(&mut self, index: &ModifierIndex) {
-        let mut to_remove = None;
-        if let Some(modification) = self.get_selected_mod_mut() {
-            if modification
-                .modifier
-                .eq(&*modification.index.instancer.instance() as &dyn DynPartialEq)
-            {
-                to_remove = Some(modification.id)
-            }
-        }
-
-        if let Some(id) = to_remove {
-            self.remove_mod(id);
-        }
-
-        self.add_mod(index);
-    }
-
     pub fn get_when_selected<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
         self.get_selected_mod()
             .map(|modification| modification.get_modifier())
