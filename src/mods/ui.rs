@@ -2,7 +2,7 @@ use std::any::TypeId;
 
 use bevy::prelude::*;
 use bevy_egui::{
-    egui::{self, Frame, Ui},
+    egui::{self, Ui},
     EguiContext,
 };
 use dyn_clone::DynClone;

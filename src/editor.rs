@@ -70,9 +70,9 @@ impl Editor {
         self.mods.iter_mut().find(|item| item.id == id)
     }
 
-    fn get_mod(&self, id: Uuid) -> Option<&Modification> {
-        self.mods.iter().find(|item| item.id == id)
-    }
+    // fn get_mod(&self, id: Uuid) -> Option<&Modification> {
+    //     self.mods.iter().find(|item| item.id == id)
+    // }
 
     fn get_mod_index(&mut self, id: Uuid) -> Option<usize> {
         self.mods
@@ -119,19 +119,19 @@ impl Editor {
         self.selected_mod.map(|id| self.get_mod_mut(id)).flatten()
     }
 
-    pub fn get_selected_mod(&self) -> Option<&Modification> {
-        self.selected_mod.map(|id| self.get_mod(id)).flatten()
-    }
+    // pub fn get_selected_mod(&self) -> Option<&Modification> {
+    //     self.selected_mod.map(|id| self.get_mod(id)).flatten()
+    // }
 
     pub fn get_selected_mod_id(&self) -> Option<Uuid> {
         self.selected_mod
     }
 
-    pub fn get_when_selected<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
-        self.get_selected_mod()
-            .map(|modification| modification.get_modifier())
-            .flatten()
-    }
+    // pub fn get_when_selected<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
+    //     self.get_selected_mod()
+    //         .map(|modification| modification.get_modifier())
+    //         .flatten()
+    // }
 
     pub fn get_when_selected_mut<T: Modifier + Default + Send + Sync + 'static>(
         &mut self,
