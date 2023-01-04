@@ -1,26 +1,47 @@
 use std::marker::PhantomData;
 
 use bevy::prelude::{Image as BevyImage, *};
-use bevy_egui::EguiContext;
+use bevy_egui::{egui::Ui, EguiContext};
 
-use crate::prelude::*;
+use crate::prelude::{Color, Image, *};
 
 #[derive(Default)]
 pub struct PencilPlugin<T>(PhantomData<T>);
 
-impl<T: Pencil + Modifier + Default + Send + Sync + 'static> Plugin for PencilPlugin<T> {
+impl<T: Pencil + PartialEq + Clone + Default + Send + Sync + 'static> Plugin for PencilPlugin<T> {
     fn build(&self, app: &mut App) {
-        app.init_resource::<ModifierCollection>()
-            .add_plugin(ModifierPlugin::<T>::default())
+        app.add_plugin(ModifierPlugin::<PencilMod<T>>::default())
             .add_system(update::<T>);
     }
 }
 
 pub trait Pencil {
-    fn add_pixel(&mut self, pixel: UVec2);
+    fn get_pixel(&self, pixel: UVec2) -> Color;
+    fn view(&mut self, _ui: &mut Ui) {}
 }
 
-fn update<T: Pencil + Modifier + Default + Send + Sync + 'static>(
+#[derive(Clone, PartialEq, Default)]
+pub struct PencilMod<T> {
+    pixels: Vec<UVec2>,
+    pencil: T,
+}
+
+impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T> {
+    fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
+        if let Some(image) = &mut input {
+            for pixel in self.pixels.iter() {
+                image.set_pixel(*pixel, self.pencil.get_pixel(*pixel)).ok();
+            }
+        }
+        input
+    }
+
+    fn view(&mut self, ui: &mut Ui) {
+        self.pencil.view(ui);
+    }
+}
+
+fn update<T: Pencil + Default + PartialEq + Clone + Send + Sync + 'static>(
     mut editor: ResMut<Editor>,
     mut cursor_events: EventReader<CursorMoved>,
     mut mouse_pos: Local<Vec2>,
@@ -38,7 +59,7 @@ fn update<T: Pencil + Modifier + Default + Send + Sync + 'static>(
         *last_mouse_pos = None;
     }
 
-    if let Some(pencil) = editor.get_when_selected_mut::<T>() {
+    if let Some(pencil) = editor.get_when_selected_mut::<PencilMod<T>>() {
         if (mouse_input.pressed(MouseButton::Left)) && !egui_context.ctx_mut().wants_pointer_input()
         {
             for (transform, handle) in query.iter() {
@@ -61,12 +82,12 @@ fn update<T: Pencil + Modifier + Default + Send + Sync + 'static>(
                             let position =
                                 last_pixel.lerp(pixel, 1.0 / delta.length().ceil() * (i as f32));
 
-                            pencil.add_pixel(position.as_uvec2());
+                            pencil.pixels.push(position.as_uvec2());
                         }
                     }
                 }
 
-                pencil.add_pixel(pixel.as_uvec2());
+                pencil.pixels.push(pixel.as_uvec2());
             }
         }
     }
