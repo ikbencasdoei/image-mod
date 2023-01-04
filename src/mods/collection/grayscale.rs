@@ -14,7 +14,7 @@ impl Modifier for GrayScaleFilter {
                     image
                         .set_pixel(
                             position,
-                            Color::from(BevyColor::rgba(sum, sum, sum, pixel.a())),
+                            Color::from(BevyColor::rgba(sum, sum, sum, pixel.a)),
                         )
                         .ok();
                 }

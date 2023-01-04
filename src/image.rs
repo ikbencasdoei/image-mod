@@ -45,11 +45,8 @@ impl Image {
 
     pub fn set_pixel(&mut self, position: UVec2, color: Color) -> Result<(), &str> {
         if self.contains_pixel(position) {
-            self.image.put_pixel(
-                position.x,
-                position.y,
-                Rgba(color.as_rgba_u32().to_le_bytes()),
-            );
+            self.image
+                .put_pixel(position.x, position.y, Rgba(color.as_rgba_u8()));
             Ok(())
         } else {
             Err("pixel outside image")

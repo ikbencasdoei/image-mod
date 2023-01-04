@@ -1,36 +1,58 @@
 use bevy::prelude::{Color as BevyColor, *};
 use bevy_egui::egui::Color32;
 
-#[derive(Deref, DerefMut, Clone, Copy, Debug, Default, PartialEq)]
-pub struct Color(BevyColor);
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Color {
+    pub r: f32,
+    pub g: f32,
+    pub b: f32,
+    pub a: f32,
+}
 
 impl Color {
     pub fn sum(self) -> f32 {
-        self.r() + self.g() + self.b()
+        self.r + self.g + self.b
+    }
+
+    pub fn rgba(r: f32, g: f32, b: f32, a: f32) -> Self {
+        Self { r, g, b, a }
+    }
+
+    pub fn rgba_u8(r: u8, g: u8, b: u8, a: u8) -> Self {
+        Self {
+            r: r as f32 / u8::MAX as f32,
+            g: g as f32 / u8::MAX as f32,
+            b: b as f32 / u8::MAX as f32,
+            a: a as f32 / u8::MAX as f32,
+        }
+    }
+
+    pub fn as_rgba_u8(self) -> [u8; 4] {
+        [
+            (self.r * u8::MAX as f32) as u8,
+            (self.g * u8::MAX as f32) as u8,
+            (self.b * u8::MAX as f32) as u8,
+            (self.a * u8::MAX as f32) as u8,
+        ]
     }
 }
 
 impl From<Color32> for Color {
     fn from(color: Color32) -> Self {
         let (r, g, b, a) = color.to_tuple();
-        Self(BevyColor::rgba_u8(r, g, b, a))
+
+        Self::rgba_u8(r, g, b, a)
     }
 }
 
 impl From<Vec4> for Color {
     fn from(color: Vec4) -> Self {
-        Self(BevyColor::from(color))
-    }
-}
-
-impl From<[u8; 4]> for Color {
-    fn from(color: [u8; 4]) -> Self {
-        Self(BevyColor::rgba_u8(color[0], color[1], color[2], color[3]))
+        Self::rgba(color.x, color.y, color.z, color.w)
     }
 }
 
 impl From<BevyColor> for Color {
     fn from(color: BevyColor) -> Self {
-        Self(color)
+        Self::rgba(color.r(), color.g(), color.b(), color.a())
     }
 }
