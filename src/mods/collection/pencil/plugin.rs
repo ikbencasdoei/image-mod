@@ -16,7 +16,7 @@ impl<T: Pencil + PartialEq + Clone + Default + Send + Sync + 'static> Plugin for
 }
 
 pub trait Pencil {
-    fn get_pixel(&mut self, pixel: UVec2) -> Color;
+    fn get_pixel(&mut self, pixel: UVec2, image: &mut Image) -> Option<Color>;
     fn view(&mut self, _ui: &mut Ui) {}
 }
 
@@ -30,7 +30,9 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
     fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
         if let Some(image) = &mut input {
             for pixel in self.pixels.iter() {
-                image.set_pixel(*pixel, self.pencil.get_pixel(*pixel)).ok();
+                if let Some(color) = self.pencil.get_pixel(*pixel, image) {
+                    image.set_pixel(*pixel, color).ok();
+                }
             }
         }
         input

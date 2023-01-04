@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_egui::egui::{Color32, Ui};
 
-use crate::prelude::Color;
+use crate::prelude::{Color, Image};
 
 use super::plugin::{Pencil, PencilPlugin};
 
@@ -27,8 +27,8 @@ impl Default for SimplePencil {
 }
 
 impl Pencil for SimplePencil {
-    fn get_pixel(&mut self, _: UVec2) -> Color {
-        Color::from(self.color)
+    fn get_pixel(&mut self, _: UVec2, _: &mut Image) -> Option<Color> {
+        Some(Color::from(self.color))
     }
 
     fn view(&mut self, ui: &mut Ui) {

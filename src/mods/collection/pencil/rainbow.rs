@@ -4,7 +4,7 @@ use bevy::{
 };
 use bevy_egui::egui;
 
-use crate::prelude::Color;
+use crate::prelude::{Color, Image};
 
 use super::plugin::{Pencil, PencilPlugin};
 
@@ -34,7 +34,7 @@ impl Default for RainbowPencil {
 }
 
 impl Pencil for RainbowPencil {
-    fn get_pixel(&mut self, pixel: UVec2) -> crate::prelude::Color {
+    fn get_pixel(&mut self, pixel: UVec2, _: &mut Image) -> Option<Color> {
         let color = hsv2rgb(self.color_hsv);
 
         if let Some(last_pixel) = self.last_pixel {
@@ -45,7 +45,7 @@ impl Pencil for RainbowPencil {
 
         self.last_pixel = Some(pixel);
 
-        Color::from(Vec4::from((color, 1.0)))
+        Some(Color::from(Vec4::from((color, 1.0))))
     }
 
     fn view(&mut self, ui: &mut egui::Ui) {
