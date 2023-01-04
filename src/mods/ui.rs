@@ -85,10 +85,6 @@ fn show_modifier(
             });
         })
         .body(|ui| {
-            if modification.cache.is_some() {
-                ui.label("cached");
-            }
-
             modification.modifier.view(ui);
         });
 
