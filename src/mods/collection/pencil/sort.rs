@@ -54,11 +54,11 @@ impl Pencil for PixelSorter {
             loop {
                 let next_position = current_position - direction;
 
-                let Ok(current_color) = image.get_pixel(current_position.as_uvec2()) else {
+                let Ok(current_color) = image.get_pixel_vec(current_position) else {
                     break;
                 };
 
-                let Ok(next_color) = image.get_pixel(next_position.as_uvec2()) else {
+                let Ok(next_color) = image.get_pixel_vec(next_position) else {
                     break;
                 };
 
@@ -77,11 +77,11 @@ impl Pencil for PixelSorter {
             loop {
                 let next_position = current_position + direction;
 
-                let Ok(current_color) = image.get_pixel(current_position.as_uvec2()) else {
+                let Ok(current_color) = image.get_pixel_vec(current_position) else {
                     break;
                 };
 
-                let Ok(next_color) = image.get_pixel(next_position.as_uvec2()) else {
+                let Ok(next_color) = image.get_pixel_vec(next_position) else {
                     break;
                 };
 
@@ -104,13 +104,13 @@ impl Pencil for PixelSorter {
         let mut colors = Vec::<Color>::new();
 
         for position in &positions {
-            colors.push(image.get_pixel(position.as_uvec2()).unwrap());
+            colors.push(image.get_pixel_vec(*position).unwrap());
         }
 
         colors.sort_by(|a, b| a.sum().total_cmp(&b.sum()));
 
         for (position, color) in positions.iter().zip(colors.iter()) {
-            image.set_pixel(position.as_uvec2(), *color).unwrap();
+            image.set_pixel_vec(*position, *color).unwrap();
         }
 
         None
