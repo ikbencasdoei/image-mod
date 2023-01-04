@@ -16,7 +16,7 @@ impl<T: Pencil + PartialEq + Clone + Default + Send + Sync + 'static> Plugin for
 }
 
 pub trait Pencil {
-    fn get_pixel(&self, pixel: UVec2) -> Color;
+    fn get_pixel(&mut self, pixel: UVec2) -> Color;
     fn view(&mut self, _ui: &mut Ui) {}
 }
 
