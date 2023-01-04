@@ -14,7 +14,7 @@ use crate::prelude::*;
 
 use super::collection::{
     color::ColorFilter,
-    pencil::{rainbow::RainbowPencilPlugin, simple::SimplePencilPlugin},
+    pencil::{rainbow::RainbowPencilPlugin, simple::SimplePencilPlugin, sort::SortPencilPlugin},
 };
 
 pub struct ModifierCollectionPlugin;
@@ -27,6 +27,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(ModifierPlugin::<ColorFilter>::default())
             .add_plugin(SimplePencilPlugin)
             .add_plugin(RainbowPencilPlugin)
+            .add_plugin(SortPencilPlugin)
             .add_system(mods_ui.after(MenuBarSystemLabel));
     }
 }
