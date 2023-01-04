@@ -62,9 +62,7 @@ impl Pencil for PixelSorter {
                     break;
                 };
 
-                if (current_color.as_rgba_linear().sum() - next_color.as_rgba_linear().sum()).abs()
-                    < self.threshold
-                {
+                if (current_color.sum() - next_color.sum()).abs() < self.threshold {
                     positions.push(next_position);
                 } else {
                     break;
@@ -87,9 +85,7 @@ impl Pencil for PixelSorter {
                     break;
                 };
 
-                if (current_color.as_rgba_linear().sum() - next_color.as_rgba_linear().sum()).abs()
-                    < self.threshold
-                {
+                if (current_color.sum() - next_color.sum()).abs() < self.threshold {
                     positions.push(next_position);
                 } else {
                     break;
