@@ -12,7 +12,7 @@ use crate::{editor::Editor, ui::MenuBarSystemLabel};
 
 use crate::prelude::*;
 
-use super::collection::color::ColorFilter;
+use super::collection::{color::ColorFilter, pencil::PencilPlugin};
 
 pub struct ModifierCollectionPlugin;
 
@@ -22,6 +22,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(ModifierPlugin::<GrayScaleFilter>::default())
             .add_plugin(ModifierPlugin::<Source>::default())
             .add_plugin(ModifierPlugin::<ColorFilter>::default())
+            .add_plugin(PencilPlugin)
             .add_system(mods_ui.after(MenuBarSystemLabel));
     }
 }
