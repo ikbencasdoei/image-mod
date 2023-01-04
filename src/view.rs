@@ -25,6 +25,32 @@ pub struct View {
     pub target_translation: Option<Vec3>,
 }
 
+impl View {
+    pub fn screen_to_pixel(
+        screen_coord: Vec2,
+        transform: &Transform,
+        windows: &Windows,
+        assets: &Assets<BevyImage>,
+        handle: &Handle<BevyImage>,
+    ) -> Vec2 {
+        let image_size = assets.get(handle).unwrap().size();
+
+        let window_size = {
+            let window = windows.get_primary().unwrap();
+            Vec2::new(window.width(), window.height())
+        };
+
+        let bottom_left_corner_on_screen =
+            (window_size - image_size * transform.scale.xy()) * 0.5 + transform.translation.xy();
+
+        let mut pixel = (screen_coord - bottom_left_corner_on_screen) / transform.scale.xy();
+
+        pixel.y = image_size.y - pixel.y;
+
+        pixel
+    }
+}
+
 fn setup(mut commands: Commands, mut assets: ResMut<Assets<BevyImage>>) {
     commands.spawn(Camera2dBundle::default());
 
