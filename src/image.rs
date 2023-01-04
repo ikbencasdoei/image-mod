@@ -43,6 +43,21 @@ impl Image {
         image
     }
 
+    pub fn set_pixel_vec(&mut self, position: Vec2, color: Color) -> Result<(), &str> {
+        self.set_pixel_ivec(
+            IVec2::new(position.x.round() as i32, position.y.round() as i32),
+            color,
+        )
+    }
+
+    pub fn set_pixel_ivec(&mut self, position: IVec2, color: Color) -> Result<(), &str> {
+        if position.x.is_negative() || position.y.is_negative() {
+            Err("negative value")
+        } else {
+            self.set_pixel(position.as_uvec2(), color)
+        }
+    }
+
     pub fn set_pixel(&mut self, position: UVec2, color: Color) -> Result<(), &str> {
         if self.contains_pixel(position) {
             self.image
@@ -73,6 +88,21 @@ impl Image {
             }
         }
         vec
+    }
+
+    pub fn get_pixel_vec(&self, position: Vec2) -> Result<Color, &str> {
+        self.get_pixel_ivec(IVec2::new(
+            position.x.round() as i32,
+            position.y.round() as i32,
+        ))
+    }
+
+    pub fn get_pixel_ivec(&self, position: IVec2) -> Result<Color, &str> {
+        if position.x.is_negative() || position.y.is_negative() {
+            Err("negative value")
+        } else {
+            self.get_pixel(position.as_uvec2())
+        }
     }
 
     pub fn get_pixel(&self, position: UVec2) -> Result<Color, &str> {
