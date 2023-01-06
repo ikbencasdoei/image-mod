@@ -10,7 +10,7 @@ pub struct ColorFilter {
 impl Modifier for ColorFilter {
     fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
         if let Some(image) = &mut input {
-            for position in image.coords().into_iter() {
+            for position in image.iter_coords() {
                 image.set_pixel(position, Color::from(self.color)).ok();
             }
         }

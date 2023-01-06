@@ -78,16 +78,10 @@ impl Image {
         UVec2::new(x, y)
     }
 
-    pub fn coords(&self) -> Vec<UVec2> {
-        let mut vec = Vec::new();
+    pub fn iter_coords(&self) -> impl Iterator<Item = UVec2> {
         let size = self.size();
 
-        for x in 0..size.x {
-            for y in 0..size.y {
-                vec.push(UVec2::new(x, y));
-            }
-        }
-        vec
+        (0..(size.x * size.y)).map(move |a| UVec2::new(a % size.x, a / size.x))
     }
 
     pub fn get_pixel_vec(&self, position: Vec2) -> Result<Color, &str> {
