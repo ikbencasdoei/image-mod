@@ -134,7 +134,7 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor) {
 pub fn mods_ui(
     mut egui_context: ResMut<EguiContext>,
     mut editor: ResMut<Editor>,
-    mod_collection: Res<ModifierCollection>,
+    mut mod_collection: ResMut<ModifierCollection>,
 ) {
     let name = "Modifiers";
 
@@ -145,6 +145,7 @@ pub fn mods_ui(
                 ui.heading(format!("{name} ({})", editor.get_mods().len()));
                 ui.separator();
                 ui.menu_button("add modifier", |ui| {
+                    mod_collection.list.sort_by(|a, b| a.name.cmp(&b.name));
                     for modifier in mod_collection.list.iter() {
                         if ui.button(modifier.name.as_str()).clicked() {
                             editor.add_mod(modifier);
