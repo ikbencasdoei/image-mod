@@ -6,14 +6,20 @@ use crate::prelude::{Image, *};
 
 #[derive(Clone, PartialEq)]
 pub struct Resize {
-    new_size: UVec2,
+    size: Size,
     filter: FilterType,
+}
+
+#[derive(Clone, PartialEq)]
+enum Size {
+    Absolute(UVec2),
+    Relative(Vec2),
 }
 
 impl Default for Resize {
     fn default() -> Self {
         Self {
-            new_size: UVec2::new(100, 100),
+            size: Size::Relative(Vec2::new(100.0, 100.0)),
             filter: FilterType::Gaussian,
         }
     }
@@ -22,21 +28,73 @@ impl Default for Resize {
 impl Modifier for Resize {
     fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
         if let Some(image) = &mut input {
-            image.resize(self.new_size, self.filter);
+            match self.size {
+                Size::Absolute(size) => image.resize(size, self.filter),
+                Size::Relative(size) => {
+                    let pixels = (image.size().as_vec2() * (size / 100.0))
+                        .as_uvec2()
+                        .max(UVec2::new(1, 1));
+                    image.resize(pixels, self.filter)
+                }
+            }
         }
         input
     }
 
     fn view(&mut self, ui: &mut Ui) {
-        ui.horizontal(|ui| {
-            ui.label("new height:");
-            ui.add(egui::DragValue::new(&mut self.new_size.x).clamp_range(1..=u32::MAX));
-        });
+        match self.size {
+            Size::Absolute(_) => {
+                if ui.checkbox(&mut false, "relative").changed() {
+                    self.size = Size::Relative(Vec2::new(100.0, 100.0))
+                }
+            }
+            Size::Relative(_) => {
+                if ui.checkbox(&mut true, "relative").changed() {
+                    self.size = Size::Absolute(UVec2::new(100, 100))
+                }
+            }
+        }
 
-        ui.horizontal(|ui| {
-            ui.label("new width:");
-            ui.add(egui::DragValue::new(&mut self.new_size.y).clamp_range(1..=u32::MAX));
-        });
+        match &mut self.size {
+            Size::Absolute(size) => {
+                ui.horizontal(|ui| {
+                    ui.label("new height:");
+                    ui.add(
+                        egui::DragValue::new(&mut size.x)
+                            .clamp_range(1..=u32::MAX)
+                            .suffix("px"),
+                    );
+                });
+
+                ui.horizontal(|ui| {
+                    ui.label("new width:");
+                    ui.add(
+                        egui::DragValue::new(&mut size.y)
+                            .clamp_range(1..=u32::MAX)
+                            .suffix("px"),
+                    );
+                });
+            }
+            Size::Relative(size) => {
+                ui.horizontal(|ui| {
+                    ui.label("new height:");
+                    ui.add(
+                        egui::DragValue::new(&mut size.x)
+                            .clamp_range(f32::MIN_POSITIVE..=f32::MAX)
+                            .suffix("%"),
+                    );
+                });
+
+                ui.horizontal(|ui| {
+                    ui.label("new width:");
+                    ui.add(
+                        egui::DragValue::new(&mut size.y)
+                            .clamp_range(f32::MIN_POSITIVE..=f32::MAX)
+                            .suffix("%"),
+                    );
+                });
+            }
+        }
 
         ui.horizontal(|ui| {
             ui.label("filter:");
