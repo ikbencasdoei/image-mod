@@ -10,15 +10,15 @@ pub struct Color {
 }
 
 impl Color {
-    pub fn sum(self) -> f32 {
+    pub fn sum_rgb(self) -> f32 {
         self.r + self.g + self.b
     }
 
-    pub fn rgba(r: f32, g: f32, b: f32, a: f32) -> Self {
+    pub fn from_rgba(r: f32, g: f32, b: f32, a: f32) -> Self {
         Self { r, g, b, a }
     }
 
-    pub fn rgba_u8(r: u8, g: u8, b: u8, a: u8) -> Self {
+    pub fn from_rgba_u8(r: u8, g: u8, b: u8, a: u8) -> Self {
         Self {
             r: r as f32 / u8::MAX as f32,
             g: g as f32 / u8::MAX as f32,
@@ -41,18 +41,18 @@ impl From<Color32> for Color {
     fn from(color: Color32) -> Self {
         let (r, g, b, a) = color.to_tuple();
 
-        Self::rgba_u8(r, g, b, a)
+        Self::from_rgba_u8(r, g, b, a)
     }
 }
 
 impl From<Vec4> for Color {
     fn from(color: Vec4) -> Self {
-        Self::rgba(color.x, color.y, color.z, color.w)
+        Self::from_rgba(color.x, color.y, color.z, color.w)
     }
 }
 
 impl From<BevyColor> for Color {
     fn from(color: BevyColor) -> Self {
-        Self::rgba(color.r(), color.g(), color.b(), color.a())
+        Self::from_rgba(color.r(), color.g(), color.b(), color.a())
     }
 }

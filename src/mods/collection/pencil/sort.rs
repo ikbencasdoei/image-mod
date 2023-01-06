@@ -62,7 +62,7 @@ impl Pencil for PixelSorter {
                     break;
                 };
 
-                if (current_color.sum() - next_color.sum()).abs() < self.threshold {
+                if (current_color.sum_rgb() - next_color.sum_rgb()).abs() < self.threshold {
                     positions.push(next_position);
                 } else {
                     break;
@@ -85,7 +85,7 @@ impl Pencil for PixelSorter {
                     break;
                 };
 
-                if (current_color.sum() - next_color.sum()).abs() < self.threshold {
+                if (current_color.sum_rgb() - next_color.sum_rgb()).abs() < self.threshold {
                     positions.push(next_position);
                 } else {
                     break;
@@ -107,7 +107,7 @@ impl Pencil for PixelSorter {
             colors.push(image.get_pixel_vec(*position).unwrap());
         }
 
-        colors.sort_by(|a, b| a.sum().total_cmp(&b.sum()));
+        colors.sort_by(|a, b| a.sum_rgb().total_cmp(&b.sum_rgb()));
 
         for (position, color) in positions.iter().zip(colors.iter()) {
             image.set_pixel_vec(*position, *color).unwrap();
@@ -127,7 +127,7 @@ impl Pencil for PixelSorter {
                     ui.add(
                         egui::DragValue::new(&mut self.threshold)
                             .speed(0.01)
-                            .clamp_range(0.0..=Color::from(BevyColor::WHITE).sum()),
+                            .clamp_range(0.0..=Color::from(BevyColor::WHITE).sum_rgb()),
                     );
                     ui.end_row();
                 }
