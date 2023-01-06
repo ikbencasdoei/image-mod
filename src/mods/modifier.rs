@@ -88,10 +88,8 @@ impl Modification {
         &mut self,
     ) -> Option<&mut T> {
         if self.index == T::get_index() {
-            unsafe {
-                let ptr: *mut _ = &mut *self.modifier;
-                Some(&mut *ptr.cast())
-            }
+            let ptr: *mut _ = &mut *self.modifier;
+            unsafe { Some(&mut *ptr.cast()) }
         } else {
             None
         }
