@@ -17,6 +17,7 @@ use super::collection::{
     color::ColorFilter,
     contrast::Contrast,
     hue::Hue,
+    invert::Invert,
     pencil::{rainbow::RainbowPencilPlugin, simple::SimplePencilPlugin, sort::SortPencilPlugin},
 };
 
@@ -31,6 +32,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(ModifierPlugin::<Hue>::default())
             .add_plugin(ModifierPlugin::<Brighten>::default())
             .add_plugin(ModifierPlugin::<Contrast>::default())
+            .add_plugin(ModifierPlugin::<Invert>::default())
             .add_plugin(SimplePencilPlugin)
             .add_plugin(RainbowPencilPlugin)
             .add_plugin(SortPencilPlugin)

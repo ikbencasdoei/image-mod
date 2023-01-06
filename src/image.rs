@@ -131,4 +131,8 @@ impl Image {
     pub fn contrast(&mut self, value: f32) {
         imageops::colorops::contrast_in_place(&mut self.image, value)
     }
+
+    pub fn invert(&mut self) {
+        imageops::colorops::invert(&mut self.image);
+    }
 }
