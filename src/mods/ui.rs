@@ -20,6 +20,7 @@ use super::collection::{
     hue::Hue,
     invert::Invert,
     pencil::{rainbow::RainbowPencilPlugin, simple::SimplePencilPlugin, sort::SortPencilPlugin},
+    resize::Resize,
 };
 
 pub struct ModifierCollectionPlugin;
@@ -35,6 +36,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(ModifierPlugin::<Contrast>::default())
             .add_plugin(ModifierPlugin::<Invert>::default())
             .add_plugin(ModifierPlugin::<Blur>::default())
+            .add_plugin(ModifierPlugin::<Resize>::default())
             .add_plugin(SimplePencilPlugin)
             .add_plugin(RainbowPencilPlugin)
             .add_plugin(SortPencilPlugin)

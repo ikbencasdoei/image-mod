@@ -4,7 +4,10 @@ use bevy::{
     prelude::{Color as BevyColor, Image as BevyImage, *},
     render::{render_resource::SamplerDescriptor, texture::ImageSampler},
 };
-use image::{imageops, DynamicImage, ImageError, Rgba, RgbaImage};
+use image::{
+    imageops::{self, FilterType},
+    DynamicImage, ImageError, Rgba, RgbaImage,
+};
 
 use crate::prelude::Color;
 
@@ -138,5 +141,9 @@ impl Image {
 
     pub fn blur(&mut self, sigma: f32) {
         self.image = imageops::blur(&self.image, sigma)
+    }
+
+    pub fn resize(&mut self, new_size: UVec2, filter: FilterType) {
+        self.image = imageops::resize(&self.image, new_size.x, new_size.y, filter);
     }
 }
