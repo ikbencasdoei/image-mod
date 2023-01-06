@@ -1,3 +1,4 @@
+pub mod blur;
 pub mod brighten;
 pub mod color;
 pub mod contrast;

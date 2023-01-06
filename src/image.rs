@@ -135,4 +135,8 @@ impl Image {
     pub fn invert(&mut self) {
         imageops::colorops::invert(&mut self.image);
     }
+
+    pub fn blur(&mut self, sigma: f32) {
+        self.image = imageops::blur(&self.image, sigma)
+    }
 }

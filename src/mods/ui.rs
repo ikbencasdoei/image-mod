@@ -13,6 +13,7 @@ use crate::{editor::Editor, ui::MenuBarSystemLabel};
 use crate::prelude::*;
 
 use super::collection::{
+    blur::Blur,
     brighten::Brighten,
     color::ColorFilter,
     contrast::Contrast,
@@ -33,6 +34,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(ModifierPlugin::<Brighten>::default())
             .add_plugin(ModifierPlugin::<Contrast>::default())
             .add_plugin(ModifierPlugin::<Invert>::default())
+            .add_plugin(ModifierPlugin::<Blur>::default())
             .add_plugin(SimplePencilPlugin)
             .add_plugin(RainbowPencilPlugin)
             .add_plugin(SortPencilPlugin)
