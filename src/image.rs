@@ -127,4 +127,8 @@ impl Image {
     pub fn brighten(&mut self, value: i32) {
         imageops::colorops::brighten_in_place(&mut self.image, value)
     }
+
+    pub fn contrast(&mut self, value: f32) {
+        imageops::colorops::contrast_in_place(&mut self.image, value)
+    }
 }

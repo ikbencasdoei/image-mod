@@ -15,6 +15,7 @@ use crate::prelude::*;
 use super::collection::{
     brighten::Brighten,
     color::ColorFilter,
+    contrast::Contrast,
     hue::Hue,
     pencil::{rainbow::RainbowPencilPlugin, simple::SimplePencilPlugin, sort::SortPencilPlugin},
 };
@@ -29,6 +30,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(ModifierPlugin::<ColorFilter>::default())
             .add_plugin(ModifierPlugin::<Hue>::default())
             .add_plugin(ModifierPlugin::<Brighten>::default())
+            .add_plugin(ModifierPlugin::<Contrast>::default())
             .add_plugin(SimplePencilPlugin)
             .add_plugin(RainbowPencilPlugin)
             .add_plugin(SortPencilPlugin)
