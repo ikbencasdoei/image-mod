@@ -1,3 +1,4 @@
+pub mod brighten;
 pub mod color;
 pub mod grayscale;
 pub mod hue;

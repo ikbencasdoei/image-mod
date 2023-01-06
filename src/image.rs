@@ -123,4 +123,8 @@ impl Image {
     pub fn huerotate(&mut self, degrees: i32) {
         imageops::colorops::huerotate_in_place(&mut self.image, degrees);
     }
+
+    pub fn brighten(&mut self, value: i32) {
+        imageops::colorops::brighten_in_place(&mut self.image, value)
+    }
 }
