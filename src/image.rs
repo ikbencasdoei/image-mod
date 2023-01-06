@@ -119,4 +119,8 @@ impl Image {
     pub fn grayscale(&mut self) {
         self.image = imageops::colorops::grayscale_with_type_alpha(&self.image);
     }
+
+    pub fn huerotate(&mut self, degrees: i32) {
+        imageops::colorops::huerotate_in_place(&mut self.image, degrees);
+    }
 }
