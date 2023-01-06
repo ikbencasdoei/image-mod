@@ -4,7 +4,7 @@ use bevy::{
     prelude::{Color as BevyColor, Image as BevyImage, *},
     render::{render_resource::SamplerDescriptor, texture::ImageSampler},
 };
-use image::{DynamicImage, ImageError, Rgba, RgbaImage};
+use image::{imageops, DynamicImage, ImageError, Rgba, RgbaImage};
 
 use crate::prelude::Color;
 
@@ -114,5 +114,9 @@ impl Image {
 
     pub fn save(&self, path: impl AsRef<Path>) -> Result<(), ImageError> {
         self.image.save(path)
+    }
+
+    pub fn grayscale(&mut self) {
+        self.image = imageops::colorops::grayscale_with_type_alpha(&self.image);
     }
 }
