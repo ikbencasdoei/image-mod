@@ -50,7 +50,7 @@ impl Editor {
         };
 
         if let Some(modification) = modification.get_mut(0) {
-            modification.get_output(inputs).get_output()
+            modification.get_output(inputs).image
         } else {
             None
         }

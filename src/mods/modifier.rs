@@ -45,29 +45,33 @@ impl Modification {
         let input = if let Some(modification) = modification {
             modification.get_output(inputs)
         } else {
-            ModOutput::NoOutput
+            ModOutput {
+                image: None,
+                id: Uuid::nil(),
+            }
         };
 
         if let Some(cache) = &self.cache {
             if !cache.changed(&*self.modifier) {
-                if cache.last_input == input.is_some() {
-                    if let ModOutput::Cached(_) | ModOutput::NoOutput = input {
-                        return ModOutput::Cached(cache.image.clone());
-                    }
+                if cache.input_id == input.id {
+                    return cache.output.clone();
                 }
             }
         }
 
-        ModOutput::Modified(self.apply(input.get_output()))
+        self.apply(input)
     }
 
-    fn apply(&mut self, input: Option<Image>) -> Option<Image> {
-        let last_input = input.is_some();
-        let output = self.modifier.apply(input);
+    fn apply(&mut self, input: ModOutput) -> ModOutput {
+        let output = ModOutput {
+            image: self.modifier.apply(input.image),
+            id: Uuid::new_v4(),
+        };
+
         self.cache = Some(ModCache {
             modifier: dyn_clone::clone(&self.modifier),
-            image: output.clone(),
-            last_input,
+            output: output.clone(),
+            input_id: input.id,
         });
         output
     }
@@ -95,34 +99,16 @@ impl Modification {
     }
 }
 
-pub enum ModOutput {
-    Modified(Option<Image>),
-    Cached(Option<Image>),
-    NoOutput,
-}
-
-impl ModOutput {
-    pub fn get_output(self) -> Option<Image> {
-        match self {
-            ModOutput::Modified(option) => option,
-            ModOutput::Cached(option) => option,
-            ModOutput::NoOutput => None,
-        }
-    }
-
-    pub fn is_some(&self) -> bool {
-        match self {
-            ModOutput::Modified(option) => option.is_some(),
-            ModOutput::Cached(option) => option.is_some(),
-            ModOutput::NoOutput => false,
-        }
-    }
+#[derive(Clone)]
+pub struct ModOutput {
+    pub image: Option<Image>,
+    id: Uuid,
 }
 
 pub struct ModCache {
     modifier: Box<dyn Modifier + Send + Sync>,
-    image: Option<Image>,
-    last_input: bool,
+    output: ModOutput,
+    input_id: Uuid,
 }
 
 impl ModCache {
