@@ -56,14 +56,10 @@ impl Editor {
         }
     }
 
-    pub fn insert_mod(&mut self, modifier: Modification) {
-        self.selected_mod = Some(modifier.id);
-        self.mods.push(modifier);
-    }
-
     pub fn add_mod(&mut self, index: &ModifierIndex) {
         let new = Modification::new_from_index(index.clone());
-        self.insert_mod(new)
+        self.selected_mod = Some(new.id);
+        self.mods.push(new);
     }
 
     fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Modification> {
