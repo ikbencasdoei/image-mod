@@ -29,8 +29,9 @@ pub struct PencilMod<T> {
 impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T> {
     fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
         if let Some(image) = &mut input {
+            let mut pencil = self.pencil.clone();
             for pixel in self.pixels.iter() {
-                if let Some(color) = self.pencil.get_pixel(*pixel, image) {
+                if let Some(color) = pencil.get_pixel(*pixel, image) {
                     image.set_pixel(*pixel, color).ok();
                 }
             }

@@ -63,8 +63,7 @@ impl Modification {
 
     fn apply(&mut self, input: Option<Image>) -> Option<Image> {
         let last_input = input.is_some();
-        let mut state = dyn_clone::clone(&self.modifier);
-        let output = state.apply(input);
+        let output = self.modifier.apply(input);
         self.cache = Some(ModCache {
             modifier: dyn_clone::clone(&self.modifier),
             image: output.clone(),
