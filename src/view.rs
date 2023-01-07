@@ -72,11 +72,7 @@ fn update(
 ) {
     for handle in handles.iter() {
         let image = assets.get_mut(handle).unwrap();
-        *image = editor
-            .get_output()
-            .unwrap_or_default()
-            .clone()
-            .into_bevy_image();
+        *image = editor.get_output().unwrap_or_default().into_bevy_image();
     }
 }
 
