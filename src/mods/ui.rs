@@ -131,7 +131,7 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor) {
     }
 }
 
-pub fn ui(
+fn ui(
     mut egui_context: ResMut<EguiContext>,
     mut editor: ResMut<Editor>,
     mut mod_collection: ResMut<ModifierCollection>,
