@@ -1,0 +1,2 @@
+[build]
+rustflags = ["-Zshare-generics=y", "-Zpolonius"]
