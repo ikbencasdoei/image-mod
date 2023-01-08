@@ -26,7 +26,7 @@ impl Modification {
         let modifier = index.instancer.instance();
 
         Self {
-            index: index,
+            index,
             id: Uuid::new_v4(),
             modifier,
             cache: None,
@@ -34,7 +34,7 @@ impl Modification {
     }
 
     pub fn get_output(&mut self, inputs: &mut [&mut Modification]) -> &ModOutput {
-        let (dependency, inputs) = if inputs.len() >= 1 {
+        let (dependency, inputs) = if !inputs.is_empty() {
             inputs.split_at_mut(1)
         } else {
             (inputs, &mut [] as &mut [&mut Modification])

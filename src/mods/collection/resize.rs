@@ -99,7 +99,7 @@ impl Modifier for Resize {
         ui.horizontal(|ui| {
             ui.label("filter:");
             egui::ComboBox::from_id_source("filter")
-                .selected_text(format!("{}", display_filter(self.filter)))
+                .selected_text(display_filter(self.filter))
                 .show_ui(ui, |ui| {
                     ui.selectable_value(
                         &mut self.filter,

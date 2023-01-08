@@ -43,7 +43,7 @@ impl Editor {
     pub fn get_output(&mut self) -> Option<Image> {
         let mut reversed: Vec<&mut Modification> = self.mods.iter_mut().rev().collect();
 
-        let (modification, inputs) = if reversed.len() >= 1 {
+        let (modification, inputs) = if !reversed.is_empty() {
             reversed.split_at_mut(1)
         } else {
             (reversed.as_mut_slice(), &mut [] as &mut [&mut Modification])
@@ -112,7 +112,7 @@ impl Editor {
     }
 
     pub fn get_selected_mod_mut(&mut self) -> Option<&mut Modification> {
-        self.selected_mod.map(|id| self.get_mod_mut(id)).flatten()
+        self.selected_mod.and_then(|id| self.get_mod_mut(id))
     }
 
     // pub fn get_selected_mod(&self) -> Option<&Modification> {
@@ -133,7 +133,6 @@ impl Editor {
         &mut self,
     ) -> Option<&mut T> {
         self.get_selected_mod_mut()
-            .map(|modification| modification.get_modifier_mut())
-            .flatten()
+            .and_then(|modification| modification.get_modifier_mut())
     }
 }

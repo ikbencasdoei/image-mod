@@ -44,6 +44,7 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn update<T: Pencil + Default + PartialEq + Clone + Send + Sync + 'static>(
     mut editor: ResMut<Editor>,
     mut cursor_events: EventReader<CursorMoved>,
@@ -66,17 +67,11 @@ fn update<T: Pencil + Default + PartialEq + Clone + Send + Sync + 'static>(
         if (mouse_input.pressed(MouseButton::Left)) && !egui_context.ctx_mut().wants_pointer_input()
         {
             for (transform, handle) in query.iter() {
-                let pixel =
-                    View::screen_to_pixel(*mouse_pos, transform, &windows, &assets, &handle);
+                let pixel = View::screen_to_pixel(*mouse_pos, transform, &windows, &assets, handle);
 
                 if let Some(last_mouse_pos) = *last_mouse_pos {
-                    let last_pixel = View::screen_to_pixel(
-                        last_mouse_pos,
-                        transform,
-                        &windows,
-                        &assets,
-                        &handle,
-                    );
+                    let last_pixel =
+                        View::screen_to_pixel(last_mouse_pos, transform, &windows, &assets, handle);
 
                     let delta: Vec2 = pixel - last_pixel;
 

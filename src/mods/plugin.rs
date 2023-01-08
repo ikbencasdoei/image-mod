@@ -21,9 +21,9 @@ pub trait Modifier: DynClone + DynPartialEq {
                 .split("::")
                 .last()
                 .unwrap()
-                .replace(">", ""),
+                .replace('>', ""),
             id: TypeId::of::<Self>(),
-            instancer: Box::new(|| Box::new(Self::default())),
+            instancer: Box::new(|| Box::<Self>::default()),
         }
     }
 

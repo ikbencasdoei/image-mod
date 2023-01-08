@@ -20,7 +20,7 @@ impl Modifier for Hue {
             ui.label("degrees:");
             ui.add(
                 egui::DragValue::new(&mut self.degrees)
-                    .clamp_range(360..=0)
+                    .clamp_range(0..=360)
                     .suffix("°"),
             );
         });
