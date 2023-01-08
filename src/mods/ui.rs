@@ -40,7 +40,7 @@ impl Plugin for ModifierCollectionPlugin {
             .add_plugin(SimplePencilPlugin)
             .add_plugin(RainbowPencilPlugin)
             .add_plugin(SortPencilPlugin)
-            .add_system(mods_ui.after(MenuBarSystemLabel));
+            .add_system(ui.after(MenuBarSystemLabel));
     }
 }
 
@@ -131,7 +131,7 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor) {
     }
 }
 
-pub fn mods_ui(
+pub fn ui(
     mut egui_context: ResMut<EguiContext>,
     mut editor: ResMut<Editor>,
     mut mod_collection: ResMut<ModifierCollection>,
