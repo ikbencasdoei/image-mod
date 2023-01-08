@@ -50,7 +50,7 @@ impl Editor {
         };
 
         if let Some(modification) = modification.get_mut(0) {
-            modification.get_output(inputs).image
+            modification.get_output(inputs).image.clone()
         } else {
             None
         }

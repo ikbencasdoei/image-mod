@@ -33,7 +33,7 @@ impl Modification {
         }
     }
 
-    pub fn get_output(&mut self, inputs: &mut [&mut Modification]) -> ModOutput {
+    pub fn get_output(&mut self, inputs: &mut [&mut Modification]) -> &ModOutput {
         let (dependency, inputs) = if inputs.len() >= 1 {
             inputs.split_at_mut(1)
         } else {
@@ -42,38 +42,39 @@ impl Modification {
 
         let modification = dependency.get_mut(0);
 
+        let no_input = ModOutput {
+            image: None,
+            id: Uuid::nil(),
+        };
+
         let input = if let Some(modification) = modification {
             modification.get_output(inputs)
         } else {
-            ModOutput {
-                image: None,
-                id: Uuid::nil(),
-            }
+            &no_input
         };
 
         if let Some(cache) = &self.cache {
-            if !cache.changed(&*self.modifier) {
-                if cache.input_id == input.id {
-                    return cache.output.clone();
-                }
+            if !cache.changed(&*self.modifier) && cache.input_id == input.id {
+                return &cache.output;
             }
         }
 
         self.apply(input)
     }
 
-    fn apply(&mut self, input: ModOutput) -> ModOutput {
+    fn apply(&mut self, input: &ModOutput) -> &ModOutput {
         let output = ModOutput {
-            image: self.modifier.apply(input.image),
+            image: self.modifier.apply(input.image.clone()),
             id: Uuid::new_v4(),
         };
 
         self.cache = Some(ModCache {
             modifier: dyn_clone::clone(&self.modifier),
-            output: output.clone(),
+            output,
             input_id: input.id,
         });
-        output
+
+        &self.cache.as_ref().unwrap().output
     }
 
     // pub fn get_modifier<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
@@ -107,7 +108,7 @@ pub struct ModOutput {
 
 pub struct ModCache {
     modifier: Box<dyn Modifier + Send + Sync>,
-    output: ModOutput,
+    pub output: ModOutput,
     input_id: Uuid,
 }
 
