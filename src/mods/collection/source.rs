@@ -5,7 +5,7 @@ use std::{
 
 use bevy_egui::egui::{TextEdit, Ui};
 
-use crate::prelude::{Image, *};
+use crate::{image::Image, mods::plugin::Modifier};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Source {

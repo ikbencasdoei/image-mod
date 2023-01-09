@@ -9,7 +9,7 @@ use image::{
     DynamicImage, ImageError, Rgba, RgbaImage,
 };
 
-use crate::prelude::Color;
+use crate::color::Color;
 
 #[derive(Clone)]
 pub struct Image {

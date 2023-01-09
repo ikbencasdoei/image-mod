@@ -1,4 +1,4 @@
-use crate::prelude::{Image, *};
+use crate::{image::Image, mods::plugin::Modifier};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct GrayScaleFilter;

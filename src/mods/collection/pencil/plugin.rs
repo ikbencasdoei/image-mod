@@ -3,7 +3,13 @@ use std::marker::PhantomData;
 use bevy::prelude::{Image as BevyImage, *};
 use bevy_egui::{egui::Ui, EguiContext};
 
-use crate::prelude::{Color, Image, *};
+use crate::{
+    color::Color,
+    editor::Editor,
+    image::Image,
+    mods::plugin::{Modifier, ModifierPlugin},
+    view::View,
+};
 
 #[derive(Default)]
 pub struct PencilPlugin<T>(PhantomData<T>);

@@ -1,8 +1,11 @@
 use uuid::Uuid;
 
-use crate::prelude::{Image, *};
+use crate::image::Image;
 
-use super::collection::ModifierIndex;
+use super::{
+    collection::ModifierIndex,
+    plugin::{DynPartialEq, Modifier},
+};
 
 pub struct Modification {
     pub index: ModifierIndex,

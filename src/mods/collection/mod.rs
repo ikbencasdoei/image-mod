@@ -3,8 +3,6 @@ use std::any::TypeId;
 use bevy::prelude::*;
 use dyn_clone::DynClone;
 
-use crate::prelude::{Modifier, ModifierPlugin};
-
 use self::{
     blur::Blur,
     brighten::Brighten,
@@ -17,6 +15,8 @@ use self::{
     resize::Resize,
     source::Source,
 };
+
+use super::plugin::{ModifierPlugin, Modifier};
 
 mod blur;
 mod brighten;

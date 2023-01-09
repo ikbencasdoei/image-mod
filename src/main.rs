@@ -6,8 +6,12 @@ use std::path::Path;
 use bevy::prelude::{Color, *};
 use bevy_egui::{EguiPlugin, EguiSettings};
 
+use editor::{Editor, EditorPlugin};
+use file_picker::FilePickerPlugin;
+use keybinds::KeyBindsPlugin;
 use mods::ui::ModifierUiPlugin;
-use prelude::*;
+use ui::UiPlugin;
+use view::ViewPlugin;
 
 mod color;
 mod editor;
@@ -15,7 +19,6 @@ mod file_picker;
 mod image;
 mod keybinds;
 mod mods;
-mod prelude;
 mod ui;
 mod view;
 

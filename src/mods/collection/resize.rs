@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_egui::egui::{self, Ui};
 use image::imageops::FilterType;
 
-use crate::prelude::{Image, *};
+use crate::{image::Image, mods::plugin::Modifier};
 
 #[derive(Clone, PartialEq)]
 pub struct Resize {

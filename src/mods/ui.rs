@@ -7,9 +7,10 @@ use uuid::Uuid;
 
 use crate::{editor::Editor, ui::MenuBarSystemLabel};
 
-use crate::prelude::*;
-
-use super::collection::{ModifierCollection, ModifierCollectionPlugin};
+use super::{
+    collection::{ModifierCollection, ModifierCollectionPlugin},
+    modifier::Modification,
+};
 
 pub struct ModifierUiPlugin;
 

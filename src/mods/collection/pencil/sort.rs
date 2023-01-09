@@ -1,10 +1,10 @@
 use std::f32::consts::PI;
 
-use crate::prelude::{Color, Image};
 use bevy::prelude::{Color as BevyColor, *};
 use bevy_egui::egui::{self, Ui};
 
 use super::plugin::{Pencil, PencilPlugin};
+use crate::{color::Color, image::Image};
 
 pub struct SortPencilPlugin;
 

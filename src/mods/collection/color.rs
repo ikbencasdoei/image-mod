@@ -1,6 +1,6 @@
 use bevy_egui::egui::{Color32, Ui};
 
-use crate::prelude::{Color, Image, *};
+use crate::{color::Color, image::Image, mods::plugin::Modifier};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct ColorFilter {

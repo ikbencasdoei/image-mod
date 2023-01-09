@@ -7,8 +7,12 @@ use bevy::prelude::*;
 use uuid::Uuid;
 
 use crate::{
-    mods::collection::{source::Source, ModifierIndex},
-    prelude::{Image, *},
+    image::Image,
+    mods::{
+        collection::{source::Source, ModifierIndex},
+        modifier::Modification,
+        plugin::Modifier,
+    },
 };
 
 pub struct EditorPlugin;

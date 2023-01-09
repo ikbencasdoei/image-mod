@@ -7,9 +7,8 @@ use bevy::prelude::*;
 use bevy_egui::egui::Ui;
 use dyn_clone::DynClone;
 
-use crate::prelude::Image;
-
 use super::collection::{ModifierCollection, ModifierIndex};
+use crate::image::Image;
 
 pub trait Modifier: DynClone + DynPartialEq {
     fn apply(&mut self, input: Option<Image>) -> Option<Image>;

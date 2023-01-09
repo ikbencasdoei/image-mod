@@ -4,9 +4,8 @@ use bevy::{
 };
 use bevy_egui::egui;
 
-use crate::prelude::{Color, Image};
-
 use super::plugin::{Pencil, PencilPlugin};
+use crate::{color::Color, image::Image};
 
 pub struct RainbowPencilPlugin;
 

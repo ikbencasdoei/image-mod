@@ -1,9 +1,8 @@
 use bevy::prelude::*;
 use bevy_egui::egui::{Color32, Ui};
 
-use crate::prelude::{Color, Image};
-
 use super::plugin::{Pencil, PencilPlugin};
+use crate::{color::Color, image::Image};
 
 pub struct SimplePencilPlugin;
 
