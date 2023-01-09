@@ -77,16 +77,15 @@ impl Modification {
         &self.cache.as_ref().unwrap().output
     }
 
-    // pub fn get_modifier<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
-    //     if self.index == T::get_index() {
-    //         unsafe {
-    //             let ptr: *const _ = &*self.modifier;
-    //             Some(&*ptr.cast())
-    //         }
-    //     } else {
-    //         None
-    //     }
-    // }
+    #[allow(dead_code)]
+    pub fn get_modifier<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
+        if self.index == T::get_index() {
+            let ptr: *const _ = &*self.modifier;
+            unsafe { Some(&*ptr.cast()) }
+        } else {
+            None
+        }
+    }
 
     pub fn get_modifier_mut<T: Modifier + Default + Send + Sync + 'static>(
         &mut self,
