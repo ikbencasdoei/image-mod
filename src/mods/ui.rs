@@ -5,12 +5,11 @@ use bevy_egui::{
 };
 use uuid::Uuid;
 
-use crate::{editor::Editor, ui::MenuBarSystemLabel};
-
 use super::{
     collection::{ModifierCollection, ModifierCollectionPlugin},
     modifier::Modification,
 };
+use crate::{editor::Editor, ui::MenuBarSystemLabel};
 
 pub struct ModifierUiPlugin;
 

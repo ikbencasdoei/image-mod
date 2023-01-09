@@ -5,7 +5,6 @@ use std::path::Path;
 
 use bevy::prelude::{Color, *};
 use bevy_egui::{EguiPlugin, EguiSettings};
-
 use editor::{Editor, EditorPlugin};
 use file_picker::FilePickerPlugin;
 use keybinds::KeyBindsPlugin;

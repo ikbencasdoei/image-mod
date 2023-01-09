@@ -15,8 +15,7 @@ use self::{
     resize::Resize,
     source::Source,
 };
-
-use super::plugin::{ModifierPlugin, Modifier};
+use super::plugin::{Modifier, ModifierPlugin};
 
 mod blur;
 mod brighten;
