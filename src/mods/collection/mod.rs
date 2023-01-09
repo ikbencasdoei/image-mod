@@ -17,15 +17,15 @@ use self::{
 };
 use super::plugin::{Modifier, ModifierPlugin};
 
-mod blur;
-mod brighten;
-mod color;
-mod contrast;
-mod grayscale;
-mod hue;
-mod invert;
-mod pencil;
-mod resize;
+pub mod blur;
+pub mod brighten;
+pub mod color;
+pub mod contrast;
+pub mod grayscale;
+pub mod hue;
+pub mod invert;
+pub mod pencil;
+pub mod resize;
 pub mod source;
 
 pub struct ModifierCollectionPlugin;
