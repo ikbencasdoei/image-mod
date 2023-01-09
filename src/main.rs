@@ -6,6 +6,7 @@ use std::path::Path;
 use bevy::prelude::{Color, *};
 use bevy_egui::{EguiPlugin, EguiSettings};
 
+use mods::ui::ModifierUiPlugin;
 use prelude::*;
 
 mod color;
@@ -38,7 +39,7 @@ fn main() {
         .add_plugin(ViewPlugin)
         .add_plugin(UiPlugin)
         .add_plugin(KeyBindsPlugin)
-        .add_plugin(ModifierCollectionPlugin)
+        .add_plugin(ModifierUiPlugin)
         .add_startup_system(setup)
         .run();
 }

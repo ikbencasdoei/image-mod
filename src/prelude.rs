@@ -5,10 +5,8 @@ pub use crate::{
     image::Image,
     keybinds::KeyBindsPlugin,
     mods::{
-        collection::{grayscale::GrayScaleFilter, source::Source},
         modifier::Modification,
         plugin::{DynPartialEq, Modifier, ModifierPlugin},
-        ui::{ModifierCollection, ModifierCollectionPlugin, ModifierIndex},
     },
     ui::UiPlugin,
     view::{View, ViewPlugin},

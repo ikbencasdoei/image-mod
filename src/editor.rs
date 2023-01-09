@@ -6,7 +6,10 @@ use std::{
 use bevy::prelude::*;
 use uuid::Uuid;
 
-use crate::prelude::{Image, *};
+use crate::{
+    mods::collection::{source::Source, ModifierIndex},
+    prelude::{Image, *},
+};
 
 pub struct EditorPlugin;
 

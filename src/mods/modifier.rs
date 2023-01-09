@@ -2,6 +2,8 @@ use uuid::Uuid;
 
 use crate::prelude::{Image, *};
 
+use super::collection::ModifierIndex;
+
 pub struct Modification {
     pub index: ModifierIndex,
     pub id: Uuid,
