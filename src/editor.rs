@@ -95,10 +95,6 @@ impl Editor {
                     self.selected_mod = None;
                 }
             }
-
-            if let Some(modification) = self.mods.get_mut(index + 1) {
-                modification.cache = None;
-            }
         }
     }
 
