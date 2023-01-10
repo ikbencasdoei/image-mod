@@ -1,6 +1,6 @@
 use std::{
     path::{Path, PathBuf},
-    slice::IterMut,
+    slice::{Iter, IterMut},
 };
 
 use bevy::prelude::*;
@@ -26,14 +26,12 @@ impl Plugin for EditorPlugin {
 #[derive(Resource, Default)]
 pub struct Editor {
     mods: Vec<Modification>,
-    pub path: Option<PathBuf>,
     selected_mod: Option<Uuid>,
 }
 
 impl Editor {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
         Self {
-            path: Some(path.as_ref().to_path_buf()),
             mods: vec![Modification::new(Source::new(path))],
             ..default()
         }
@@ -98,7 +96,11 @@ impl Editor {
         }
     }
 
-    pub fn iter_mut_mods(&mut self) -> IterMut<'_, Modification> {
+    pub fn iter_mods(&self) -> Iter<Modification> {
+        self.mods.iter()
+    }
+
+    pub fn iter_mut_mods(&mut self) -> IterMut<Modification> {
         self.mods.iter_mut()
     }
 
@@ -149,5 +151,18 @@ impl Editor {
         } else {
             Err("invalid id")
         }
+    }
+
+    fn get_mods_of_type<T: Modifier + Default + Send + Sync + 'static>(&self) -> Vec<&T> {
+        self.iter_mods()
+            .map(|modification| modification.get_modifier())
+            .flatten()
+            .collect()
+    }
+
+    pub fn get_path(&self) -> Option<PathBuf> {
+        self.get_mods_of_type::<Source>()
+            .last()
+            .map(|source| source.path.clone())
     }
 }

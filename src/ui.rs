@@ -43,23 +43,26 @@ fn ui(
                 }
             });
 
-            ui.add_enabled_ui(editor.path.is_some() && file_picker.open.is_none(), |ui| {
-                if ui.button("export").clicked() {
-                    let directory = if let Some(path) = editor.path.clone() {
-                        path
-                    } else {
-                        PathBuf::new()
-                    };
+            ui.add_enabled_ui(
+                !editor.get_path().is_some() && file_picker.open.is_none(),
+                |ui| {
+                    if ui.button("export").clicked() {
+                        let directory = if let Some(path) = editor.get_path() {
+                            path
+                        } else {
+                            PathBuf::new()
+                        };
 
-                    let file_name = directory
-                        .file_name()
-                        .unwrap_or_default()
-                        .to_string_lossy()
-                        .to_string();
+                        let file_name = directory
+                            .file_name()
+                            .unwrap_or_default()
+                            .to_string_lossy()
+                            .to_string();
 
-                    file_picker.open_export(directory, file_name).ok();
-                }
-            });
+                        file_picker.open_export(directory, file_name).ok();
+                    }
+                },
+            );
 
             if let Ok(sprite) = &mut query_sprite.get_single_mut() {
                 if let Some(scale) = &mut sprite.target_scale {
@@ -87,7 +90,7 @@ fn ui(
             ui.separator();
 
             {
-                if let Some(image_path) = editor.path.as_ref() {
+                if let Some(image_path) = editor.get_path() {
                     ui.label(image_path.to_string_lossy());
                 } else {
                     ui.label("(no image)");
