@@ -78,7 +78,7 @@ impl Editor {
         self.mods.iter().find(|item| item.id == id)
     }
 
-    fn get_mod_index(&mut self, id: Uuid) -> Option<usize> {
+    pub fn get_mod_index(&mut self, id: Uuid) -> Option<usize> {
         self.mods
             .iter()
             .enumerate()
@@ -139,5 +139,15 @@ impl Editor {
     ) -> Option<&mut T> {
         self.get_selected_mod_mut()
             .and_then(|modification| modification.get_modifier_mut())
+    }
+
+    pub fn mod_set_index(&mut self, id: Uuid, index: usize) -> Result<(), &str> {
+        if let Some(i) = self.get_mod_index(id) {
+            let modification = self.mods.remove(i);
+            self.mods.insert(index, modification);
+            Ok(())
+        } else {
+            Err("invalid id")
+        }
     }
 }

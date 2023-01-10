@@ -1,5 +1,6 @@
-#![feature(trait_upcasting)]
 #![allow(incomplete_features)]
+#![feature(trait_upcasting)]
+#![feature(option_result_contains)]
 
 use std::path::Path;
 
