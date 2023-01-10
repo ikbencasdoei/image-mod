@@ -38,7 +38,7 @@ fn ui(
     egui::TopBottomPanel::top("panel").show(egui_context.ctx_mut(), |ui| {
         egui::menu::bar(ui, |ui| {
             ui.add_enabled_ui(file_picker.open.is_none(), |ui| {
-                if ui.button("load").clicked() {
+                if ui.button("new").clicked() {
                     file_picker.open_load().ok();
                 }
             });
