@@ -87,9 +87,14 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor, dragging: &mut Option<Uuid>) {
         let current_place = dragging.and_then(|id| editor.get_mod_index(id));
         for (i, modification) in editor.iter_mut_mods().enumerate().rev() {
             {
-                if dragging.is_some() && current_place.is_some() && current_place.unwrap() < i && ui
+                if dragging.is_some()
+                    && current_place.is_some()
+                    && current_place.unwrap() < i
+                    && ui
                         .add(egui::Label::new("place here").sense(Sense::hover()))
-                        .hovered() && !ui.memory().is_anything_being_dragged() {
+                        .hovered()
+                    && !ui.memory().is_anything_being_dragged()
+                {
                     place_mod = Some(i);
                 }
             }
@@ -99,9 +104,14 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor, dragging: &mut Option<Uuid>) {
             }
 
             {
-                if dragging.is_some() && current_place.is_some() && current_place.unwrap() >= i && ui
+                if dragging.is_some()
+                    && current_place.is_some()
+                    && current_place.unwrap() >= i
+                    && ui
                         .add(egui::Label::new("place here").sense(Sense::hover()))
-                        .hovered() && !ui.memory().is_anything_being_dragged() {
+                        .hovered()
+                    && !ui.memory().is_anything_being_dragged()
+                {
                     place_mod = Some(i);
                 }
             }
