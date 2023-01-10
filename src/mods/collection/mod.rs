@@ -6,7 +6,6 @@ use dyn_clone::DynClone;
 use self::{
     blur::Blur,
     brighten::Brighten,
-    color::ColorFilter,
     contrast::Contrast,
     grayscale::GrayScaleFilter,
     hue::Hue,
@@ -19,7 +18,6 @@ use super::plugin::{Modifier, ModifierPlugin};
 
 pub mod blur;
 pub mod brighten;
-pub mod color;
 pub mod contrast;
 pub mod grayscale;
 pub mod hue;
@@ -35,7 +33,6 @@ impl Plugin for ModifierCollectionPlugin {
         app.init_resource::<ModifierCollection>()
             .add_plugin(ModifierPlugin::<GrayScaleFilter>::default())
             .add_plugin(ModifierPlugin::<Source>::default())
-            .add_plugin(ModifierPlugin::<ColorFilter>::default())
             .add_plugin(ModifierPlugin::<Hue>::default())
             .add_plugin(ModifierPlugin::<Brighten>::default())
             .add_plugin(ModifierPlugin::<Contrast>::default())
