@@ -84,7 +84,7 @@ impl Editor {
             .map(|item| item.0)
     }
 
-    pub fn remove_mod(&mut self, id: Uuid) {
+    pub fn remove_mod(&mut self, id: Uuid) -> Result<(), &str> {
         if let Some(index) = self.get_mod_index(id) {
             self.mods.remove(index);
 
@@ -93,6 +93,9 @@ impl Editor {
                     self.selected_mod = None;
                 }
             }
+            Ok(())
+        } else {
+            Err("invalid id")
         }
     }
 

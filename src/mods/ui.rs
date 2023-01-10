@@ -108,7 +108,7 @@ fn show_mods(ui: &mut Ui, editor: &mut Editor, dragging: &mut Option<Uuid>) {
         }
 
         if let Some(index) = remove_mod {
-            editor.remove_mod(index);
+            editor.remove_mod(index).ok();
         }
 
         if let Some(id) = selected_mod {
