@@ -65,25 +65,34 @@ fn ui(
             );
 
             if let Ok(sprite) = &mut query_sprite.get_single_mut() {
-                if let Some(scale) = &mut sprite.target_scale {
+                if sprite.target_scale.is_some() {
                     ui.separator();
 
-                    let mut single = scale.x * 100.0;
+                    let mut percentage = sprite.target_scale.unwrap().x * 100.0;
 
-                    if ui
-                        .add(
-                            egui::DragValue::new(&mut single)
-                                .clamp_range(1.0..=f32::MAX)
-                                .suffix("%")
-                                .speed(1),
-                        )
-                        .secondary_clicked()
-                    {
-                        single = 100.0;
+                    let response = ui.add(
+                        egui::DragValue::new(&mut percentage)
+                            .clamp_range(1.0..=f32::MAX)
+                            .suffix("%")
+                            .speed(1),
+                    );
+
+                    if response.secondary_clicked() {
+                        percentage = 100.0;
+                        if let Some(translation) = &mut sprite.target_translation {
+                            *translation = Vec3::ZERO;
+                        }
                     }
 
-                    single /= 100.0;
-                    *scale = Vec3::new(single, single, single);
+                    if response.changed() {
+                        if let Some(translation) = &mut sprite.target_translation {
+                            *translation = Vec3::ZERO;
+                        }
+                    }
+
+                    percentage /= 100.0;
+                    *sprite.target_scale.as_mut().unwrap() =
+                        Vec3::new(percentage, percentage, percentage);
                 }
             }
 
