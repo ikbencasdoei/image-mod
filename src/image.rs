@@ -1,112 +1,149 @@
-use std::{convert::TryFrom, path::Path};
+use std::path::Path;
 
 use bevy::{
-    prelude::{Image as BevyImage, *},
-    render::render_resource::TextureFormat,
+    prelude::{Color as BevyColor, Image as BevyImage, *},
+    render::{render_resource::SamplerDescriptor, texture::ImageSampler},
 };
-use image::{DynamicImage, ImageBuffer};
+use image::{
+    imageops::{self, FilterType},
+    DynamicImage, ImageError, Rgba, RgbaImage,
+};
 
 use crate::color::Color;
 
-#[derive(Deref, DerefMut)]
-pub struct ImageHelper<'a> {
-    image: &'a mut BevyImage,
+#[derive(Clone)]
+pub struct Image {
+    image: RgbaImage,
 }
 
-const OFFSET: u32 = 4;
+impl Default for Image {
+    fn default() -> Self {
+        Self {
+            image: RgbaImage::new(1, 1),
+        }
+    }
+}
 
-impl<'a> ImageHelper<'a> {
-    pub fn new(image: &'a mut BevyImage) -> Self {
-        Self { image }
+impl Image {
+    pub fn from_dyn(image: DynamicImage) -> Self {
+        Self {
+            image: image.into_rgba8(),
+        }
     }
 
-    fn get_index(&mut self, position: Vec2) -> Result<usize, &'static str> {
-        let size = self.image.size().as_uvec2();
+    pub fn into_dyn(self) -> DynamicImage {
+        DynamicImage::ImageRgba8(self.image)
+    }
 
-        let position = if position.x.is_sign_positive() && position.y.is_sign_positive() {
-            position.as_uvec2()
+    pub fn into_bevy_image(self) -> BevyImage {
+        let mut image = BevyImage::from_dynamic(self.into_dyn(), true);
+        image.sampler_descriptor = ImageSampler::Descriptor(SamplerDescriptor {
+            mag_filter: bevy::render::render_resource::FilterMode::Nearest,
+            min_filter: bevy::render::render_resource::FilterMode::Linear,
+            ..default()
+        });
+
+        image
+    }
+
+    pub fn set_pixel_vec(&mut self, position: Vec2, color: Color) -> Result<(), &str> {
+        self.set_pixel_ivec(
+            IVec2::new(position.x.round() as i32, position.y.round() as i32),
+            color,
+        )
+    }
+
+    pub fn set_pixel_ivec(&mut self, position: IVec2, color: Color) -> Result<(), &str> {
+        if position.x.is_negative() || position.y.is_negative() {
+            Err("negative value")
         } else {
-            return Err("negative position");
-        };
-
-        if position.x >= size.x || position.y >= size.y {
-            return Err("position is outside image");
-        }
-
-        let i = ((size.x * position.y + position.x) * OFFSET) as usize;
-
-        if i >= self.image.data.len() {
-            return Err("position is outside image");
-        }
-
-        Ok(i)
-    }
-
-    pub fn set_pixel(&mut self, position: Vec2, color: Color) -> Result<(), &'static str> {
-        match self.image.texture_descriptor.format {
-            TextureFormat::Rgba8UnormSrgb => {
-                let i = self.get_index(position)?;
-                self.image
-                    .data
-                    .splice(i..(i + OFFSET as usize), color.as_rgba_u32().to_le_bytes());
-                Ok(())
-            }
-            _ => Err("textureformat not supported"),
+            self.set_pixel(position.as_uvec2(), color)
         }
     }
 
-    pub fn get_pixel(&mut self, position: Vec2) -> Result<Color, &'static str> {
-        let bytes: [u8; 4] = match self.image.texture_descriptor.format {
-            TextureFormat::Rgba8UnormSrgb => {
-                let i = self.get_index(position)?;
-                self.image.data[i..(i + OFFSET as usize)]
-                    .try_into()
-                    .map_err(|_| "could not convert slice to array")?
-            }
-            _ => return Err("textureformat not supported"),
-        };
-
-        Ok(Color::from(bytes))
-    }
-
-    pub fn save(&self, path: impl AsRef<Path>) -> Result<(), &'static str> {
-        let image =
-            DynamicImage::try_from(self.to_owned()).map_err(|_| "could not convert image")?;
-
-        image.save(path).map_err(|_| "could not save image")
-    }
-}
-
-impl TryFrom<&ImageHelper<'_>> for DynamicImage {
-    type Error = ();
-
-    fn try_from(helper: &ImageHelper<'_>) -> Result<Self, Self::Error> {
-        let image = &helper.image;
-        let option = match image.texture_descriptor.format {
-            TextureFormat::R8Unorm => ImageBuffer::from_raw(
-                image.texture_descriptor.size.width,
-                image.texture_descriptor.size.height,
-                image.data.clone(),
-            )
-            .map(DynamicImage::ImageLuma8),
-            TextureFormat::Rg8Unorm => ImageBuffer::from_raw(
-                image.texture_descriptor.size.width,
-                image.texture_descriptor.size.height,
-                image.data.clone(),
-            )
-            .map(DynamicImage::ImageLumaA8),
-            TextureFormat::Rgba8UnormSrgb => ImageBuffer::from_raw(
-                image.texture_descriptor.size.width,
-                image.texture_descriptor.size.height,
-                image.data.clone(),
-            )
-            .map(DynamicImage::ImageRgba8),
-            _ => None,
-        };
-
-        match option {
-            Some(image) => Ok(image),
-            None => Err(()),
+    pub fn set_pixel(&mut self, position: UVec2, color: Color) -> Result<(), &str> {
+        if self.contains_pixel(position) {
+            self.image
+                .put_pixel(position.x, position.y, Rgba(color.as_rgba_u8()));
+            Ok(())
+        } else {
+            Err("pixel outside image")
         }
+    }
+
+    pub fn contains_pixel(&self, position: UVec2) -> bool {
+        let size = self.size();
+        (0..size.x).contains(&position.x) && (0..size.y).contains(&position.y)
+    }
+
+    pub fn size(&self) -> UVec2 {
+        let (x, y) = self.image.dimensions();
+        UVec2::new(x, y)
+    }
+
+    pub fn iter_coords(&self) -> impl Iterator<Item = UVec2> {
+        let size = self.size();
+
+        (0..(size.x * size.y)).map(move |a| UVec2::new(a % size.x, a / size.x))
+    }
+
+    pub fn get_pixel_vec(&self, position: Vec2) -> Result<Color, &str> {
+        self.get_pixel_ivec(IVec2::new(
+            position.x.round() as i32,
+            position.y.round() as i32,
+        ))
+    }
+
+    pub fn get_pixel_ivec(&self, position: IVec2) -> Result<Color, &str> {
+        if position.x.is_negative() || position.y.is_negative() {
+            Err("negative value")
+        } else {
+            self.get_pixel(position.as_uvec2())
+        }
+    }
+
+    pub fn get_pixel(&self, position: UVec2) -> Result<Color, &str> {
+        if self.contains_pixel(position) {
+            let Rgba([r, g, b, a]) = *self.image.get_pixel(position.x, position.y);
+            Ok(Color::from(BevyColor::rgba_u8(r, g, b, a)))
+        } else {
+            Err("pixel outside image")
+        }
+    }
+
+    pub fn open(path: impl AsRef<Path>) -> Result<Self, ImageError> {
+        Ok(Self::from_dyn(image::open(path)?))
+    }
+
+    pub fn save(&self, path: impl AsRef<Path>) -> Result<(), ImageError> {
+        self.image.save(path)
+    }
+
+    pub fn grayscale(&mut self) {
+        self.image = imageops::colorops::grayscale_with_type_alpha(&self.image);
+    }
+
+    pub fn huerotate(&mut self, degrees: i32) {
+        imageops::colorops::huerotate_in_place(&mut self.image, degrees);
+    }
+
+    pub fn brighten(&mut self, value: i32) {
+        imageops::colorops::brighten_in_place(&mut self.image, value)
+    }
+
+    pub fn contrast(&mut self, value: f32) {
+        imageops::colorops::contrast_in_place(&mut self.image, value)
+    }
+
+    pub fn invert(&mut self) {
+        imageops::colorops::invert(&mut self.image);
+    }
+
+    pub fn blur(&mut self, sigma: f32) {
+        self.image = imageops::blur(&self.image, sigma)
+    }
+
+    pub fn resize(&mut self, new_size: UVec2, filter: FilterType) {
+        self.image = imageops::resize(&self.image, new_size.x, new_size.y, filter);
     }
 }

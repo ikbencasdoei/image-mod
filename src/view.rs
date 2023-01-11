@@ -1,25 +1,78 @@
-use crate::viewer::Sprite;
 use bevy::{
     input::mouse::MouseWheel,
     math::Vec3Swizzles,
     prelude::{Image as BevyImage, *},
 };
-use bevy_egui::{egui, egui::util::id_type_map::TypeId, EguiContext};
+use bevy_egui::EguiContext;
 
-use super::{
-    plugin::{Tool, ToolDescription, ToolPlugin},
-    CurrentTool,
-};
+use crate::{editor::Editor, image::Image};
 
-pub struct Plugin;
+pub struct ViewPlugin;
 
-impl bevy::prelude::Plugin for Plugin {
+impl Plugin for ViewPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(State::default())
-            .add_plugin(ToolPlugin::<GrabTool>::default())
+        app.init_resource::<State>()
+            .add_startup_system(setup)
+            .add_system(update)
             .add_system(grab)
-            .add_system(zoom)
-            .add_system(help);
+            .add_system(zoom);
+    }
+}
+
+#[derive(Component, Default)]
+pub struct View {
+    pub target_scale: Option<Vec3>,
+    pub target_translation: Option<Vec3>,
+}
+
+impl View {
+    pub fn screen_to_pixel(
+        screen_coord: Vec2,
+        transform: &Transform,
+        windows: &Windows,
+        assets: &Assets<BevyImage>,
+        handle: &Handle<BevyImage>,
+    ) -> Vec2 {
+        let image_size = assets.get(handle).unwrap().size();
+
+        let window_size = {
+            let window = windows.get_primary().unwrap();
+            Vec2::new(window.width(), window.height())
+        };
+
+        let bottom_left_corner_on_screen =
+            (window_size - image_size * transform.scale.xy()) * 0.5 + transform.translation.xy();
+
+        let mut pixel = (screen_coord - bottom_left_corner_on_screen) / transform.scale.xy();
+
+        pixel.y = image_size.y - pixel.y;
+
+        pixel
+    }
+}
+
+fn setup(mut commands: Commands, mut assets: ResMut<Assets<BevyImage>>) {
+    commands.spawn(Camera2dBundle::default());
+
+    let image = Image::default();
+    let handle = assets.add(image.into_bevy_image());
+
+    commands
+        .spawn(SpriteBundle {
+            texture: handle,
+            ..default()
+        })
+        .insert(View::default());
+}
+
+fn update(
+    handles: Query<&Handle<BevyImage>, With<View>>,
+    mut assets: ResMut<Assets<BevyImage>>,
+    mut editor: ResMut<Editor>,
+) {
+    for handle in handles.iter() {
+        let image = assets.get_mut(handle).unwrap();
+        *image = editor.get_output().unwrap_or_default().into_bevy_image();
     }
 }
 
@@ -28,24 +81,12 @@ struct State {
     last_mouse_position: Option<Vec2>,
 }
 
-#[derive(Component, Default, Reflect)]
-pub struct GrabTool;
-
-impl Tool<GrabTool> for GrabTool {
-    fn get_description() -> ToolDescription {
-        ToolDescription {
-            name: "Grab".to_string(),
-        }
-    }
-}
-
 fn grab(
-    mut query: Query<(&mut Transform, &mut Sprite)>,
+    mut query: Query<(&mut Transform, &mut View)>,
     mouse_button_input: Res<Input<MouseButton>>,
     mut cursor_moved_events: EventReader<CursorMoved>,
     mut egui_context: ResMut<EguiContext>,
     mut state: ResMut<State>,
-    current_tool: Res<CurrentTool>,
 ) {
     if !egui_context.ctx_mut().wants_pointer_input() {
         let delta = if let Some(cursor) = cursor_moved_events.iter().last() {
@@ -62,17 +103,7 @@ fn grab(
             Vec2::ZERO
         };
 
-        let tool_active = if let Some(current_tool) = current_tool.to_owned() {
-            current_tool.type_id == TypeId::of::<GrabTool>()
-        } else {
-            false
-        };
-
-        if tool_active
-            && (mouse_button_input.pressed(MouseButton::Right)
-                || mouse_button_input.pressed(MouseButton::Left))
-            || mouse_button_input.pressed(MouseButton::Middle)
-        {
+        if mouse_button_input.pressed(MouseButton::Middle) {
             for (mut transform, mut sprite) in query.iter_mut() {
                 transform.translation += Vec3::from((delta, 0.0));
                 sprite.target_translation = Some(transform.translation);
@@ -89,7 +120,7 @@ const ZOOM_FACTOR: f32 = 1.3;
 const ZOOM_LERP: f32 = 0.3;
 
 fn zoom(
-    mut query: Query<(&mut Transform, &mut crate::viewer::Sprite)>,
+    mut query: Query<(&mut Transform, &mut crate::view::View, &Handle<BevyImage>)>,
     mut mouse_wheel_events: EventReader<MouseWheel>,
     mut egui_context: ResMut<EguiContext>,
     windows: Res<Windows>,
@@ -104,7 +135,7 @@ fn zoom(
     {
         for event in mouse_wheel_events.iter() {
             if event.y.is_normal() {
-                for (transform, mut sprite) in query.iter_mut() {
+                for (transform, mut sprite, handle) in query.iter_mut() {
                     let to_center_screen = state.last_mouse_position.unwrap_or_default() - {
                         let window = windows.get_primary().unwrap();
                         Vec2::new(window.width(), window.height())
@@ -113,12 +144,8 @@ fn zoom(
                     let to_center_image = to_center_screen - transform.translation.xy();
 
                     let current_size = {
-                        if let Some(image) = sprite.image.as_ref() {
-                            if let Some(image) = assets.get(image) {
-                                image.size() * transform.scale.xy()
-                            } else {
-                                Vec2::ZERO
-                            }
+                        if let Some(image) = assets.get(handle) {
+                            image.size() * transform.scale.xy()
                         } else {
                             Vec2::ZERO
                         }
@@ -159,23 +186,12 @@ fn zoom(
         mouse_wheel_events.clear();
     }
 
-    for (mut transform, sprite) in query.iter_mut() {
+    for (mut transform, sprite, _) in query.iter_mut() {
         if let Some(target_scale) = sprite.target_scale {
             transform.scale = transform.scale.lerp(target_scale, ZOOM_LERP);
         }
         if let Some(target_translation) = sprite.target_translation {
             transform.translation = transform.translation.lerp(target_translation, ZOOM_LERP);
         }
-    }
-}
-
-fn help(mut egui_context: ResMut<EguiContext>, query: Query<&GrabTool>) {
-    for _ in query.iter() {
-        egui::Window::new(format!("{} Help", GrabTool::get_description().name)).show(
-            egui_context.ctx_mut(),
-            |ui| {
-                ui.label("Use right and left mouse button grab the image.");
-            },
-        );
     }
 }

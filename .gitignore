@@ -1,5 +1,4 @@
 /target/
 /assets/
 /.vscode/
-/.cargo/
 .env
