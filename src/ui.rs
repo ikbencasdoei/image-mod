@@ -64,11 +64,11 @@ fn ui(
                 },
             );
 
-            if let Ok(sprite) = &mut query_sprite.get_single_mut() {
-                if sprite.target_scale.is_some() {
+            if let Ok(view) = query_sprite.get_single_mut().as_deref_mut() {
+                if view.target_scale.is_some() {
                     ui.separator();
 
-                    let mut percentage = sprite.target_scale.unwrap().x * 100.0;
+                    let mut percentage = view.target_scale.unwrap().x * 100.0;
 
                     let response = ui.add(
                         egui::DragValue::new(&mut percentage)
@@ -79,19 +79,19 @@ fn ui(
 
                     if response.secondary_clicked() {
                         percentage = 100.0;
-                        if let Some(translation) = &mut sprite.target_translation {
+                        if let Some(translation) = &mut view.target_translation {
                             *translation = Vec3::ZERO;
                         }
                     }
 
                     if response.changed() {
-                        if let Some(translation) = &mut sprite.target_translation {
+                        if let Some(translation) = &mut view.target_translation {
                             *translation = Vec3::ZERO;
                         }
                     }
 
                     percentage /= 100.0;
-                    *sprite.target_scale.as_mut().unwrap() =
+                    *view.target_scale.as_mut().unwrap() =
                         Vec3::new(percentage, percentage, percentage);
                 }
             }
