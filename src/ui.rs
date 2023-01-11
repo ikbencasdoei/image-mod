@@ -44,7 +44,7 @@ fn ui(
             });
 
             ui.add_enabled_ui(
-                !editor.get_path().is_some() && file_picker.open.is_none(),
+                editor.get_path().is_some() && file_picker.open.is_none(),
                 |ui| {
                     if ui.button("export").clicked() {
                         let directory = if let Some(path) = editor.get_path() {
