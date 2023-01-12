@@ -144,7 +144,9 @@ impl ModifierUi {
                     });
                 })
                 .body(|ui| {
-                    editor.get_mod_mut(mod_id).unwrap().modifier.view(ui);
+                    if let Some(modi) = editor.get_mod_mut(mod_id) {
+                        modi.modifier.view(ui);
+                    }
                 });
         }
     }
