@@ -62,35 +62,17 @@ impl ModifierUi {
             let current_place = self.dragging.and_then(|id| editor.get_mod_index(id));
 
             for (i, id) in editor.mod_ids().into_iter().enumerate().rev() {
-                {
-                    if self.dragging.is_some()
-                        && current_place.is_some()
-                        && current_place.unwrap() < i
-                        && ui
-                            .add(egui::Label::new("place here").sense(Sense::hover()))
-                            .hovered()
-                        && !ui.memory().is_anything_being_dragged()
-                    {
-                        editor
-                            .mod_set_index(self.dragging.take().unwrap(), i)
-                            .unwrap()
+                if let Some(current_place) = current_place {
+                    if current_place < i {
+                        self.drop_mod_widget(i, editor, ui);
                     }
                 }
 
                 self.view_modifier(id, i, editor, ui);
 
-                {
-                    if self.dragging.is_some()
-                        && current_place.is_some()
-                        && current_place.unwrap() >= i
-                        && ui
-                            .add(egui::Label::new("place here").sense(Sense::hover()))
-                            .hovered()
-                        && !ui.memory().is_anything_being_dragged()
-                    {
-                        editor
-                            .mod_set_index(self.dragging.take().unwrap(), i)
-                            .unwrap()
+                if let Some(current_place) = current_place {
+                    if current_place >= i {
+                        self.drop_mod_widget(i, editor, ui);
                     }
                 }
             }
@@ -98,6 +80,19 @@ impl ModifierUi {
             if !ui.memory().is_anything_being_dragged() {
                 self.dragging = None;
             }
+        }
+    }
+
+    fn drop_mod_widget(&mut self, index: usize, editor: &mut Editor, ui: &mut Ui) {
+        if self.dragging.is_some()
+            && ui
+                .add(egui::Label::new("place here").sense(Sense::hover()))
+                .hovered()
+            && !ui.memory().is_anything_being_dragged()
+        {
+            editor
+                .mod_set_index(self.dragging.take().unwrap(), index)
+                .unwrap()
         }
     }
 
