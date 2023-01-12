@@ -30,8 +30,7 @@ pub struct ModifierCollectionPlugin;
 
 impl Plugin for ModifierCollectionPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<ModifierCollection>()
-            .add_plugin(ModifierPlugin::<GrayScaleFilter>::default())
+        app.add_plugin(ModifierPlugin::<GrayScaleFilter>::default())
             .add_plugin(ModifierPlugin::<Source>::default())
             .add_plugin(ModifierPlugin::<Hue>::default())
             .add_plugin(ModifierPlugin::<Brighten>::default())
@@ -68,9 +67,4 @@ impl PartialEq for ModifierIndex {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
     }
-}
-
-#[derive(Resource, Default)]
-pub struct ModifierCollection {
-    pub list: Vec<ModifierIndex>,
 }

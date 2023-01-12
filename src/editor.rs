@@ -67,7 +67,7 @@ impl Editor {
         self.mods.push(new);
     }
 
-    fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Modification> {
+    pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Modification> {
         self.mods.iter_mut().find(|item| item.id == id)
     }
 
@@ -103,8 +103,13 @@ impl Editor {
         self.mods.iter()
     }
 
+    #[allow(dead_code)]
     pub fn iter_mut_mods(&mut self) -> IterMut<Modification> {
         self.mods.iter_mut()
+    }
+
+    pub fn mod_ids(&self) -> Vec<Uuid> {
+        self.iter_mods().map(|modi| modi.id).collect()
     }
 
     pub fn get_mods(&self) -> &Vec<Modification> {

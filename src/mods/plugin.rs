@@ -7,7 +7,7 @@ use bevy::prelude::*;
 use bevy_egui::egui::Ui;
 use dyn_clone::DynClone;
 
-use super::collection::{ModifierCollection, ModifierIndex};
+use super::{collection::ModifierIndex, ui::ModifierUi};
 use crate::image::Image;
 
 pub trait Modifier: DynClone + DynPartialEq {
@@ -70,8 +70,6 @@ where
     }
 }
 
-fn setup<T: Modifier + Default + Send + Sync + 'static>(
-    mut collection: ResMut<ModifierCollection>,
-) {
-    collection.list.push(T::get_index());
+fn setup<T: Modifier + Default + Send + Sync + 'static>(mut mod_ui: ResMut<ModifierUi>) {
+    mod_ui.add_index(T::get_index());
 }
