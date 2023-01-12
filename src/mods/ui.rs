@@ -59,27 +59,29 @@ impl ModifierUi {
         if editor.get_mods().is_empty() {
             ui.label("(empty)");
         } else {
-            let current_place = self.dragging.and_then(|id| editor.get_mod_index(id));
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                let current_place = self.dragging.and_then(|id| editor.get_mod_index(id));
 
-            for (i, id) in editor.mod_ids().into_iter().enumerate().rev() {
-                if let Some(current_place) = current_place {
-                    if current_place < i {
-                        self.drop_mod_widget(i, editor, ui);
+                for (i, id) in editor.mod_ids().into_iter().enumerate().rev() {
+                    if let Some(current_place) = current_place {
+                        if current_place < i {
+                            self.drop_mod_widget(i, editor, ui);
+                        }
+                    }
+
+                    self.view_modifier(id, i, editor, ui);
+
+                    if let Some(current_place) = current_place {
+                        if current_place >= i {
+                            self.drop_mod_widget(i, editor, ui);
+                        }
                     }
                 }
 
-                self.view_modifier(id, i, editor, ui);
-
-                if let Some(current_place) = current_place {
-                    if current_place >= i {
-                        self.drop_mod_widget(i, editor, ui);
-                    }
+                if !ui.memory().is_anything_being_dragged() {
+                    self.dragging = None;
                 }
-            }
-
-            if !ui.memory().is_anything_being_dragged() {
-                self.dragging = None;
-            }
+            });
         }
     }
 
