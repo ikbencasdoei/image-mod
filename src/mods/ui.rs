@@ -96,13 +96,13 @@ impl ModifierUi {
         }
     }
 
-    fn view_modifier(&mut self, mod_id: Uuid, index: usize, editor: &mut Editor, ui: &mut Ui) {
-        if self.dragging.contains(&mod_id) {
-            self.view_dragged_mod(mod_id, editor, ui);
+    fn view_modifier(&mut self, id: Uuid, index: usize, editor: &mut Editor, ui: &mut Ui) {
+        if self.dragging.contains(&id) {
+            self.view_dragged_mod(id, editor, ui);
         } else {
             egui::collapsing_header::CollapsingState::load_with_default_open(
                 ui.ctx(),
-                ui.make_persistent_id(mod_id),
+                ui.make_persistent_id(id),
                 true,
             )
             .show_header(ui, |ui| {
@@ -110,28 +110,28 @@ impl ModifierUi {
                     .add(Label::new(format!("#{index}")).sense(Sense::drag()))
                     .drag_started()
                 {
-                    self.dragging = Some(mod_id);
+                    self.dragging = Some(id);
                 }
 
                 if ui
                     .toggle_value(
-                        &mut (editor.get_selected_mod_id() == Some(mod_id)),
-                        editor.get_mod_mut(mod_id).unwrap().index.name.as_str(),
+                        &mut (editor.get_selected_mod_id() == Some(id)),
+                        editor.get_mod_mut(id).unwrap().index.name.as_str(),
                     )
                     .clicked()
                 {
-                    editor.select_mod(mod_id).unwrap();
+                    editor.select_mod(id).unwrap();
                 }
 
                 ui.menu_button("remove", |ui| {
                     if ui.button("sure?").clicked() {
-                        editor.remove_mod(mod_id).unwrap();
+                        editor.remove_mod(id).unwrap();
                         ui.close_menu();
                     }
                 });
             })
             .body(|ui| {
-                if let Some(modi) = editor.get_mod_mut(mod_id) {
+                if let Some(modi) = editor.get_mod_mut(id) {
                     modi.modifier.view(ui);
                 }
             });
