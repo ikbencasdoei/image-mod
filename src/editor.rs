@@ -71,8 +71,7 @@ impl Editor {
         self.mods.iter_mut().find(|item| item.id == id)
     }
 
-    #[allow(dead_code)]
-    fn get_mod(&self, id: Uuid) -> Option<&Modification> {
+    pub fn get_mod(&self, id: Uuid) -> Option<&Modification> {
         self.mods.iter().find(|item| item.id == id)
     }
 

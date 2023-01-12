@@ -97,52 +97,57 @@ impl ModifierUi {
     }
 
     fn view_modifier(&mut self, mod_id: Uuid, index: usize, editor: &mut Editor, ui: &mut Ui) {
-        let ui_id = ui.make_persistent_id(mod_id);
-
         if self.dragging.contains(&mod_id) {
-            let layer = LayerId::new(Order::Tooltip, ui_id);
-
-            if let Some(mouse_pos) = ui.ctx().pointer_interact_pos() {
-                ui.ctx().layer_painter(layer).text(
-                    mouse_pos,
-                    Align2::CENTER_CENTER,
-                    &editor.get_mod_mut(mod_id).unwrap().index.name,
-                    TextStyle::Heading.resolve(ui.style()),
-                    Color32::WHITE,
-                );
-            }
+            self.view_dragged_mod(mod_id, editor, ui);
         } else {
-            egui::collapsing_header::CollapsingState::load_with_default_open(ui.ctx(), ui_id, true)
-                .show_header(ui, |ui| {
-                    if ui
-                        .add(Label::new(format!("#{index}")).sense(Sense::drag()))
-                        .drag_started()
-                    {
-                        self.dragging = Some(mod_id);
-                    }
+            egui::collapsing_header::CollapsingState::load_with_default_open(
+                ui.ctx(),
+                ui.make_persistent_id(mod_id),
+                true,
+            )
+            .show_header(ui, |ui| {
+                if ui
+                    .add(Label::new(format!("#{index}")).sense(Sense::drag()))
+                    .drag_started()
+                {
+                    self.dragging = Some(mod_id);
+                }
 
-                    if ui
-                        .toggle_value(
-                            &mut (editor.get_selected_mod_id() == Some(mod_id)),
-                            editor.get_mod_mut(mod_id).unwrap().index.name.as_str(),
-                        )
-                        .clicked()
-                    {
-                        editor.select_mod(mod_id).unwrap();
-                    }
+                if ui
+                    .toggle_value(
+                        &mut (editor.get_selected_mod_id() == Some(mod_id)),
+                        editor.get_mod_mut(mod_id).unwrap().index.name.as_str(),
+                    )
+                    .clicked()
+                {
+                    editor.select_mod(mod_id).unwrap();
+                }
 
-                    ui.menu_button("remove", |ui| {
-                        if ui.button("sure?").clicked() {
-                            editor.remove_mod(mod_id).unwrap();
-                            ui.close_menu();
-                        }
-                    });
-                })
-                .body(|ui| {
-                    if let Some(modi) = editor.get_mod_mut(mod_id) {
-                        modi.modifier.view(ui);
+                ui.menu_button("remove", |ui| {
+                    if ui.button("sure?").clicked() {
+                        editor.remove_mod(mod_id).unwrap();
+                        ui.close_menu();
                     }
                 });
+            })
+            .body(|ui| {
+                if let Some(modi) = editor.get_mod_mut(mod_id) {
+                    modi.modifier.view(ui);
+                }
+            });
+        }
+    }
+
+    fn view_dragged_mod(&self, id: Uuid, editor: &Editor, ui: &mut Ui) {
+        let layer = LayerId::new(Order::Tooltip, ui.make_persistent_id(id));
+        if let Some(mouse_pos) = ui.ctx().pointer_interact_pos() {
+            ui.ctx().layer_painter(layer).text(
+                mouse_pos,
+                Align2::CENTER_CENTER,
+                &editor.get_mod(id).unwrap().index.name,
+                TextStyle::Heading.resolve(ui.style()),
+                Color32::WHITE,
+            );
         }
     }
 }
