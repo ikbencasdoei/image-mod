@@ -53,10 +53,7 @@ impl Modification {
     }
 
     fn apply(&mut self, input: &ModOutput) -> &ModOutput {
-        let output = ModOutput {
-            image: self.modifier.apply(input.image.clone()),
-            id: Uuid::new_v4(),
-        };
+        let output = ModOutput::new(self.modifier.apply(input.image.clone()));
 
         self.cache = Some(ModCache {
             modifier: dyn_clone::clone(&self.modifier),
@@ -103,6 +100,13 @@ pub struct ModOutput {
 }
 
 impl ModOutput {
+    pub fn new(image: Option<Image>) -> Self {
+        Self {
+            image,
+            id: Uuid::new_v4(),
+        }
+    }
+
     pub fn new_empty() -> Self {
         Self {
             image: None,
