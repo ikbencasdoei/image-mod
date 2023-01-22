@@ -5,7 +5,10 @@ use bevy_egui::{
 };
 use uuid::Uuid;
 
-use super::collection::{ModifierCollectionPlugin, ModifierIndex};
+use super::{
+    collection::{ModifierCollectionPlugin, ModifierIndex},
+    plugin::Modifier,
+};
 use crate::{editor::Editor, ui::MenuBarSystemLabel};
 
 pub struct ModifierUiPlugin;
@@ -118,7 +121,7 @@ impl ModifierUi {
                 if ui
                     .toggle_value(
                         &mut (editor.get_selected_mod_id() == Some(id)),
-                        editor.get_mod_mut(id).unwrap().index.name.as_str(),
+                        editor.get_mod_mut(id).unwrap().modifier.index.name.as_str(),
                     )
                     .clicked()
                 {
@@ -146,7 +149,7 @@ impl ModifierUi {
             ui.ctx().layer_painter(layer).text(
                 mouse_pos,
                 Align2::CENTER_CENTER,
-                &editor.get_mod(id).unwrap().index.name,
+                &editor.get_mod(id).unwrap().modifier.index.name,
                 TextStyle::Heading.resolve(ui.style()),
                 Color32::WHITE,
             );

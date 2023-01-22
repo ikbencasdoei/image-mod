@@ -10,7 +10,7 @@ use crate::{
     image::Image,
     mods::{
         collection::{source::Source, ModifierIndex},
-        modifier::{ModOutput, Modification},
+        modifier::{DynMod, ModOutput, Modification},
         plugin::Modifier,
     },
 };
@@ -25,14 +25,14 @@ impl Plugin for EditorPlugin {
 
 #[derive(Resource, Default)]
 pub struct Editor {
-    mods: Vec<Modification>,
+    mods: Vec<Modification<DynMod>>,
     selected_mod: Option<Uuid>,
 }
 
 impl Editor {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
         Self {
-            mods: vec![Modification::new(Source::new(path))],
+            mods: vec![Modification::new(DynMod::new(Source::new(path)))],
             ..default()
         }
     }
@@ -59,16 +59,16 @@ impl Editor {
     }
 
     pub fn add_mod(&mut self, index: &ModifierIndex) {
-        let new = Modification::new_from_index(index.clone());
+        let new = Modification::new(DynMod::from_index(index.clone()));
         self.selected_mod = Some(new.id);
         self.mods.push(new);
     }
 
-    pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Modification> {
+    pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Modification<DynMod>> {
         self.mods.iter_mut().find(|item| item.id == id)
     }
 
-    pub fn get_mod(&self, id: Uuid) -> Option<&Modification> {
+    pub fn get_mod(&self, id: Uuid) -> Option<&Modification<DynMod>> {
         self.mods.iter().find(|item| item.id == id)
     }
 
@@ -95,12 +95,12 @@ impl Editor {
         }
     }
 
-    pub fn iter_mods(&self) -> Iter<Modification> {
+    pub fn iter_mods(&self) -> Iter<Modification<DynMod>> {
         self.mods.iter()
     }
 
     #[allow(dead_code)]
-    pub fn iter_mut_mods(&mut self) -> IterMut<Modification> {
+    pub fn iter_mut_mods(&mut self) -> IterMut<Modification<DynMod>> {
         self.mods.iter_mut()
     }
 
@@ -108,7 +108,7 @@ impl Editor {
         self.iter_mods().map(|modi| modi.id).collect()
     }
 
-    pub fn get_mods(&self) -> &Vec<Modification> {
+    pub fn get_mods(&self) -> &Vec<Modification<DynMod>> {
         &self.mods
     }
 
@@ -121,12 +121,12 @@ impl Editor {
         }
     }
 
-    pub fn get_selected_mod_mut(&mut self) -> Option<&mut Modification> {
+    pub fn get_selected_mod_mut(&mut self) -> Option<&mut Modification<DynMod>> {
         self.selected_mod.and_then(|id| self.get_mod_mut(id))
     }
 
     #[allow(dead_code)]
-    pub fn get_selected_mod(&self) -> Option<&Modification> {
+    pub fn get_selected_mod(&self) -> Option<&Modification<DynMod>> {
         self.selected_mod.and_then(|id| self.get_mod(id))
     }
 
@@ -137,14 +137,14 @@ impl Editor {
     #[allow(dead_code)]
     pub fn get_when_selected<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
         self.get_selected_mod()
-            .and_then(|modification| modification.get_modifier())
+            .and_then(|modification| modification.modifier.get_modifier())
     }
 
     pub fn get_when_selected_mut<T: Modifier + Default + Send + Sync + 'static>(
         &mut self,
     ) -> Option<&mut T> {
         self.get_selected_mod_mut()
-            .and_then(|modification| modification.get_modifier_mut())
+            .and_then(|modification| modification.modifier.get_modifier_mut())
     }
 
     pub fn mod_set_index(&mut self, id: Uuid, index: usize) -> Result<(), &str> {
@@ -159,7 +159,7 @@ impl Editor {
 
     fn get_mods_of_type<T: Modifier + Default + Send + Sync + 'static>(&self) -> Vec<&T> {
         self.iter_mods()
-            .map(|modification| modification.get_modifier())
+            .map(|modification| modification.modifier.get_modifier())
             .flatten()
             .collect()
     }
