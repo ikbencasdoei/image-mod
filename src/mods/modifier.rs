@@ -89,6 +89,13 @@ impl Modification {
     }
 }
 
+impl PartialEq for Modification {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+            && &*self.modifier as &dyn DynPartialEq == &*other.modifier as &dyn DynPartialEq
+    }
+}
+
 #[derive(Clone)]
 pub struct ModOutput {
     pub image: Option<Image>,
