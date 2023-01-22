@@ -107,6 +107,6 @@ pub struct ModCache {
 
 impl ModCache {
     fn changed(&self, modifier: &dyn Modifier) -> bool {
-        !self.modifier.eq(modifier as &dyn DynPartialEq)
+        &*self.modifier as &dyn DynPartialEq != modifier as &dyn DynPartialEq
     }
 }
