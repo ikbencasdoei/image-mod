@@ -6,6 +6,7 @@ use super::{
 };
 use crate::image::Image;
 
+#[derive(Clone)]
 pub struct Modification {
     pub index: ModifierIndex,
     pub id: Uuid,
@@ -103,6 +104,7 @@ impl ModOutput {
     }
 }
 
+#[derive(Clone)]
 pub struct ModCache {
     modifier: Box<dyn Modifier + Send + Sync>,
     pub output: ModOutput,
