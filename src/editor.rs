@@ -10,7 +10,7 @@ use crate::{
     image::Image,
     mods::{
         collection::{source::Source, ModifierIndex},
-        modifier::Modification,
+        modifier::{ModOutput, Modification},
         plugin::Modifier,
     },
 };
@@ -46,19 +46,16 @@ impl Editor {
     }
 
     pub fn get_output(&mut self) -> Option<Image> {
-        let mut reversed: Vec<&mut Modification> = self.mods.iter_mut().rev().collect();
-
-        let (modification, inputs) = if !reversed.is_empty() {
-            reversed.split_at_mut(1)
-        } else {
-            (reversed.as_mut_slice(), &mut [] as &mut [&mut Modification])
-        };
-
-        if let Some(modification) = modification.get_mut(0) {
-            modification.get_output(inputs).image.clone()
-        } else {
-            None
+        let mut output = ModOutput::new_empty();
+        {
+            let mut borrow = &output;
+            for modification in self.mods.iter_mut() {
+                borrow = modification.get_output(&borrow);
+            }
+            output = borrow.clone();
         }
+
+        output.image
     }
 
     pub fn add_mod(&mut self, index: &ModifierIndex) {

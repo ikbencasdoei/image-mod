@@ -37,26 +37,7 @@ impl Modification {
         }
     }
 
-    pub fn get_output(&mut self, inputs: &mut [&mut Modification]) -> &ModOutput {
-        let (dependency, inputs) = if !inputs.is_empty() {
-            inputs.split_at_mut(1)
-        } else {
-            (inputs, &mut [] as &mut [&mut Modification])
-        };
-
-        let modification = dependency.get_mut(0);
-
-        let no_input = ModOutput {
-            image: None,
-            id: Uuid::nil(),
-        };
-
-        let input = if let Some(modification) = modification {
-            modification.get_output(inputs)
-        } else {
-            &no_input
-        };
-
+    pub fn get_output(&mut self, input: &ModOutput) -> &ModOutput {
         if let Some(cache) = &self.cache {
             if !cache.changed(&*self.modifier) && cache.input_id == input.id {
                 return &cache.output;
@@ -107,6 +88,15 @@ impl Modification {
 pub struct ModOutput {
     pub image: Option<Image>,
     id: Uuid,
+}
+
+impl ModOutput {
+    pub fn new_empty() -> Self {
+        Self {
+            image: None,
+            id: Uuid::nil(),
+        }
+    }
 }
 
 pub struct ModCache {
