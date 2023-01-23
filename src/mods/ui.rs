@@ -9,7 +9,7 @@ use super::{
     collection::{ModifierCollectionPlugin, ModifierIndex},
     plugin::Modifier,
 };
-use crate::{editor::Editor, ui::MenuBarSystemLabel};
+use crate::{editor::Editor, menu::MenuSystemLabel};
 
 pub struct ModifierUiPlugin;
 
@@ -17,7 +17,7 @@ impl Plugin for ModifierUiPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<ModifierUi>()
             .add_plugin(ModifierCollectionPlugin)
-            .add_system(ui.after(MenuBarSystemLabel));
+            .add_system(ui.after(MenuSystemLabel));
     }
 }
 
