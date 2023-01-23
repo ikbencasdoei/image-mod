@@ -10,8 +10,8 @@ use bevy_egui::{EguiPlugin, EguiSettings};
 use editor::{Editor, EditorPlugin};
 use file_picker::FilePickerPlugin;
 use keybinds::KeyBindsPlugin;
+use menu::MenuPlugin;
 use mods::ui::ModifierUiPlugin;
-use ui::UiPlugin;
 use view::ViewPlugin;
 
 mod color;
@@ -19,8 +19,8 @@ mod editor;
 mod file_picker;
 mod image;
 mod keybinds;
+mod menu;
 mod mods;
-mod ui;
 mod view;
 
 fn main() {
@@ -41,7 +41,7 @@ fn main() {
         .add_plugin(EditorPlugin)
         .add_plugin(FilePickerPlugin)
         .add_plugin(ViewPlugin)
-        .add_plugin(UiPlugin)
+        .add_plugin(MenuPlugin)
         .add_plugin(KeyBindsPlugin)
         .add_plugin(ModifierUiPlugin)
         .add_startup_system(setup)

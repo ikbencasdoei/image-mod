@@ -8,11 +8,11 @@ use crate::{
     file_picker::{FilePicker, FilePickerEvent},
 };
 
-pub struct UiPlugin;
+pub struct MenuPlugin;
 
-impl Plugin for UiPlugin {
+impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(ui.label(MenuBarSystemLabel))
+        app.add_system(menu.label(MenuSystemLabel))
             .add_system(events);
     }
 }
@@ -27,9 +27,9 @@ fn events(mut event_reader: EventReader<FilePickerEvent>, mut editor: ResMut<Edi
 }
 
 #[derive(SystemLabel)]
-pub struct MenuBarSystemLabel;
+pub struct MenuSystemLabel;
 
-fn ui(
+fn menu(
     mut egui_context: ResMut<EguiContext>,
     mut query_sprite: Query<&mut crate::view::View>,
     editor: Res<Editor>,
