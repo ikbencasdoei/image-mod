@@ -37,11 +37,15 @@ impl Modification {
         }
     }
 
+    pub fn check_cache(&self, input: &ModOutput) -> bool {
+        self.cache
+            .as_ref()
+            .is_some_and(|cache| !cache.changed(&*self.modifier) && cache.input_id == input.id)
+    }
+
     pub fn get_output(&mut self, input: &ModOutput) -> &ModOutput {
-        if let Some(cache) = &self.cache {
-            if !cache.changed(&*self.modifier) && cache.input_id == input.id {
-                return &cache.output;
-            }
+        if self.check_cache(input) {
+            return &self.cache.as_ref().unwrap().output;
         }
 
         self.apply(input)

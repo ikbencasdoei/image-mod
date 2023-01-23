@@ -1,6 +1,7 @@
 #![allow(incomplete_features)]
 #![feature(trait_upcasting)]
 #![feature(option_result_contains)]
+#![feature(is_some_and)]
 
 use std::path::Path;
 
