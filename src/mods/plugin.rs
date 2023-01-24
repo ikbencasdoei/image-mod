@@ -11,7 +11,7 @@ pub trait Modifier: DynClone + DynPartialEq {
 
     fn get_index() -> ModifierIndex
     where
-        Self: Sized + Default + Send + Sync + 'static,
+        Self: Sized + Default + 'static,
     {
         ModifierIndex {
             name: type_name::<Self>()
@@ -54,6 +54,6 @@ impl<T: PartialEq + 'static> DynPartialEq for T {
     }
 }
 
-pub fn init_modifier<T: Modifier + Default + Send + Sync + 'static>(mod_ui: &mut ModifierUi) {
+pub fn init_modifier<T: Modifier + Default + 'static>(mod_ui: &mut ModifierUi) {
     mod_ui.add_index(T::get_index());
 }

@@ -59,13 +59,13 @@ impl<T: PartialEq> PartialEq for Modification<T> {
 #[derive(Clone)]
 pub struct DynMod {
     pub index: ModifierIndex,
-    modifier: Box<dyn Modifier + Send + Sync>,
+    modifier: Box<dyn Modifier>,
 }
 
 impl DynMod {
     pub fn new<M>(modifier: M) -> Self
     where
-        M: Modifier + Default + Send + Sync + 'static,
+        M: Modifier + Default + 'static,
     {
         Self {
             index: M::get_index(),
@@ -80,7 +80,7 @@ impl DynMod {
         }
     }
 
-    pub fn get_modifier<M: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&M> {
+    pub fn get_modifier<M: Modifier + Default + 'static>(&self) -> Option<&M> {
         if self.index == M::get_index() {
             let ptr: *const _ = &*self.modifier;
             unsafe { Some(&*ptr.cast()) }
@@ -89,7 +89,7 @@ impl DynMod {
         }
     }
 
-    pub fn get_modifier_mut<M: Modifier + Default + Send + Sync + 'static>(
+    pub fn get_modifier_mut<M: Modifier + Default  + 'static>(
         &mut self,
     ) -> Option<&mut M> {
         if self.index == M::get_index() {

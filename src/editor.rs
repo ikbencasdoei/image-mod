@@ -126,15 +126,13 @@ impl Editor {
     }
 
     #[allow(dead_code)]
-    pub fn get_when_selected<T: Modifier + Default + Send + Sync + 'static>(&self) -> Option<&T> {
+    pub fn get_when_selected<T: Modifier + Default + 'static>(&self) -> Option<&T> {
         self.get_selected_mod()
             .and_then(|modification| modification.modifier.get_modifier())
     }
-    
+
     #[allow(dead_code)]
-    pub fn get_when_selected_mut<T: Modifier + Default + Send + Sync + 'static>(
-        &mut self,
-    ) -> Option<&mut T> {
+    pub fn get_when_selected_mut<T: Modifier + Default + 'static>(&mut self) -> Option<&mut T> {
         self.get_selected_mod_mut()
             .and_then(|modification| modification.modifier.get_modifier_mut())
     }
@@ -149,7 +147,7 @@ impl Editor {
         }
     }
 
-    fn get_mods_of_type<T: Modifier + Default + Send + Sync + 'static>(&self) -> Vec<&T> {
+    fn get_mods_of_type<T: Modifier + Default + 'static>(&self) -> Vec<&T> {
         self.iter_mods()
             .map(|modification| modification.modifier.get_modifier())
             .flatten()
