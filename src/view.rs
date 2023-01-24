@@ -99,7 +99,8 @@ impl View {
 
     fn view(&self, ctx: &Context, ui: &mut Ui) {
         let texture = self.texture.as_ref().unwrap();
-        ui.painter().image(
+
+        ui.painter().with_clip_rect(ui.max_rect()).image(
             texture.id(),
             self.rect(ctx, ui),
             Rect::from_min_max(Pos2::new(0.0, 0.0), Pos2::new(1.0, 1.0)),
