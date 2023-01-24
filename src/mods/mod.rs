@@ -1,4 +1,4 @@
 pub mod collection;
-pub mod modifier;
+pub mod modification;
 pub mod plugin;
 pub mod ui;

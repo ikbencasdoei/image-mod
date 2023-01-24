@@ -9,7 +9,7 @@ use crate::{
     image::Image,
     mods::{
         collection::{source::Source, ModifierIndex},
-        modifier::{DynMod, ModOutput, Modification},
+        modification::{DynMod, ModOutput, Modification},
         plugin::Modifier,
     },
 };
