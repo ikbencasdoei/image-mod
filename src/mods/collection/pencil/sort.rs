@@ -1,18 +1,10 @@
 use std::f32::consts::PI;
 
-use bevy::prelude::{Color as BevyColor, *};
-use bevy_egui::egui::{self, Ui};
+use egui::{Color32, Ui};
+use glam::{UVec2, Vec2};
 
-use super::plugin::{Pencil, PencilPlugin};
+use super::plugin::Pencil;
 use crate::{color::Color, image::Image};
-
-pub struct SortPencilPlugin;
-
-impl Plugin for SortPencilPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(PencilPlugin::<PixelSorter>::default());
-    }
-}
 
 #[derive(Clone, PartialEq)]
 enum SortDirection {
@@ -127,7 +119,7 @@ impl Pencil for PixelSorter {
                     ui.add(
                         egui::DragValue::new(&mut self.threshold)
                             .speed(0.01)
-                            .clamp_range(0.0..=Color::from(BevyColor::WHITE).sum_rgb()),
+                            .clamp_range(0.0..=Color::from(Color32::WHITE).sum_rgb()),
                     );
                     ui.end_row();
                 }

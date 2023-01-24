@@ -9,9 +9,9 @@ use editor::Editor;
 use eframe::Frame;
 use egui::Context;
 use file_picker::FilePicker;
+use menu::menu;
+use mods::{collection::process_modifiers, ui::ModifierUi};
 use view::View;
-
-use crate::image::Image;
 
 mod color;
 mod editor;
@@ -27,6 +27,7 @@ struct App {
     editor: Editor,
     file_picker: FilePicker,
     view: View,
+    mod_ui: ModifierUi,
 }
 
 impl eframe::App for App {
@@ -35,12 +36,22 @@ impl eframe::App for App {
             editor,
             file_picker,
             view,
+            mod_ui,
         } = self;
 
         keybinds::fullscreen(ctx, frame);
         keybinds::exit(ctx, frame);
 
         file_picker.update(editor);
+
+        menu(ctx, view, editor, file_picker);
+        mod_ui.view(editor, ctx);
+
+        process_modifiers(editor, ctx, view);
+
+        if let Some(output) = editor.get_output() {
+            view.update(ctx, output);
+        }
 
         view.process(ctx);
     }
@@ -67,15 +78,12 @@ fn main() {
         Box::new(|cc| {
             cc.egui_ctx.set_pixels_per_point(1.5);
 
-            let mut view = View::default();
-
-            if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
-                view.update(&cc.egui_ctx, Image::open(path).unwrap());
-            }
+            let mut mod_ui = ModifierUi::default();
+            mods::collection::init_modifiers_collection(&mut mod_ui);
 
             Box::new(App {
                 editor,
-                view,
+                mod_ui,
                 ..Default::default()
             })
         }),

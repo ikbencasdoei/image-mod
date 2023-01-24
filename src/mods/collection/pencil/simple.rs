@@ -1,19 +1,11 @@
-use bevy::prelude::*;
-use bevy_egui::egui::{Color32, Ui};
+use egui::{Color32, Ui};
+use glam::UVec2;
 
-use super::plugin::{Pencil, PencilPlugin};
+use super::plugin::Pencil;
 use crate::{color::Color, image::Image};
 
-pub struct SimplePencilPlugin;
-
-impl Plugin for SimplePencilPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(PencilPlugin::<SimplePencil>::default());
-    }
-}
-
 #[derive(Clone, PartialEq)]
-struct SimplePencil {
+pub struct SimplePencil {
     color: Color32,
 }
 

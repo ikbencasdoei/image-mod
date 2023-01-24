@@ -1,11 +1,7 @@
-use std::{
-    any::{type_name, Any, TypeId},
-    marker::PhantomData,
-};
+use std::any::{type_name, Any, TypeId};
 
-use bevy::prelude::*;
-use bevy_egui::egui::Ui;
 use dyn_clone::DynClone;
+use egui::Ui;
 
 use super::{collection::ModifierIndex, ui::ModifierUi};
 use crate::image::Image;
@@ -58,18 +54,6 @@ impl<T: PartialEq + 'static> DynPartialEq for T {
     }
 }
 
-#[derive(Default)]
-pub struct ModifierPlugin<T>(PhantomData<T>);
-
-impl<T> Plugin for ModifierPlugin<T>
-where
-    T: Modifier + Default + Send + Sync + 'static,
-{
-    fn build(&self, app: &mut App) {
-        app.add_startup_system(setup::<T>);
-    }
-}
-
-fn setup<T: Modifier + Default + Send + Sync + 'static>(mut mod_ui: ResMut<ModifierUi>) {
+pub fn init_modifier<T: Modifier + Default + Send + Sync + 'static>(mod_ui: &mut ModifierUi) {
     mod_ui.add_index(T::get_index());
 }

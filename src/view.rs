@@ -7,8 +7,8 @@ use crate::image::Image;
 
 pub struct View {
     texture: Option<TextureHandle>,
-    scale: f32,
-    translation: Vec2,
+    pub scale: f32,
+    pub translation: Vec2,
     dragging: bool,
     rect: Rect,
 }

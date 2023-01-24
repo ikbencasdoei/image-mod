@@ -1,27 +1,10 @@
-use bevy::prelude::*;
-use bevy_egui::{
-    egui::{self, Align2, Color32, Label, LayerId, Order, Sense, TextStyle, Ui},
-    EguiContext,
-};
+use egui::{Align2, Color32, Context, Label, LayerId, Order, Sense, TextStyle, Ui};
 use uuid::Uuid;
 
-use super::{
-    collection::{ModifierCollectionPlugin, ModifierIndex},
-    plugin::Modifier,
-};
-use crate::{editor::Editor, menu::MenuSystemLabel};
+use super::{collection::ModifierIndex, plugin::Modifier};
+use crate::editor::Editor;
 
-pub struct ModifierUiPlugin;
-
-impl Plugin for ModifierUiPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<ModifierUi>()
-            .add_plugin(ModifierCollectionPlugin)
-            .add_system(ui.after(MenuSystemLabel));
-    }
-}
-
-#[derive(Resource, Default)]
+#[derive(Default)]
 pub struct ModifierUi {
     index: Vec<ModifierIndex>,
     dragging: Option<Uuid>,
@@ -33,10 +16,10 @@ impl ModifierUi {
         self.index.sort_by(|a, b| a.name.cmp(&b.name));
     }
 
-    fn view(&mut self, editor: &mut Editor, ctx: &mut EguiContext) {
+    pub fn view(&mut self, editor: &mut Editor, ctx: &Context) {
         egui::SidePanel::left("Modifiers")
             .resizable(true)
-            .show(ctx.ctx_mut(), |ui| {
+            .show(ctx, |ui| {
                 ui.vertical_centered(|ui| {
                     ui.heading(format!("Modifiers ({})", editor.get_mods().len()));
                     ui.separator();
@@ -155,12 +138,4 @@ impl ModifierUi {
             );
         }
     }
-}
-
-fn ui(
-    mut egui_context: ResMut<EguiContext>,
-    mut editor: ResMut<Editor>,
-    mut mod_ui: ResMut<ModifierUi>,
-) {
-    mod_ui.view(&mut editor, &mut egui_context);
 }

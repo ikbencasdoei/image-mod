@@ -1,7 +1,7 @@
 use std::any::TypeId;
 
-use bevy::prelude::*;
 use dyn_clone::DynClone;
+use egui::Context;
 
 use self::{
     blur::Blur,
@@ -10,11 +10,15 @@ use self::{
     grayscale::GrayScaleFilter,
     hue::Hue,
     invert::Invert,
-    pencil::{rainbow::RainbowPencilPlugin, simple::SimplePencilPlugin, sort::SortPencilPlugin},
+    pencil::{plugin::PencilMod, rainbow::RainbowPencil, simple::SimplePencil, sort::PixelSorter},
     resize::Resize,
     source::Source,
 };
-use super::plugin::{Modifier, ModifierPlugin};
+use super::{
+    plugin::{init_modifier, Modifier},
+    ui::ModifierUi,
+};
+use crate::{editor::Editor, view::View};
 
 pub mod blur;
 pub mod brighten;
@@ -26,21 +30,42 @@ pub mod pencil;
 pub mod resize;
 pub mod source;
 
-pub struct ModifierCollectionPlugin;
+pub fn init_modifiers_collection(mod_ui: &mut ModifierUi) {
+    init_modifier::<GrayScaleFilter>(mod_ui);
+    init_modifier::<Source>(mod_ui);
+    init_modifier::<Hue>(mod_ui);
+    init_modifier::<Brighten>(mod_ui);
+    init_modifier::<Contrast>(mod_ui);
+    init_modifier::<Invert>(mod_ui);
+    init_modifier::<Blur>(mod_ui);
+    init_modifier::<Resize>(mod_ui);
+    init_modifier::<PencilMod<SimplePencil>>(mod_ui);
+    init_modifier::<PencilMod<RainbowPencil>>(mod_ui);
+    init_modifier::<PencilMod<PixelSorter>>(mod_ui);
+}
 
-impl Plugin for ModifierCollectionPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(ModifierPlugin::<GrayScaleFilter>::default())
-            .add_plugin(ModifierPlugin::<Source>::default())
-            .add_plugin(ModifierPlugin::<Hue>::default())
-            .add_plugin(ModifierPlugin::<Brighten>::default())
-            .add_plugin(ModifierPlugin::<Contrast>::default())
-            .add_plugin(ModifierPlugin::<Invert>::default())
-            .add_plugin(ModifierPlugin::<Blur>::default())
-            .add_plugin(ModifierPlugin::<Resize>::default())
-            .add_plugin(SimplePencilPlugin)
-            .add_plugin(RainbowPencilPlugin)
-            .add_plugin(SortPencilPlugin);
+pub fn process_modifiers(editor: &mut Editor, ctx: &Context, view: &View) {
+    if let Some(modification) = editor.get_selected_mod_mut() {
+        if let Some(modifier) = modification
+            .modifier
+            .get_modifier_mut::<PencilMod<SimplePencil>>()
+        {
+            modifier.update(ctx, view);
+        }
+
+        if let Some(modifier) = modification
+            .modifier
+            .get_modifier_mut::<PencilMod<RainbowPencil>>()
+        {
+            modifier.update(ctx, view);
+        }
+
+        if let Some(modifier) = modification
+            .modifier
+            .get_modifier_mut::<PencilMod<PixelSorter>>()
+        {
+            modifier.update(ctx, view);
+        }
     }
 }
 

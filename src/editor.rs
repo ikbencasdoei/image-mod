@@ -130,7 +130,8 @@ impl Editor {
         self.get_selected_mod()
             .and_then(|modification| modification.modifier.get_modifier())
     }
-
+    
+    #[allow(dead_code)]
     pub fn get_when_selected_mut<T: Modifier + Default + Send + Sync + 'static>(
         &mut self,
     ) -> Option<&mut T> {

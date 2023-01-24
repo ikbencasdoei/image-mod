@@ -1,22 +1,10 @@
-use bevy::{
-    math::{Vec3Swizzles, Vec4Swizzles},
-    prelude::{App, *},
-};
-use bevy_egui::egui;
+use glam::{UVec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 
-use super::plugin::{Pencil, PencilPlugin};
+use super::plugin::Pencil;
 use crate::{color::Color, image::Image};
 
-pub struct RainbowPencilPlugin;
-
-impl Plugin for RainbowPencilPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(PencilPlugin::<RainbowPencil>::default());
-    }
-}
-
 #[derive(Clone, PartialEq)]
-struct RainbowPencil {
+pub struct RainbowPencil {
     color_hsv: Vec3,
     rotation_per_pixel: f32,
     last_pixel: Option<UVec2>,
