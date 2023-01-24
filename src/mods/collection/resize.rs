@@ -2,7 +2,7 @@ use egui::Ui;
 use glam::{UVec2, Vec2};
 use image::imageops::FilterType;
 
-use crate::{image::Image, mods::plugin::Modifier};
+use crate::{image::Image, mods::modifier::Modifier};
 
 #[derive(Clone, PartialEq)]
 pub struct Resize {

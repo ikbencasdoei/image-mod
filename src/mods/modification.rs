@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use super::{
     collection::ModifierIndex,
-    plugin::{DynPartialEq, Modifier},
+    modifier::{DynPartialEq, Modifier},
 };
 use crate::image::Image;
 

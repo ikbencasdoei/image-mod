@@ -15,7 +15,7 @@ use self::{
     source::Source,
 };
 use super::{
-    plugin::{init_modifier, Modifier},
+    modifier::{init_modifier, Modifier},
     ui::ModifierUi,
 };
 use crate::{editor::Editor, view::View};

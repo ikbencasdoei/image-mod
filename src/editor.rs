@@ -10,7 +10,7 @@ use crate::{
     mods::{
         collection::{source::Source, ModifierIndex},
         modification::{DynMod, ModOutput, Modification},
-        plugin::Modifier,
+        modifier::Modifier,
     },
 };
 

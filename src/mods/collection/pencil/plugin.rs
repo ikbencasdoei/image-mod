@@ -1,7 +1,7 @@
 use egui::{Context, Ui};
 use glam::{UVec2, Vec2};
 
-use crate::{color::Color, image::Image, mods::plugin::Modifier, view::View};
+use crate::{color::Color, image::Image, mods::modifier::Modifier, view::View};
 
 pub trait Pencil {
     fn get_pixel(&mut self, pixel: UVec2, image: &mut Image) -> Option<Color>;

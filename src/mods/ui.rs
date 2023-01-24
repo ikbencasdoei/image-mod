@@ -1,7 +1,7 @@
 use egui::{Align2, Color32, Context, Label, LayerId, Order, Sense, TextStyle, Ui};
 use uuid::Uuid;
 
-use super::{collection::ModifierIndex, plugin::Modifier};
+use super::{collection::ModifierIndex, modifier::Modifier};
 use crate::editor::Editor;
 
 #[derive(Default)]
