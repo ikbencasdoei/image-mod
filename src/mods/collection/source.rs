@@ -3,7 +3,7 @@ use std::{
     str::FromStr,
 };
 
-use bevy_egui::egui::{TextEdit, Ui};
+use egui::{TextEdit, Ui};
 
 use crate::{image::Image, mods::plugin::Modifier};
 
