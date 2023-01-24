@@ -89,9 +89,7 @@ impl DynMod {
         }
     }
 
-    pub fn get_modifier_mut<M: Modifier + Default  + 'static>(
-        &mut self,
-    ) -> Option<&mut M> {
+    pub fn get_modifier_mut<M: Modifier + Default + 'static>(&mut self) -> Option<&mut M> {
         if self.index == M::get_index() {
             let ptr: *mut _ = &mut *self.modifier;
             unsafe { Some(&mut *ptr.cast()) }

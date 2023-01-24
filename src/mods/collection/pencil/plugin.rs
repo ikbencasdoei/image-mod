@@ -33,7 +33,7 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
     }
 }
 
-impl<T: Pencil + Default + PartialEq + Clone + 'static> PencilMod<T> {
+impl<T: Pencil + Default + PartialEq + Clone> PencilMod<T> {
     pub fn update(&mut self, ctx: &Context, view: &View) {
         if (ctx.input().pointer.primary_down()) && !ctx.wants_pointer_input() {
             let pixel = {

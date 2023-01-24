@@ -69,11 +69,11 @@ pub fn process_modifiers(editor: &mut Editor, ctx: &Context, view: &View) {
     }
 }
 
-pub trait ModInstancer: Fn() -> Box<dyn Modifier + 'static> + DynClone {
+pub trait ModInstancer: Fn() -> Box<dyn Modifier> + DynClone {
     fn instance(&self) -> Box<dyn Modifier>;
 }
 
-impl<T: Fn() -> Box<dyn Modifier + 'static> + DynClone> ModInstancer for T {
+impl<T: Fn() -> Box<dyn Modifier> + DynClone> ModInstancer for T {
     fn instance(&self) -> Box<dyn Modifier> {
         self()
     }
@@ -85,7 +85,7 @@ dyn_clone::clone_trait_object!(ModInstancer);
 pub struct ModifierIndex {
     pub name: String,
     pub id: TypeId,
-    pub instancer: Box<dyn ModInstancer + 'static>,
+    pub instancer: Box<dyn ModInstancer>,
 }
 
 impl PartialEq for ModifierIndex {
