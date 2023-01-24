@@ -10,6 +10,7 @@ pub struct View {
     scale: f32,
     translation: Vec2,
     dragging: bool,
+    rect: Rect,
 }
 
 impl Default for View {
@@ -19,6 +20,7 @@ impl Default for View {
             scale: 1.0,
             translation: Vec2::ZERO,
             dragging: false,
+            rect: Rect::NAN,
         }
     }
 }
@@ -62,7 +64,7 @@ impl View {
 
         if ui.rect_contains_pointer(ui.max_rect()) {
             let pointer = ui.input().pointer.interact_pos().unwrap();
-            let center_pointer = pointer.to_vec2() - self.rect(ctx, ui).center().to_vec2();
+            let center_pointer = pointer.to_vec2() - self.rect.center().to_vec2();
 
             let scrolled = ctx.input().scroll_delta.y;
             if scrolled.is_normal() {
@@ -97,21 +99,23 @@ impl View {
         }
     }
 
-    fn view(&self, ctx: &Context, ui: &mut Ui) {
-        let texture = self.texture.as_ref().unwrap();
-
-        ui.painter().with_clip_rect(ui.max_rect()).image(
-            texture.id(),
-            self.rect(ctx, ui),
-            Rect::from_min_max(Pos2::new(0.0, 0.0), Pos2::new(1.0, 1.0)),
-            Color32::WHITE,
-        )
-    }
-
-    fn rect(&self, ctx: &Context, ui: &Ui) -> Rect {
+    fn view(&mut self, ctx: &Context, ui: &mut Ui) {
         let texture = self.texture.as_ref().unwrap();
         let size = texture.size_vec2() / ctx.pixels_per_point() * self.scale;
         let center = ui.max_rect().center() + self.translation;
-        Rect::from_center_size(center, size)
+        self.rect = Rect::from_center_size(center, size);
+
+        ui.painter().with_clip_rect(ui.max_rect()).image(
+            texture.id(),
+            self.rect,
+            Rect::from_min_max(Pos2::new(0.0, 0.0), Pos2::new(1.0, 1.0)),
+            Color32::WHITE,
+        );
+    }
+
+    pub fn hovered_pixel(&self, ctx: &Context) -> Vec2 {
+        let pointer = ctx.input().pointer.interact_pos().unwrap();
+        let pos = pointer - self.rect.left_top();
+        pos / self.scale * ctx.pixels_per_point()
     }
 }
