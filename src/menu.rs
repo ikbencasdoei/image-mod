@@ -1,8 +1,5 @@
 use std::path::PathBuf;
 
-use bevy::prelude::*;
-use bevy_egui::{egui, EguiContext};
-
 use crate::{
     editor::Editor,
     file_picker::{FilePicker, FilePickerEvent},
@@ -12,22 +9,9 @@ pub struct MenuPlugin;
 
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(menu.label(MenuSystemLabel))
-            .add_system(events);
+        app.add_system(menu.label(MenuSystemLabel));
     }
 }
-
-fn events(mut event_reader: EventReader<FilePickerEvent>, mut editor: ResMut<Editor>) {
-    for event in event_reader.iter() {
-        match event {
-            FilePickerEvent::PickedLoad(path) => *editor = Editor::new_from_input_path(path),
-            FilePickerEvent::PickedExport(path) => editor.export(path).unwrap(),
-        }
-    }
-}
-
-#[derive(SystemLabel)]
-pub struct MenuSystemLabel;
 
 fn menu(
     mut egui_context: ResMut<EguiContext>,

@@ -8,6 +8,7 @@ use std::path::Path;
 use editor::Editor;
 use eframe::Frame;
 use egui::Context;
+use file_picker::FilePicker;
 
 mod color;
 mod editor;
@@ -21,10 +22,18 @@ mod view;
 #[derive(Default)]
 struct App {
     editor: Editor,
+    file_picker: FilePicker,
 }
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &Context, _frame: &mut Frame) {}
+    fn update(&mut self, ctx: &Context, _frame: &mut Frame) {
+        let App {
+            editor,
+            file_picker,
+        } = self;
+
+        file_picker.update(editor);
+    }
 }
 
 fn main() {
@@ -48,7 +57,10 @@ fn main() {
         Box::new(|cc| {
             cc.egui_ctx.set_pixels_per_point(1.5);
 
-            Box::new(App { editor })
+            Box::new(App {
+                editor,
+                ..Default::default()
+            })
         }),
     );
 }

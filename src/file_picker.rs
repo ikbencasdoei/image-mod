@@ -3,20 +3,11 @@ use std::{
     thread::{self, JoinHandle},
 };
 
-use bevy::prelude::*;
 use rfd::FileDialog;
 
-pub struct FilePickerPlugin;
+use crate::editor::Editor;
 
-impl Plugin for FilePickerPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<FilePicker>()
-            .add_event::<FilePickerEvent>()
-            .add_system(system);
-    }
-}
-
-#[derive(Resource, Default)]
+#[derive(Default)]
 pub struct FilePicker {
     pub open: Option<JoinHandle<Option<FilePickerEvent>>>,
 }
@@ -64,12 +55,17 @@ impl FilePicker {
 
         Ok(())
     }
-}
 
-fn system(mut state: ResMut<FilePicker>, mut event_writer: EventWriter<FilePickerEvent>) {
-    if state.open.is_some() && state.open.as_ref().unwrap().is_finished() {
-        if let Ok(Some(event)) = state.open.take().unwrap().join() {
-            event_writer.send(event);
+    pub fn update(&mut self, editor: &mut Editor) {
+        if self.open.is_some() && self.open.as_ref().unwrap().is_finished() {
+            if let Ok(Some(event)) = self.open.take().unwrap().join() {
+                match event {
+                    FilePickerEvent::PickedLoad(path) => {
+                        *editor = Editor::new_from_input_path(path)
+                    }
+                    FilePickerEvent::PickedExport(path) => editor.export(path).unwrap(),
+                }
+            }
         }
     }
 }
