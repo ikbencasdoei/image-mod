@@ -5,16 +5,9 @@
 
 use std::path::Path;
 
-use bevy::prelude::{App as BevyApp, Color, *};
-use bevy_egui::{EguiPlugin, EguiSettings};
-use editor::{Editor, EditorPlugin};
+use editor::Editor;
 use eframe::Frame;
 use egui::Context;
-use file_picker::FilePickerPlugin;
-use keybinds::KeyBindsPlugin;
-use menu::MenuPlugin;
-use mods::ui::ModifierUiPlugin;
-use view::ViewPlugin;
 
 mod color;
 mod editor;
@@ -26,7 +19,9 @@ mod mods;
 mod view;
 
 #[derive(Default)]
-struct App {}
+struct App {
+    editor: Editor,
+}
 
 impl eframe::App for App {
     fn update(&mut self, ctx: &Context, _frame: &mut Frame) {}
@@ -40,35 +35,20 @@ fn main() {
         centered: true,
         ..Default::default()
     };
+
+    let editor = if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
+        Editor::new_from_input_path(Path::new(&path))
+    } else {
+        Editor::default()
+    };
+
     eframe::run_native(
         env!("CARGO_PKG_NAME"),
         options,
         Box::new(|cc| {
             cc.egui_ctx.set_pixels_per_point(1.5);
-            Box::new(App::default())
+
+            Box::new(App { editor })
         }),
     );
-
-    //
-
-    // BevyApp::new()
-    //     .insert_resource(Msaa { samples: 4 })
-    //     .insert_resource(ClearColor(Color::DARK_GRAY))
-
-    //     .add_plugin(EditorPlugin)
-    //     .add_plugin(FilePickerPlugin)
-    //     .add_plugin(ViewPlugin)
-    //     .add_plugin(MenuPlugin)
-    //     .add_plugin(KeyBindsPlugin)
-    //     .add_plugin(ModifierUiPlugin)
-    //     .add_startup_system(setup)
-    //     .run();
-}
-
-fn setup(mut egui_settings: ResMut<EguiSettings>, mut editor: ResMut<Editor>) {
-    // egui_settings.scale_factor = 1.5;
-
-    if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
-        *editor = Editor::new_from_input_path(Path::new(&path))
-    }
 }
