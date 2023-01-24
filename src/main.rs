@@ -26,11 +26,14 @@ struct App {
 }
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &Context, _frame: &mut Frame) {
+    fn update(&mut self, ctx: &Context, frame: &mut Frame) {
         let App {
             editor,
             file_picker,
         } = self;
+
+        keybinds::fullscreen(ctx, frame);
+        keybinds::exit(ctx, frame);
 
         file_picker.update(editor);
     }
