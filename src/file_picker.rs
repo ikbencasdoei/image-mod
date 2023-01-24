@@ -5,7 +5,7 @@ use std::{
 
 use rfd::FileDialog;
 
-use crate::editor::Editor;
+use crate::project::Project;
 
 #[derive(Default)]
 pub struct FilePicker {
@@ -56,14 +56,14 @@ impl FilePicker {
         Ok(())
     }
 
-    pub fn update(&mut self, editor: &mut Editor) {
+    pub fn update(&mut self, project: &mut Project) {
         if self.open.is_some() && self.open.as_ref().unwrap().is_finished() {
             if let Ok(Some(event)) = self.open.take().unwrap().join() {
                 match event {
                     FilePickerEvent::PickedLoad(path) => {
-                        *editor = Editor::new_from_input_path(path)
+                        *project = Project::new_from_input_path(path)
                     }
-                    FilePickerEvent::PickedExport(path) => editor.export(path).unwrap(),
+                    FilePickerEvent::PickedExport(path) => project.export(path).unwrap(),
                 }
             }
         }

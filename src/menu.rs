@@ -2,9 +2,9 @@ use std::path::PathBuf;
 
 use egui::{Context, Vec2};
 
-use crate::{editor::Editor, file_picker::FilePicker, view::View};
+use crate::{file_picker::FilePicker, project::Project, view::View};
 
-pub fn menu(ctx: &Context, view: &mut View, editor: &Editor, file_picker: &mut FilePicker) {
+pub fn menu(ctx: &Context, view: &mut View, project: &Project, file_picker: &mut FilePicker) {
     egui::TopBottomPanel::top("panel").show(ctx, |ui| {
         egui::menu::bar(ui, |ui| {
             ui.add_enabled_ui(file_picker.open.is_none(), |ui| {
@@ -14,10 +14,10 @@ pub fn menu(ctx: &Context, view: &mut View, editor: &Editor, file_picker: &mut F
             });
 
             ui.add_enabled_ui(
-                editor.get_path().is_some() && file_picker.open.is_none(),
+                project.get_path().is_some() && file_picker.open.is_none(),
                 |ui| {
                     if ui.button("export").clicked() {
-                        let directory = if let Some(path) = editor.get_path() {
+                        let directory = if let Some(path) = project.get_path() {
                             path
                         } else {
                             PathBuf::new()
@@ -60,7 +60,7 @@ pub fn menu(ctx: &Context, view: &mut View, editor: &Editor, file_picker: &mut F
             ui.separator();
 
             {
-                if let Some(image_path) = editor.get_path() {
+                if let Some(image_path) = project.get_path() {
                     ui.label(image_path.to_string_lossy());
                 } else {
                     ui.label("(no image)");

@@ -15,12 +15,12 @@ use crate::{
 };
 
 #[derive(Default)]
-pub struct Editor {
+pub struct Project {
     mods: Vec<Modification<DynMod>>,
     selected_mod: Option<Uuid>,
 }
 
-impl Editor {
+impl Project {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
         Self {
             mods: vec![Modification::new(DynMod::new(Source::new(path)))],

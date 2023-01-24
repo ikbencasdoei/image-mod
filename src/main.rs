@@ -5,26 +5,26 @@
 
 use std::path::Path;
 
-use editor::Editor;
 use eframe::Frame;
 use egui::Context;
 use file_picker::FilePicker;
 use menu::menu;
 use modifier::{collection::process_modifiers, ui::ModifierUi};
+use project::Project;
 use view::View;
 
 mod color;
-mod editor;
 mod file_picker;
 mod image;
 mod keybinds;
 mod menu;
 mod modifier;
+mod project;
 mod view;
 
 #[derive(Default)]
 struct App {
-    editor: Editor,
+    project: Project,
     file_picker: FilePicker,
     view: View,
     mod_ui: ModifierUi,
@@ -33,7 +33,7 @@ struct App {
 impl eframe::App for App {
     fn update(&mut self, ctx: &Context, frame: &mut Frame) {
         let App {
-            editor,
+            project,
             file_picker,
             view,
             mod_ui,
@@ -42,14 +42,14 @@ impl eframe::App for App {
         keybinds::fullscreen(ctx, frame);
         keybinds::exit(ctx, frame);
 
-        file_picker.update(editor);
+        file_picker.update(project);
 
-        menu(ctx, view, editor, file_picker);
-        mod_ui.view(editor, ctx);
+        menu(ctx, view, project, file_picker);
+        mod_ui.view(project, ctx);
 
-        process_modifiers(editor, ctx, view);
+        process_modifiers(project, ctx, view);
 
-        if let Some(output) = editor.get_output() {
+        if let Some(output) = project.get_output() {
             view.update(ctx, output);
         }
 
@@ -66,10 +66,10 @@ fn main() {
         ..Default::default()
     };
 
-    let editor = if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
-        Editor::new_from_input_path(Path::new(&path))
+    let project = if let Ok(path) = std::env::var("NEW_PROJECT_INPUT_PATH") {
+        Project::new_from_input_path(Path::new(&path))
     } else {
-        Editor::default()
+        Project::default()
     };
 
     eframe::run_native(
@@ -82,7 +82,7 @@ fn main() {
             modifier::collection::init_modifiers_collection(&mut mod_ui);
 
             Box::new(App {
-                editor,
+                project,
                 mod_ui,
                 ..Default::default()
             })

@@ -2,7 +2,7 @@ use egui::{Align2, Color32, Context, Label, LayerId, Order, Sense, TextStyle, Ui
 use uuid::Uuid;
 
 use super::{collection::ModifierIndex, modifier::Modifier};
-use crate::editor::Editor;
+use crate::project::Project;
 
 #[derive(Default)]
 pub struct ModifierUi {
@@ -16,50 +16,50 @@ impl ModifierUi {
         self.index.sort_by(|a, b| a.name.cmp(&b.name));
     }
 
-    pub fn view(&mut self, editor: &mut Editor, ctx: &Context) {
+    pub fn view(&mut self, project: &mut Project, ctx: &Context) {
         egui::SidePanel::left("Modifiers")
             .resizable(true)
             .show(ctx, |ui| {
                 ui.vertical_centered(|ui| {
-                    ui.heading(format!("Modifiers ({})", editor.get_mods().len()));
+                    ui.heading(format!("Modifiers ({})", project.get_mods().len()));
                     ui.separator();
-                    self.mod_add_widget(ui, editor);
+                    self.mod_add_widget(ui, project);
                 });
                 ui.separator();
-                self.view_mods(editor, ui);
+                self.view_mods(project, ui);
             });
     }
 
-    fn mod_add_widget(&self, ui: &mut Ui, editor: &mut Editor) {
+    fn mod_add_widget(&self, ui: &mut Ui, project: &mut Project) {
         ui.menu_button("add modifier", |ui| {
             for modifier in self.index.iter() {
                 if ui.button(modifier.name.as_str()).clicked() {
-                    editor.add_mod(modifier);
+                    project.add_mod(modifier);
                     ui.close_menu();
                 }
             }
         });
     }
 
-    fn view_mods(&mut self, editor: &mut Editor, ui: &mut Ui) {
-        if editor.get_mods().is_empty() {
+    fn view_mods(&mut self, project: &mut Project, ui: &mut Ui) {
+        if project.get_mods().is_empty() {
             ui.label("(empty)");
         } else {
             egui::ScrollArea::vertical().show(ui, |ui| {
-                let current_place = self.dragging.and_then(|id| editor.get_mod_index(id));
+                let current_place = self.dragging.and_then(|id| project.get_mod_index(id));
 
-                for (i, id) in editor.mod_ids().into_iter().enumerate().rev() {
+                for (i, id) in project.mod_ids().into_iter().enumerate().rev() {
                     if let Some(current_place) = current_place {
                         if current_place < i {
-                            self.drop_mod_widget(i, editor, ui);
+                            self.drop_mod_widget(i, project, ui);
                         }
                     }
 
-                    self.view_modifier(id, i, editor, ui);
+                    self.view_modifier(id, i, project, ui);
 
                     if let Some(current_place) = current_place {
                         if current_place >= i {
-                            self.drop_mod_widget(i, editor, ui);
+                            self.drop_mod_widget(i, project, ui);
                         }
                     }
                 }
@@ -71,22 +71,22 @@ impl ModifierUi {
         }
     }
 
-    fn drop_mod_widget(&mut self, index: usize, editor: &mut Editor, ui: &mut Ui) {
+    fn drop_mod_widget(&mut self, index: usize, project: &mut Project, ui: &mut Ui) {
         if self.dragging.is_some()
             && ui
                 .add(egui::Label::new("place here").sense(Sense::hover()))
                 .hovered()
             && !ui.memory().is_anything_being_dragged()
         {
-            editor
+            project
                 .mod_set_index(self.dragging.take().unwrap(), index)
                 .unwrap()
         }
     }
 
-    fn view_modifier(&mut self, id: Uuid, index: usize, editor: &mut Editor, ui: &mut Ui) {
+    fn view_modifier(&mut self, id: Uuid, index: usize, project: &mut Project, ui: &mut Ui) {
         if self.dragging.contains(&id) {
-            self.view_dragged_mod(id, editor, ui);
+            self.view_dragged_mod(id, project, ui);
         } else {
             egui::collapsing_header::CollapsingState::load_with_default_open(
                 ui.ctx(),
@@ -103,36 +103,36 @@ impl ModifierUi {
 
                 if ui
                     .toggle_value(
-                        &mut (editor.get_selected_mod_id() == Some(id)),
-                        editor.get_mod_mut(id).unwrap().modifier.index.name.as_str(),
+                        &mut (project.get_selected_mod_id() == Some(id)),
+                        project.get_mod_mut(id).unwrap().modifier.index.name.as_str(),
                     )
                     .clicked()
                 {
-                    editor.select_mod(id).unwrap();
+                    project.select_mod(id).unwrap();
                 }
 
                 ui.menu_button("remove", |ui| {
                     if ui.button("sure?").clicked() {
-                        editor.remove_mod(id).unwrap();
+                        project.remove_mod(id).unwrap();
                         ui.close_menu();
                     }
                 });
             })
             .body(|ui| {
-                if let Some(modi) = editor.get_mod_mut(id) {
+                if let Some(modi) = project.get_mod_mut(id) {
                     modi.modifier.view(ui);
                 }
             });
         }
     }
 
-    fn view_dragged_mod(&self, id: Uuid, editor: &Editor, ui: &mut Ui) {
+    fn view_dragged_mod(&self, id: Uuid, project: &Project, ui: &mut Ui) {
         let layer = LayerId::new(Order::Tooltip, ui.make_persistent_id(id));
         if let Some(mouse_pos) = ui.ctx().pointer_interact_pos() {
             ui.ctx().layer_painter(layer).text(
                 mouse_pos,
                 Align2::CENTER_CENTER,
-                &editor.get_mod(id).unwrap().modifier.index.name,
+                &project.get_mod(id).unwrap().modifier.index.name,
                 TextStyle::Heading.resolve(ui.style()),
                 Color32::WHITE,
             );

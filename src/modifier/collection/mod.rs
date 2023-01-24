@@ -18,7 +18,7 @@ use super::{
     modifier::{init_modifier, Modifier},
     ui::ModifierUi,
 };
-use crate::{editor::Editor, view::View};
+use crate::{project::Project, view::View};
 
 pub mod blur;
 pub mod brighten;
@@ -44,8 +44,8 @@ pub fn init_modifiers_collection(mod_ui: &mut ModifierUi) {
     init_modifier::<PencilMod<PixelSorter>>(mod_ui);
 }
 
-pub fn process_modifiers(editor: &mut Editor, ctx: &Context, view: &View) {
-    if let Some(modification) = editor.get_selected_mod_mut() {
+pub fn process_modifiers(project: &mut Project, ctx: &Context, view: &View) {
+    if let Some(modification) = project.get_selected_mod_mut() {
         if let Some(modifier) = modification
             .modifier
             .get_modifier_mut::<PencilMod<SimplePencil>>()
