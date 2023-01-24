@@ -1,4 +1,4 @@
-use crate::{image::Image, mods::modifier::Modifier};
+use crate::{image::Image, modifier::modifier::Modifier};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Invert;

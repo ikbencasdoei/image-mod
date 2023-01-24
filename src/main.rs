@@ -10,7 +10,7 @@ use eframe::Frame;
 use egui::Context;
 use file_picker::FilePicker;
 use menu::menu;
-use mods::{collection::process_modifiers, ui::ModifierUi};
+use modifier::{collection::process_modifiers, ui::ModifierUi};
 use view::View;
 
 mod color;
@@ -19,7 +19,7 @@ mod file_picker;
 mod image;
 mod keybinds;
 mod menu;
-mod mods;
+mod modifier;
 mod view;
 
 #[derive(Default)]
@@ -79,7 +79,7 @@ fn main() {
             cc.egui_ctx.set_pixels_per_point(1.5);
 
             let mut mod_ui = ModifierUi::default();
-            mods::collection::init_modifiers_collection(&mut mod_ui);
+            modifier::collection::init_modifiers_collection(&mut mod_ui);
 
             Box::new(App {
                 editor,

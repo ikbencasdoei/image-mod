@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 use crate::{
     image::Image,
-    mods::{
+    modifier::{
         collection::{source::Source, ModifierIndex},
         modification::{DynMod, ModOutput, Modification},
         modifier::Modifier,
