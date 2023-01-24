@@ -1,4 +1,4 @@
-use bevy_egui::egui::{self, Ui};
+use egui::Ui;
 
 use crate::{image::Image, mods::plugin::Modifier};
 
