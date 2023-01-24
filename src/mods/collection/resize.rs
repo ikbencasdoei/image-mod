@@ -1,5 +1,5 @@
-use bevy::prelude::*;
-use bevy_egui::egui::{self, Ui};
+use egui::Ui;
+use glam::{UVec2, Vec2};
 use image::imageops::FilterType;
 
 use crate::{image::Image, mods::plugin::Modifier};
