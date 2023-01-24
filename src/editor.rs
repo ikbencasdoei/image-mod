@@ -3,7 +3,6 @@ use std::{
     slice::{Iter, IterMut},
 };
 
-use bevy::prelude::*;
 use uuid::Uuid;
 
 use crate::{
@@ -15,15 +14,7 @@ use crate::{
     },
 };
 
-pub struct EditorPlugin;
-
-impl Plugin for EditorPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<Editor>();
-    }
-}
-
-#[derive(Resource, Default)]
+#[derive(Default)]
 pub struct Editor {
     mods: Vec<Modification<DynMod>>,
     selected_mod: Option<Uuid>,
@@ -33,7 +24,7 @@ impl Editor {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
         Self {
             mods: vec![Modification::new(DynMod::new(Source::new(path)))],
-            ..default()
+            ..Default::default()
         }
     }
 
