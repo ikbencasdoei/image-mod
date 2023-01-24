@@ -1,4 +1,4 @@
-use bevy_egui::egui::Ui;
+use egui::Ui;
 use uuid::Uuid;
 
 use super::{
