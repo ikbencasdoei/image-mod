@@ -1,5 +1,5 @@
-use bevy::prelude::{Color as BevyColor, *};
-use bevy_egui::egui::Color32;
+use egui::Color32;
+use glam::Vec4;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct Color {
@@ -48,11 +48,5 @@ impl From<Color32> for Color {
 impl From<Vec4> for Color {
     fn from(color: Vec4) -> Self {
         Self::from_rgba(color.x, color.y, color.z, color.w)
-    }
-}
-
-impl From<BevyColor> for Color {
-    fn from(color: BevyColor) -> Self {
-        Self::from_rgba(color.r(), color.g(), color.b(), color.a())
     }
 }
