@@ -24,7 +24,8 @@ pub trait Modifier: DynClone + DynPartialEq {
         }
     }
 
-    fn view(&mut self, _ui: &mut Ui) {}
+    #[allow(unused_variables)]
+    fn view(&mut self, ui: &mut Ui) {}
 }
 
 dyn_clone::clone_trait_object!(Modifier);
