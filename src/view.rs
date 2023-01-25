@@ -51,9 +51,9 @@ impl View {
             .frame(Frame::central_panel(&ctx.style()).inner_margin(0.0))
             .show(ctx, |ui| {
                 if self.texture.is_some() {
-                    self.view(ctx, ui);
                     self.input_zoom(ctx, ui);
                     self.input_drag(ctx, ui);
+                    self.view(ctx, ui);
                 }
             });
     }
