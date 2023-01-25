@@ -1,5 +1,5 @@
 [package]
-name = "foto-winkel"
+name = "image-mod"
 version = "0.1.0"
 edition = "2021"
 authors = ["Cas Brugman <casbrugman@hotmail.nl>"]

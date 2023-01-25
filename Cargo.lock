@@ -859,20 +859,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "foto-winkel"
-version = "0.1.0"
-dependencies = [
- "dotenvy",
- "dyn-clone",
- "eframe",
- "egui",
- "glam",
- "image",
- "rfd",
- "uuid",
-]
-
-[[package]]
 name = "freetype-rs"
 version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1157,6 +1143,20 @@ dependencies = [
  "png",
  "scoped_threadpool",
  "tiff",
+]
+
+[[package]]
+name = "image-mod"
+version = "0.1.0"
+dependencies = [
+ "dotenvy",
+ "dyn-clone",
+ "eframe",
+ "egui",
+ "glam",
+ "image",
+ "rfd",
+ "uuid",
 ]
 
 [[package]]
