@@ -1,18 +1,13 @@
 ![preview image](./preview.jpg)
 # image-mod
-A small simple image editor written in Rust using the Bevy game-engine. I made this mainly to learn the tools, and possibly in the future, to implement personal image editing effects on.
+A small simple image editor written in Rust.
 
-## Features
-* Opening and saving of png and jpeg images
-* Dragging & zooming
-* Pencil tool
-* Rainbow pencil (awesome)
-* Pixel sorting
+## Technologies used
+* [egui](https://egui.rs)
+* [image](https://github.com/image-rs/image)
+* [rfd](https://github.com/PolyMeilex/rfd)
 
-## Todo
-* Undo and redo
-
-## Building
-Like most other Rust crates, simply `cargo run`. The libraries used should be cross-platform.
+## Running
+Like most other Rust crates, simply `cargo run`. The libraries used should work cross-platform.
 ### Linux
-For running on linux bevy requires some [dependencies](https://github.com/bevyengine/bevy/blob/main/docs/linux_dependencies.md).  
+For running on linux egui/eframe requires some [dependencies](https://github.com/emilk/egui/tree/master/crates/eframe).  
