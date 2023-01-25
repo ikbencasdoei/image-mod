@@ -8,22 +8,32 @@ use uuid::Uuid;
 use crate::{
     image::Image,
     modifier::{
-        collection::{source::Source, ModifierIndex},
+        collection::{list::List, source::Source, ModifierIndex},
         modification::{DynMod, ModOutput, Modification},
         modifier::Modifier,
     },
 };
 
-#[derive(Default)]
 pub struct Project {
-    mods: Vec<Modification<DynMod>>,
+    root: Modification<List>,
     selected_mod: Option<Uuid>,
+}
+
+impl Default for Project {
+    fn default() -> Self {
+        Self {
+            root: Modification::new(List::default()),
+            selected_mod: Default::default(),
+        }
+    }
 }
 
 impl Project {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
         Self {
-            mods: vec![Modification::new(DynMod::new(Source::new(path)))],
+            root: Modification::new(List {
+                contents: vec![Modification::new(DynMod::new(Source::new(path)))],
+            }),
             ..Default::default()
         }
     }
@@ -37,34 +47,36 @@ impl Project {
     }
 
     pub fn get_output(&mut self) -> Option<Image> {
-        let mut output = ModOutput::new_empty();
-        {
-            let mut borrow = &output;
-            for modification in self.mods.iter_mut() {
-                borrow = modification.get_output(&borrow);
-            }
-            output = borrow.clone();
-        }
-
-        output.image
+        let input = ModOutput::new_empty();
+        self.root.get_output(&input).image.clone()
     }
 
     pub fn add_mod(&mut self, index: &ModifierIndex) {
         let new = Modification::new(DynMod::from_index(index.clone()));
         self.selected_mod = Some(new.id);
-        self.mods.push(new);
+        self.root.modifier.contents.push(new);
     }
 
     pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Modification<DynMod>> {
-        self.mods.iter_mut().find(|item| item.id == id)
+        self.root
+            .modifier
+            .contents
+            .iter_mut()
+            .find(|item| item.id == id)
     }
 
     pub fn get_mod(&self, id: Uuid) -> Option<&Modification<DynMod>> {
-        self.mods.iter().find(|item| item.id == id)
+        self.root
+            .modifier
+            .contents
+            .iter()
+            .find(|item| item.id == id)
     }
 
     pub fn get_mod_index(&mut self, id: Uuid) -> Option<usize> {
-        self.mods
+        self.root
+            .modifier
+            .contents
             .iter()
             .enumerate()
             .find(|item| item.1.id == id)
@@ -73,7 +85,7 @@ impl Project {
 
     pub fn remove_mod(&mut self, id: Uuid) -> Result<(), &str> {
         if let Some(index) = self.get_mod_index(id) {
-            self.mods.remove(index);
+            self.root.modifier.contents.remove(index);
 
             if let Some(selected) = self.selected_mod {
                 if selected == id {
@@ -87,12 +99,12 @@ impl Project {
     }
 
     pub fn iter_mods(&self) -> Iter<Modification<DynMod>> {
-        self.mods.iter()
+        self.root.modifier.contents.iter()
     }
 
     #[allow(dead_code)]
     pub fn iter_mut_mods(&mut self) -> IterMut<Modification<DynMod>> {
-        self.mods.iter_mut()
+        self.root.modifier.contents.iter_mut()
     }
 
     pub fn mod_ids(&self) -> Vec<Uuid> {
@@ -100,7 +112,7 @@ impl Project {
     }
 
     pub fn get_mods(&self) -> &Vec<Modification<DynMod>> {
-        &self.mods
+        &self.root.modifier.contents
     }
 
     pub fn select_mod(&mut self, id: Uuid) -> Result<(), &str> {
@@ -139,8 +151,8 @@ impl Project {
 
     pub fn mod_set_index(&mut self, id: Uuid, index: usize) -> Result<(), &str> {
         if let Some(i) = self.get_mod_index(id) {
-            let modification = self.mods.remove(i);
-            self.mods.insert(index, modification);
+            let modification = self.root.modifier.contents.remove(i);
+            self.root.modifier.contents.insert(index, modification);
             Ok(())
         } else {
             Err("invalid id")
