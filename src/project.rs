@@ -51,6 +51,10 @@ impl Project {
         &self.root.get_output(&input).image
     }
 
+    pub fn output_changed(&self) -> bool {
+        !self.root.check_cache(&ModOutput::new_empty())
+    }
+
     pub fn add_mod(&mut self, index: &ModifierIndex) {
         let new = Modification::new(DynMod::from_index(index.clone()));
         self.selected_mod = Some(new.id);
