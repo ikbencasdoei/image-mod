@@ -51,21 +51,21 @@ impl View {
             .frame(Frame::central_panel(&ctx.style()).inner_margin(0.0))
             .show(ctx, |ui| {
                 if self.texture.is_some() {
-                    self.input_zoom(ctx, ui);
-                    self.input_drag(ctx, ui);
-                    self.view(ctx, ui);
+                    self.input_zoom(ui);
+                    self.input_drag(ui);
+                    self.view(ui);
                 }
             });
     }
 
-    fn input_zoom(&mut self, ctx: &Context, ui: &mut Ui) {
+    fn input_zoom(&mut self, ui: &mut Ui) {
         const FACTOR: f32 = 1.3;
 
         if ui.rect_contains_pointer(ui.max_rect()) {
             let pointer = ui.input().pointer.interact_pos().unwrap();
             let center_pointer = pointer.to_vec2() - self.rect.center().to_vec2();
 
-            let scrolled = ctx.input().scroll_delta.y;
+            let scrolled = ui.ctx().input().scroll_delta.y;
             if scrolled.is_normal() {
                 if scrolled.is_sign_positive() {
                     let diff = center_pointer * FACTOR - center_pointer;
@@ -80,27 +80,28 @@ impl View {
         }
     }
 
-    fn input_drag(&mut self, ctx: &Context, ui: &mut Ui) {
+    fn input_drag(&mut self, ui: &mut Ui) {
         if ui.rect_contains_pointer(ui.max_rect()) {
             {
-                if ctx.input().pointer.any_pressed() && ctx.input().pointer.middle_down() {
+                if ui.ctx().input().pointer.any_pressed() && ui.ctx().input().pointer.middle_down()
+                {
                     self.dragging = true;
-                } else if ctx.input().pointer.any_released() {
+                } else if ui.ctx().input().pointer.any_released() {
                     self.dragging = false;
                 }
             }
         }
 
-        if self.dragging && ctx.input().pointer.any_down() {
-            self.translation += ctx.input().pointer.delta();
+        if self.dragging && ui.ctx().input().pointer.any_down() {
+            self.translation += ui.ctx().input().pointer.delta();
         } else {
             self.dragging = false;
         }
     }
 
-    fn view(&mut self, ctx: &Context, ui: &mut Ui) {
+    fn view(&mut self, ui: &mut Ui) {
         let texture = self.texture.as_ref().unwrap();
-        let size = texture.size_vec2() / ctx.pixels_per_point() * self.scale;
+        let size = texture.size_vec2() / ui.ctx().pixels_per_point() * self.scale;
         let center = ui.max_rect().center() + self.translation;
         self.rect = Rect::from_center_size(center, size);
 
