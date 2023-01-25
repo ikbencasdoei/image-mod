@@ -52,13 +52,13 @@ impl View {
             .show(ctx, |ui| {
                 if self.texture.is_some() {
                     self.view(ctx, ui);
-                    self.zoom(ctx, ui);
-                    self.drag(ctx, ui);
+                    self.input_zoom(ctx, ui);
+                    self.input_drag(ctx, ui);
                 }
             });
     }
 
-    fn zoom(&mut self, ctx: &Context, ui: &mut Ui) {
+    fn input_zoom(&mut self, ctx: &Context, ui: &mut Ui) {
         const FACTOR: f32 = 1.3;
 
         if ui.rect_contains_pointer(ui.max_rect()) {
@@ -80,7 +80,7 @@ impl View {
         }
     }
 
-    fn drag(&mut self, ctx: &Context, ui: &mut Ui) {
+    fn input_drag(&mut self, ctx: &Context, ui: &mut Ui) {
         if ui.rect_contains_pointer(ui.max_rect()) {
             {
                 if ctx.input().pointer.any_pressed() && ctx.input().pointer.middle_down() {
