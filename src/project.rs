@@ -46,9 +46,9 @@ impl Project {
         }
     }
 
-    pub fn get_output(&mut self) -> Option<Image> {
+    pub fn get_output(&mut self) -> &Option<Image> {
         let input = ModOutput::new_empty();
-        self.root.get_output(&input).image.clone()
+        &self.root.get_output(&input).image
     }
 
     pub fn add_mod(&mut self, index: &ModifierIndex) {

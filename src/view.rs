@@ -26,13 +26,13 @@ impl Default for View {
 }
 
 impl View {
-    pub fn update(&mut self, ctx: &Context, image: Image) {
+    pub fn update(&mut self, ctx: &Context, image: &Image) {
         const OPTIONS: TextureOptions = TextureOptions {
             magnification: TextureFilter::Nearest,
             minification: TextureFilter::Linear,
         };
 
-        let image = image.into_dyn().to_rgba8();
+        let image = image.clone().into_dyn().to_rgba8();
 
         let size = [image.width() as usize, image.height() as usize];
         let pixels = image.as_flat_samples();
