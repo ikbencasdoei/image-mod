@@ -47,16 +47,15 @@ impl View {
     }
 
     pub fn process(&mut self, ctx: &Context) {
-        if self.texture.is_some() {
-            egui::CentralPanel::default()
-                .frame(Frame::central_panel(&ctx.style()).inner_margin(0.0))
-                .show(ctx, |ui| {
+        egui::CentralPanel::default()
+            .frame(Frame::central_panel(&ctx.style()).inner_margin(0.0))
+            .show(ctx, |ui| {
+                if self.texture.is_some() {
                     self.view(ctx, ui);
                     self.zoom(ctx, ui);
                     self.drag(ctx, ui);
-                    // self.view(ctx, ui);
-                });
-        }
+                }
+            });
     }
 
     fn zoom(&mut self, ctx: &Context, ui: &mut Ui) {
