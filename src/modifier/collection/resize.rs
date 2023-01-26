@@ -2,7 +2,11 @@ use egui::Ui;
 use glam::{UVec2, Vec2};
 use image::imageops::FilterType;
 
-use crate::{editor::Editor, image::Image, modifier::traits::Modifier};
+use crate::{
+    editor::Editor,
+    image::Image,
+    modifier::{modification::ModOutput, traits::Modifier},
+};
 
 #[derive(Clone, PartialEq)]
 pub struct Resize {
@@ -26,8 +30,8 @@ impl Default for Resize {
 }
 
 impl Modifier for Resize {
-    fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
-        if let Some(image) = &mut input {
+    fn apply(&mut self, mut input: ModOutput) -> Option<Image> {
+        if let Some(image) = &mut input.image {
             match self.size {
                 Size::Absolute(size) => image.resize(size, self.filter),
                 Size::Relative(size) => {
@@ -38,7 +42,7 @@ impl Modifier for Resize {
                 }
             }
         }
-        input
+        input.image
     }
 
     fn view(&mut self, ui: &mut Ui, _: &mut Editor) {

@@ -151,12 +151,11 @@ impl List {
 }
 
 impl Modifier for List {
-    fn apply(&mut self, input: Option<Image>) -> Option<Image> {
-        let mut output = ModOutput::new(input);
+    fn apply(&mut self, mut output: ModOutput) -> Option<Image> {
         {
             let mut borrow = &output;
             for modification in self.contents.iter_mut() {
-                borrow = modification.get_output(&borrow);
+                borrow = modification.get_output(borrow);
             }
             output = borrow.clone();
         }

@@ -5,7 +5,11 @@ use std::{
 
 use egui::{TextEdit, Ui};
 
-use crate::{editor::Editor, image::Image, modifier::traits::Modifier};
+use crate::{
+    editor::Editor,
+    image::Image,
+    modifier::{modification::ModOutput, traits::Modifier},
+};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Source {
@@ -21,7 +25,7 @@ impl Source {
 }
 
 impl Modifier for Source {
-    fn apply(&mut self, _: Option<Image>) -> Option<Image> {
+    fn apply(&mut self, _: ModOutput) -> Option<Image> {
         Image::open(&self.path).ok()
     }
 

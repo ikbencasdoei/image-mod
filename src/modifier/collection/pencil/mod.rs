@@ -1,7 +1,13 @@
 use egui::{Context, Ui};
 use glam::{UVec2, Vec2};
 
-use crate::{color::Color, editor::Editor, image::Image, modifier::traits::Modifier, view::View};
+use crate::{
+    color::Color,
+    editor::Editor,
+    image::Image,
+    modifier::{modification::ModOutput, traits::Modifier},
+    view::View,
+};
 
 pub mod rainbow;
 pub mod simple;
@@ -20,8 +26,8 @@ pub struct PencilMod<T> {
 }
 
 impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T> {
-    fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
-        if let Some(image) = &mut input {
+    fn apply(&mut self, mut input: ModOutput) -> Option<Image> {
+        if let Some(image) = &mut input.image {
             let mut pencil = self.pencil.clone();
             for pixel in self.pixels.iter() {
                 if let Some(color) = pencil.get_pixel(*pixel, image) {
@@ -29,7 +35,7 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
                 }
             }
         }
-        input
+        input.image
     }
 
     fn view(&mut self, ui: &mut Ui, _: &mut Editor) {

@@ -1,6 +1,10 @@
 use egui::Ui;
 
-use crate::{editor::Editor, image::Image, modifier::traits::Modifier};
+use crate::{
+    editor::Editor,
+    image::Image,
+    modifier::{modification::ModOutput, traits::Modifier},
+};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Hue {
@@ -8,11 +12,11 @@ pub struct Hue {
 }
 
 impl Modifier for Hue {
-    fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
-        if let Some(image) = &mut input {
+    fn apply(&mut self, mut input: ModOutput) -> Option<Image> {
+        if let Some(image) = &mut input.image {
             image.huerotate(self.degrees);
         }
-        input
+        input.image
     }
 
     fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
