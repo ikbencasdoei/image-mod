@@ -32,8 +32,7 @@ impl View {
             minification: TextureFilter::Linear,
         };
 
-        let image = image.clone().into_dyn().to_rgba8();
-
+        let image = image.as_rgba8();
         let size = [image.width() as usize, image.height() as usize];
         let pixels = image.as_flat_samples();
 
