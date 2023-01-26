@@ -32,6 +32,10 @@ impl Image {
         DynamicImage::ImageRgba8(self.image)
     }
 
+    pub fn as_rgba8(&self) -> &RgbaImage {
+        &self.image
+    }
+
     pub fn set_pixel_vec(&mut self, position: Vec2, color: Color) -> Result<(), &str> {
         self.set_pixel_ivec(
             IVec2::new(position.x.round() as i32, position.y.round() as i32),
