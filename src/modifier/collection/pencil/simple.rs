@@ -1,7 +1,7 @@
 use egui::{Color32, Ui};
 use glam::UVec2;
 
-use super::plugin::Pencil;
+use super::Pencil;
 use crate::{color::Color, image::Image};
 
 #[derive(Clone, PartialEq)]

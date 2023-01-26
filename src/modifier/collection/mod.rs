@@ -10,7 +10,7 @@ use self::{
     grayscale::GrayScaleFilter,
     hue::Hue,
     invert::Invert,
-    pencil::{plugin::PencilMod, rainbow::RainbowPencil, simple::SimplePencil, sort::PixelSorter},
+    pencil::{rainbow::RainbowPencil, simple::SimplePencil, sort::PixelSorter, PencilMod},
     resize::Resize,
     source::Source,
 };

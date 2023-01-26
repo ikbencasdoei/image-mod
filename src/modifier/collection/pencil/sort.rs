@@ -3,7 +3,7 @@ use std::f32::consts::PI;
 use egui::{Color32, Ui};
 use glam::{UVec2, Vec2};
 
-use super::plugin::Pencil;
+use super::Pencil;
 use crate::{color::Color, image::Image};
 
 #[derive(Clone, PartialEq)]

@@ -1,6 +1,6 @@
 use glam::{UVec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 
-use super::plugin::Pencil;
+use super::Pencil;
 use crate::{color::Color, image::Image};
 
 #[derive(Clone, PartialEq)]
