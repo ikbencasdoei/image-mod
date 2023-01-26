@@ -82,13 +82,10 @@ impl View {
 
     fn input_drag(&mut self, ui: &mut Ui) {
         if ui.rect_contains_pointer(ui.max_rect()) {
-            {
-                if ui.ctx().input().pointer.any_pressed() && ui.ctx().input().pointer.middle_down()
-                {
-                    self.dragging = true;
-                } else if ui.ctx().input().pointer.any_released() {
-                    self.dragging = false;
-                }
+            if ui.ctx().input().pointer.any_pressed() && ui.ctx().input().pointer.middle_down() {
+                self.dragging = true;
+            } else if ui.ctx().input().pointer.any_released() {
+                self.dragging = false;
             }
         }
 
