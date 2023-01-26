@@ -5,7 +5,7 @@ use super::{
     collection::ModifierIndex,
     traits::{DynPartialEq, Modifier},
 };
-use crate::image::Image;
+use crate::{editor::Editor, image::Image};
 
 #[derive(Clone)]
 pub struct Modification<T> {
@@ -110,8 +110,8 @@ impl Modifier for DynMod {
         self.modifier.apply(input)
     }
 
-    fn view(&mut self, ui: &mut Ui) {
-        self.modifier.view(ui)
+    fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
+        self.modifier.view(ui, editor);
     }
 }
 

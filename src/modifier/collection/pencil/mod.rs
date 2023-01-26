@@ -1,7 +1,7 @@
 use egui::{Context, Ui};
 use glam::{UVec2, Vec2};
 
-use crate::{color::Color, image::Image, modifier::traits::Modifier, view::View};
+use crate::{color::Color, editor::Editor, image::Image, modifier::traits::Modifier, view::View};
 
 pub mod rainbow;
 pub mod simple;
@@ -32,7 +32,7 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
         input
     }
 
-    fn view(&mut self, ui: &mut Ui) {
+    fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
         self.pencil.view(ui);
     }
 }

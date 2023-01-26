@@ -2,7 +2,7 @@ use egui::Ui;
 use glam::{UVec2, Vec2};
 use image::imageops::FilterType;
 
-use crate::{image::Image, modifier::traits::Modifier};
+use crate::{editor::Editor, image::Image, modifier::traits::Modifier};
 
 #[derive(Clone, PartialEq)]
 pub struct Resize {
@@ -41,7 +41,7 @@ impl Modifier for Resize {
         input
     }
 
-    fn view(&mut self, ui: &mut Ui) {
+    fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
         match self.size {
             Size::Absolute(_) => {
                 if ui.checkbox(&mut false, "relative").changed() {

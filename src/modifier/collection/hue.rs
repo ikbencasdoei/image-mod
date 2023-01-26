@@ -1,6 +1,6 @@
 use egui::Ui;
 
-use crate::{image::Image, modifier::traits::Modifier};
+use crate::{editor::Editor, image::Image, modifier::traits::Modifier};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Hue {
@@ -15,7 +15,7 @@ impl Modifier for Hue {
         input
     }
 
-    fn view(&mut self, ui: &mut Ui) {
+    fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
         ui.horizontal(|ui| {
             ui.label("degrees:");
             ui.add(

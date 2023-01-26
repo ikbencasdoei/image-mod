@@ -3,29 +3,36 @@ use std::any::{type_name, Any, TypeId};
 use dyn_clone::DynClone;
 use egui::Ui;
 
-use super::{collection::ModifierIndex, ui::ModifierUi};
-use crate::image::Image;
+use super::collection::ModifierIndex;
+use crate::{editor::Editor, image::Image};
 
 pub trait Modifier: DynClone + DynPartialEq {
     fn apply(&mut self, input: Option<Image>) -> Option<Image>;
+
+    fn get_name() -> String
+    where
+        Self: Sized,
+    {
+        type_name::<Self>()
+            .split("::")
+            .last()
+            .unwrap()
+            .replace('>', "")
+    }
 
     fn get_index() -> ModifierIndex
     where
         Self: Sized + Default + 'static,
     {
         ModifierIndex {
-            name: type_name::<Self>()
-                .split("::")
-                .last()
-                .unwrap()
-                .replace('>', ""),
+            name: Self::get_name(),
             id: TypeId::of::<Self>(),
             instancer: Box::new(|| Box::<Self>::default()),
         }
     }
 
     #[allow(unused_variables)]
-    fn view(&mut self, ui: &mut Ui) {}
+    fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {}
 }
 
 dyn_clone::clone_trait_object!(Modifier);
@@ -55,6 +62,6 @@ impl<T: PartialEq + 'static> DynPartialEq for T {
     }
 }
 
-pub fn init_modifier<T: Modifier + Default + 'static>(mod_ui: &mut ModifierUi) {
-    mod_ui.add_index(T::get_index());
+pub fn init_modifier<T: Modifier + Default + 'static>(editor: &mut Editor) {
+    editor.add_index(T::get_index());
 }

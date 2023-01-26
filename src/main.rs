@@ -5,15 +5,17 @@
 
 use std::path::Path;
 
+use editor::Editor;
 use eframe::Frame;
 use egui::Context;
 use file_picker::FilePicker;
 use menu::menu;
-use modifier::{collection::process_modifiers, ui::ModifierUi};
+use modifier::collection::process_modifiers;
 use project::Project;
 use view::View;
 
 mod color;
+mod editor;
 mod file_picker;
 mod image;
 mod keybinds;
@@ -27,7 +29,7 @@ struct App {
     project: Project,
     file_picker: FilePicker,
     view: View,
-    mod_ui: ModifierUi,
+    editor: Editor,
 }
 
 impl eframe::App for App {
@@ -36,7 +38,7 @@ impl eframe::App for App {
             project,
             file_picker,
             view,
-            mod_ui,
+            editor,
         } = self;
 
         keybinds::fullscreen(ctx, frame);
@@ -45,9 +47,10 @@ impl eframe::App for App {
         file_picker.update(project);
 
         menu(ctx, view, project, file_picker);
-        mod_ui.view(project, ctx);
 
-        process_modifiers(project, ctx, view);
+        project.view(ctx, editor);
+
+        process_modifiers(project, ctx, view, editor);
 
         if project.output_changed() {
             if let Some(output) = project.get_output() {
@@ -80,12 +83,12 @@ fn main() {
         Box::new(|cc| {
             cc.egui_ctx.set_pixels_per_point(1.5);
 
-            let mut mod_ui = ModifierUi::default();
-            modifier::collection::init_modifiers_collection(&mut mod_ui);
+            let mut editor = Editor::default();
+            modifier::collection::init_modifiers_collection(&mut editor);
 
             Box::new(App {
                 project,
-                mod_ui,
+                editor,
                 ..Default::default()
             })
         }),

@@ -5,7 +5,7 @@ use std::{
 
 use egui::{TextEdit, Ui};
 
-use crate::{image::Image, modifier::traits::Modifier};
+use crate::{editor::Editor, image::Image, modifier::traits::Modifier};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Source {
@@ -25,7 +25,7 @@ impl Modifier for Source {
         Image::open(&self.path).ok()
     }
 
-    fn view(&mut self, ui: &mut Ui) {
+    fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
         ui.horizontal(|ui| {
             ui.label("path");
             let mut string = self.path.to_string_lossy().to_string();
