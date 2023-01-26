@@ -1,6 +1,6 @@
 use egui::Ui;
 
-use crate::{image::Image, modifier::modifier::Modifier};
+use crate::{image::Image, modifier::traits::Modifier};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Hue {

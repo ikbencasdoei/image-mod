@@ -15,7 +15,7 @@ use self::{
     source::Source,
 };
 use super::{
-    modifier::{init_modifier, Modifier},
+    traits::{init_modifier, Modifier},
     ui::ModifierUi,
 };
 use crate::{project::Project, view::View};

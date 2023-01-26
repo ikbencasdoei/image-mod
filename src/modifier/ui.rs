@@ -1,7 +1,7 @@
 use egui::{Align2, Color32, Context, Label, LayerId, Order, Sense, TextStyle, Ui};
 use uuid::Uuid;
 
-use super::{collection::ModifierIndex, modifier::Modifier};
+use super::{collection::ModifierIndex, traits::Modifier};
 use crate::project::Project;
 
 #[derive(Default)]
@@ -104,7 +104,13 @@ impl ModifierUi {
                 if ui
                     .toggle_value(
                         &mut (project.get_selected_mod_id() == Some(id)),
-                        project.get_mod_mut(id).unwrap().modifier.index.name.as_str(),
+                        project
+                            .get_mod_mut(id)
+                            .unwrap()
+                            .modifier
+                            .index
+                            .name
+                            .as_str(),
                     )
                     .clicked()
                 {

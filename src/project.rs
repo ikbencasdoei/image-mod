@@ -10,7 +10,7 @@ use crate::{
     modifier::{
         collection::{list::List, source::Source, ModifierIndex},
         modification::{DynMod, ModOutput, Modification},
-        modifier::Modifier,
+        traits::Modifier,
     },
 };
 

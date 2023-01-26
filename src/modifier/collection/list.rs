@@ -2,7 +2,7 @@ use crate::{
     image::Image,
     modifier::{
         modification::{DynMod, ModOutput, Modification},
-        modifier::Modifier,
+        traits::Modifier,
     },
 };
 
