@@ -133,7 +133,7 @@ impl Modifier for Resize {
 
 fn display_filter(filter: FilterType) -> &'static str {
     match filter {
-        FilterType::Nearest => "Nearest Meighbor",
+        FilterType::Nearest => "Nearest Neighbor",
         FilterType::Triangle => "Linear",
         FilterType::CatmullRom => "Cubic",
         FilterType::Gaussian => "Gaussian",
