@@ -9,6 +9,17 @@ use crate::image::Image;
 pub trait Modifier: DynClone + DynPartialEq {
     fn apply(&mut self, input: Option<Image>) -> Option<Image>;
 
+    fn get_name() -> String
+    where
+        Self: Sized,
+    {
+        type_name::<Self>()
+            .split_inclusive("<")
+            .map(|a| a.split("::").last().unwrap())
+            .collect::<Vec<&str>>()
+            .concat()
+    }
+
     fn get_index() -> ModifierIndex
     where
         Self: Sized + Default + 'static,
