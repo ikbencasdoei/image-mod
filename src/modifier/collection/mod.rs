@@ -7,6 +7,7 @@ use self::{
     blur::Blur,
     brighten::Brighten,
     contrast::Contrast,
+    fill::Fill,
     grayscale::GrayScaleFilter,
     hue::Hue,
     invert::Invert,
@@ -20,6 +21,7 @@ use crate::{editor::Editor, project::Project, view::View};
 pub mod blur;
 pub mod brighten;
 pub mod contrast;
+pub mod fill;
 pub mod grayscale;
 pub mod hue;
 pub mod invert;
@@ -37,6 +39,7 @@ pub fn init_modifiers_collection(editor: &mut Editor) {
     init_modifier::<Invert>(editor);
     init_modifier::<Blur>(editor);
     init_modifier::<Resize>(editor);
+    init_modifier::<Fill>(editor);
     init_modifier::<PencilMod<SimplePencil>>(editor);
     init_modifier::<PencilMod<RainbowPencil>>(editor);
     init_modifier::<PencilMod<PixelSorter>>(editor);
