@@ -1,8 +1,7 @@
-use egui::{Color32, Context, Ui};
+use egui::{Context, Ui};
 
 use super::{fill::Fill, magic_wand::MagicWand};
 use crate::{
-    color::Color,
     editor::Editor,
     image::Image,
     modifier::{
