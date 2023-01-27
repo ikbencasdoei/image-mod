@@ -14,10 +14,10 @@ pub trait Modifier: DynClone + DynPartialEq {
         Self: Sized,
     {
         type_name::<Self>()
-            .split("::")
-            .last()
-            .unwrap()
-            .replace('>', "")
+            .split_inclusive("<")
+            .map(|a| a.split("::").last().unwrap())
+            .collect::<Vec<&str>>()
+            .concat()
     }
 
     fn get_index() -> ModifierIndex
