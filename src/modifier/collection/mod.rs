@@ -26,6 +26,7 @@ pub mod grayscale;
 pub mod hue;
 pub mod invert;
 pub mod list;
+pub mod magic_wand;
 pub mod pencil;
 pub mod resize;
 pub mod source;
