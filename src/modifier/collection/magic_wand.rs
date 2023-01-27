@@ -28,6 +28,17 @@ impl<T> MagicWand<T> {
             self.target = Some(pixel);
         }
     }
+
+    pub fn view_threshold(&mut self, ui: &mut Ui) {
+        ui.horizontal(|ui| {
+            ui.label("threshold");
+            ui.add(
+                egui::DragValue::new(&mut self.threshold)
+                    .speed(0.001)
+                    .clamp_range(0.0..=Color::from(Color32::WHITE).sum_rgb()),
+            );
+        });
+    }
 }
 
 impl<T: Modifier + Clone + PartialEq + 'static> Modifier for MagicWand<T> {

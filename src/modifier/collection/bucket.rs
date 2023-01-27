@@ -41,14 +41,6 @@ impl Modifier for Bucket {
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
         self.wand.child.as_mut().unwrap().modifier.view(ui, editor);
-
-        ui.horizontal(|ui| {
-            ui.label("threshold");
-            ui.add(
-                egui::DragValue::new(&mut self.wand.threshold)
-                    .speed(0.001)
-                    .clamp_range(0.0..=Color::from(Color32::WHITE).sum_rgb()),
-            );
-        });
+        self.wand.view_threshold(ui);
     }
 }
