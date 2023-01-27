@@ -1,13 +1,12 @@
 use egui::{Align2, Color32, Label, LayerId, Order, Sense, TextStyle, Ui};
 use uuid::Uuid;
 
-use super::ModifierIndex;
 use crate::{
     editor::Editor,
     image::Image,
     modifier::{
         modification::{DynMod, ModOutput, Modification},
-        traits::Modifier,
+        traits::{Modifier, ModifierIndex},
     },
 };
 

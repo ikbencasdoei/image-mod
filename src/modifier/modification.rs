@@ -1,10 +1,7 @@
 use egui::Ui;
 use uuid::Uuid;
 
-use super::{
-    collection::ModifierIndex,
-    traits::{DynPartialEq, Modifier},
-};
+use super::traits::{DynPartialEq, Modifier, ModifierIndex};
 use crate::{editor::Editor, image::Image};
 
 #[derive(Clone)]

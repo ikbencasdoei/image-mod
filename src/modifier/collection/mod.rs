@@ -1,6 +1,3 @@
-use std::any::TypeId;
-
-use dyn_clone::DynClone;
 use egui::Context;
 
 use self::{
@@ -16,7 +13,7 @@ use self::{
     resize::Resize,
     source::Source,
 };
-use super::traits::{init_modifier, Modifier};
+use super::traits::init_modifier;
 use crate::{editor::Editor, project::Project, view::View};
 
 pub mod blur;
@@ -75,30 +72,5 @@ pub fn process_modifiers(project: &mut Project, ctx: &Context, view: &View, edit
         if let Some(modifier) = modification.modifier.get_modifier_mut::<Bucket>() {
             modifier.update(ctx, view);
         }
-    }
-}
-
-pub trait ModInstancer: Fn() -> Box<dyn Modifier> + DynClone {
-    fn instance(&self) -> Box<dyn Modifier>;
-}
-
-impl<T: Fn() -> Box<dyn Modifier> + DynClone> ModInstancer for T {
-    fn instance(&self) -> Box<dyn Modifier> {
-        self()
-    }
-}
-
-dyn_clone::clone_trait_object!(ModInstancer);
-
-#[derive(Clone)]
-pub struct ModifierIndex {
-    pub name: String,
-    pub id: TypeId,
-    pub instancer: Box<dyn ModInstancer>,
-}
-
-impl PartialEq for ModifierIndex {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
     }
 }

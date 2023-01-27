@@ -1,6 +1,6 @@
 use uuid::Uuid;
 
-use crate::modifier::collection::ModifierIndex;
+use crate::modifier::traits::ModifierIndex;
 
 #[derive(Default)]
 pub struct Editor {

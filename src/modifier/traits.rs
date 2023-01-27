@@ -3,7 +3,7 @@ use std::any::{type_name, Any, TypeId};
 use dyn_clone::DynClone;
 use egui::Ui;
 
-use super::{collection::ModifierIndex, modification::ModOutput};
+use super::modification::ModOutput;
 use crate::{editor::Editor, image::Image};
 
 pub trait Modifier: DynClone + DynPartialEq {
@@ -64,4 +64,29 @@ impl<T: PartialEq + 'static> DynPartialEq for T {
 
 pub fn init_modifier<T: Modifier + Default + 'static>(editor: &mut Editor) {
     editor.add_index(T::get_index());
+}
+
+pub trait ModInstancer: Fn() -> Box<dyn Modifier> + DynClone {
+    fn instance(&self) -> Box<dyn Modifier>;
+}
+
+impl<T: Fn() -> Box<dyn Modifier> + DynClone> ModInstancer for T {
+    fn instance(&self) -> Box<dyn Modifier> {
+        self()
+    }
+}
+
+dyn_clone::clone_trait_object!(ModInstancer);
+
+#[derive(Clone)]
+pub struct ModifierIndex {
+    pub name: String,
+    pub id: TypeId,
+    pub instancer: Box<dyn ModInstancer>,
+}
+
+impl PartialEq for ModifierIndex {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
 }
