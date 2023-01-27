@@ -13,7 +13,7 @@ use self::{
     resize::Resize,
     source::Source,
 };
-use super::traits::init_modifier;
+use super::traits::Modifier;
 use crate::{editor::Editor, project::Project, view::View};
 
 pub mod blur;
@@ -73,4 +73,8 @@ pub fn process_modifiers(project: &mut Project, ctx: &Context, view: &View, edit
             modifier.update(ctx, view);
         }
     }
+}
+
+pub fn init_modifier<T: Modifier + Default + 'static>(editor: &mut Editor) {
+    editor.add_index(T::get_index());
 }

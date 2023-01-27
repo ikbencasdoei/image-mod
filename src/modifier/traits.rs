@@ -62,10 +62,6 @@ impl<T: PartialEq + 'static> DynPartialEq for T {
     }
 }
 
-pub fn init_modifier<T: Modifier + Default + 'static>(editor: &mut Editor) {
-    editor.add_index(T::get_index());
-}
-
 pub trait ModInstancer: Fn() -> Box<dyn Modifier> + DynClone {
     fn instance(&self) -> Box<dyn Modifier>;
 }
