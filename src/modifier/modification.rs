@@ -8,7 +8,7 @@ use crate::{editor::Editor, image::Image};
 pub struct Cacher<T> {
     pub id: Uuid,
     pub modifier: T,
-    pub cache: Option<ModCache<T>>,
+    cache: Option<ModCache<T>>,
 }
 
 impl<T: Modifier + Clone + PartialEq> Cacher<T> {
@@ -135,7 +135,7 @@ impl CacheOutput {
 }
 
 #[derive(Clone)]
-pub struct ModCache<T> {
+struct ModCache<T> {
     modifier: T,
     pub output: CacheOutput,
     input_id: Uuid,
