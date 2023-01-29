@@ -1,7 +1,8 @@
-use egui::Context;
+use egui::{Color32, Context, Ui};
 use glam::UVec2;
 
 use crate::{
+    color::Color,
     image::Image,
     modifier::{
         modification::{ModOutput, Modification},
