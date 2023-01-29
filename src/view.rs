@@ -109,9 +109,13 @@ impl View {
         );
     }
 
-    pub fn hovered_pixel(&self, ctx: &Context) -> Vec2 {
-        let pointer = ctx.input().pointer.interact_pos().unwrap();
-        let pos = pointer - self.rect.left_top();
-        pos / self.scale * ctx.pixels_per_point()
+    pub fn hovered_pixel(&self, ctx: &Context) -> Option<Vec2> {
+        let pointer = ctx.input().pointer.interact_pos()?;
+        if self.rect.contains(pointer) {
+            let pos = pointer - self.rect.left_top();
+            Some(pos / self.scale * ctx.pixels_per_point())
+        } else {
+            None
+        }
     }
 }

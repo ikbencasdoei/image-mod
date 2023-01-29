@@ -21,12 +21,10 @@ pub struct MagicWand<T> {
 impl<T> MagicWand<T> {
     pub fn update(&mut self, ctx: &Context, view: &View) {
         if ctx.input().pointer.primary_clicked() && !ctx.wants_pointer_input() {
-            let pixel = {
-                let egui::Vec2 { x, y } = view.hovered_pixel(ctx);
-                UVec2::new(x.round() as u32, y.round() as u32)
-            };
-
-            self.target = Some(pixel);
+            if let Some(pos) = view.hovered_pixel(ctx) {
+                let egui::Vec2 { x, y } = pos;
+                self.target = Some(UVec2::new(x.round() as u32, y.round() as u32));
+            }
         }
     }
 
