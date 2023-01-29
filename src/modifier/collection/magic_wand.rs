@@ -5,7 +5,7 @@ use crate::{
     color::Color,
     image::Image,
     modifier::{
-        modification::{ModOutput, Modification},
+        modification::{Cacher, ModOutput},
         traits::Modifier,
     },
     view::View,
@@ -15,7 +15,7 @@ use crate::{
 pub struct MagicWand<T> {
     pub target: Option<UVec2>,
     pub threshold: f32,
-    pub child: Option<Modification<T>>,
+    pub child: Option<Cacher<T>>,
 }
 
 impl<T> MagicWand<T> {

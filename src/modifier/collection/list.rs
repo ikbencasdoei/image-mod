@@ -5,14 +5,14 @@ use crate::{
     editor::Editor,
     image::Image,
     modifier::{
-        modification::{DynMod, ModOutput, Modification},
+        modification::{Cacher, DynMod, ModOutput},
         traits::{Modifier, ModifierIndex},
     },
 };
 
 #[derive(Default, Clone, PartialEq)]
 pub struct List {
-    pub contents: Vec<Modification<DynMod>>,
+    pub contents: Vec<Cacher<DynMod>>,
 }
 
 impl List {
@@ -32,7 +32,7 @@ impl List {
     }
 
     pub fn add_mod_from_index(&mut self, index: &ModifierIndex, editor: &mut Editor) {
-        let new = Modification::new(DynMod::from_index(index.clone()));
+        let new = Cacher::new(DynMod::from_index(index.clone()));
         editor.selected = Some(new.id);
         self.contents.push(new);
     }
@@ -70,11 +70,11 @@ impl List {
         }
     }
 
-    pub fn get_selected_mod_mut(&mut self, editor: &Editor) -> Option<&mut Modification<DynMod>> {
+    pub fn get_selected_mod_mut(&mut self, editor: &Editor) -> Option<&mut Cacher<DynMod>> {
         editor.selected.and_then(|id| self.get_mod_mut(id))
     }
 
-    pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Modification<DynMod>> {
+    pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Cacher<DynMod>> {
         self.contents.iter_mut().find(|item| item.id == id)
     }
 
@@ -88,7 +88,7 @@ impl List {
 
     fn view_modifier(
         index: usize,
-        modification: &mut Modification<DynMod>,
+        modification: &mut Cacher<DynMod>,
         ui: &mut Ui,
         editor: &mut Editor,
     ) {
@@ -125,7 +125,7 @@ impl List {
         .body(|ui| modification.modifier.view(ui, editor));
     }
 
-    fn view_dragging(modification: &mut Modification<DynMod>, ui: &mut Ui) {
+    fn view_dragging(modification: &mut Cacher<DynMod>, ui: &mut Ui) {
         let layer = LayerId::new(Order::Tooltip, ui.make_persistent_id(modification.id));
         if let Some(mouse_pos) = ui.ctx().pointer_interact_pos() {
             ui.ctx().layer_painter(layer).text(

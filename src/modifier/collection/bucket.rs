@@ -5,7 +5,7 @@ use crate::{
     editor::Editor,
     image::Image,
     modifier::{
-        modification::{ModOutput, Modification},
+        modification::{Cacher, ModOutput},
         traits::Modifier,
     },
     view::View,
@@ -20,7 +20,7 @@ impl Default for Bucket {
     fn default() -> Self {
         Self {
             wand: MagicWand {
-                child: Some(Modification::new(Fill::default())),
+                child: Some(Cacher::new(Fill::default())),
                 ..Default::default()
             },
         }

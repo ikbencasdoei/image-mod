@@ -5,13 +5,13 @@ use super::traits::{DynPartialEq, Modifier, ModifierIndex};
 use crate::{editor::Editor, image::Image};
 
 #[derive(Clone)]
-pub struct Modification<T> {
+pub struct Cacher<T> {
     pub id: Uuid,
     pub modifier: T,
     pub cache: Option<ModCache<T>>,
 }
 
-impl<T: Modifier + Clone + PartialEq> Modification<T> {
+impl<T: Modifier + Clone + PartialEq> Cacher<T> {
     pub fn new(modifier: T) -> Self {
         Self {
             id: Uuid::new_v4(),
@@ -47,7 +47,7 @@ impl<T: Modifier + Clone + PartialEq> Modification<T> {
     }
 }
 
-impl<T: PartialEq> PartialEq for Modification<T> {
+impl<T: PartialEq> PartialEq for Cacher<T> {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id && self.modifier == other.modifier
     }

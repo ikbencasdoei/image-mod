@@ -7,19 +7,19 @@ use crate::{
     image::Image,
     modifier::{
         collection::{list::List, source::Source},
-        modification::{DynMod, ModOutput, Modification},
+        modification::{Cacher, DynMod, ModOutput},
         traits::Modifier,
     },
 };
 
 pub struct Project {
-    pub root: Modification<List>,
+    pub root: Cacher<List>,
 }
 
 impl Default for Project {
     fn default() -> Self {
         Self {
-            root: Modification::new(List::default()),
+            root: Cacher::new(List::default()),
         }
     }
 }
@@ -27,8 +27,8 @@ impl Default for Project {
 impl Project {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
         Self {
-            root: Modification::new(List {
-                contents: vec![Modification::new(DynMod::new(Source::new(path)))],
+            root: Cacher::new(List {
+                contents: vec![Cacher::new(DynMod::new(Source::new(path)))],
             }),
             ..Default::default()
         }
