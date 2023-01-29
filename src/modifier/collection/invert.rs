@@ -1,13 +1,13 @@
 use crate::{
     image::Image,
-    modifier::{modification::ModOutput, traits::Modifier},
+    modifier::{modification::CacheOutput, traits::Modifier},
 };
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Invert;
 
 impl Modifier for Invert {
-    fn apply(&mut self, mut input: ModOutput) -> Option<Image> {
+    fn apply(&mut self, mut input: CacheOutput) -> Option<Image> {
         if let Some(image) = &mut input.image {
             image.invert();
         }

@@ -5,7 +5,7 @@ use crate::{
     color::Color,
     image::Image,
     modifier::{
-        modification::{Cacher, ModOutput},
+        modification::{CacheOutput, Cacher},
         traits::Modifier,
     },
     view::View,
@@ -43,7 +43,7 @@ impl<T> MagicWand<T> {
 }
 
 impl<T: Modifier + Clone + PartialEq + 'static> Modifier for MagicWand<T> {
-    fn apply(&mut self, mut input: ModOutput) -> Option<Image> {
+    fn apply(&mut self, mut input: CacheOutput) -> Option<Image> {
         if let Some(target) = self.target {
             if let Some(child) = &mut self.child {
                 if let Some(output) = child.get_output(&input).image.clone() {

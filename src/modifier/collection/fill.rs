@@ -3,7 +3,7 @@ use egui::{Color32, Ui};
 use crate::{
     editor::Editor,
     image::Image,
-    modifier::{modification::ModOutput, traits::Modifier},
+    modifier::{modification::CacheOutput, traits::Modifier},
 };
 
 #[derive(Clone, PartialEq)]
@@ -20,7 +20,7 @@ impl Default for Fill {
 }
 
 impl Modifier for Fill {
-    fn apply(&mut self, mut input: ModOutput) -> Option<Image> {
+    fn apply(&mut self, mut input: CacheOutput) -> Option<Image> {
         if let Some(image) = &mut input.image {
             for position in image.iter_coords() {
                 image.set_pixel(position, self.color.into()).ok();

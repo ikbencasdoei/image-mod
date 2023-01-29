@@ -8,7 +8,7 @@ use egui::{TextEdit, Ui};
 use crate::{
     editor::Editor,
     image::Image,
-    modifier::{modification::ModOutput, traits::Modifier},
+    modifier::{modification::CacheOutput, traits::Modifier},
 };
 
 #[derive(Clone, Default, PartialEq)]
@@ -25,7 +25,7 @@ impl Source {
 }
 
 impl Modifier for Source {
-    fn apply(&mut self, _: ModOutput) -> Option<Image> {
+    fn apply(&mut self, _: CacheOutput) -> Option<Image> {
         Image::open(&self.path).ok()
     }
 

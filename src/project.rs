@@ -7,7 +7,7 @@ use crate::{
     image::Image,
     modifier::{
         collection::{list::List, source::Source},
-        modification::{Cacher, DynMod, ModOutput},
+        modification::{CacheOutput, Cacher, DynMod},
         traits::Modifier,
     },
 };
@@ -43,12 +43,12 @@ impl Project {
     }
 
     pub fn get_output(&mut self) -> &Option<Image> {
-        let input = ModOutput::new_empty();
+        let input = CacheOutput::new_empty();
         &self.root.get_output(&input).image
     }
 
     pub fn output_changed(&self) -> bool {
-        !self.root.check_cache(&ModOutput::new_empty())
+        !self.root.check_cache(&CacheOutput::new_empty())
     }
 
     pub fn get_path(&self) -> Option<PathBuf> {

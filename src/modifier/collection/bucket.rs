@@ -5,7 +5,7 @@ use crate::{
     editor::Editor,
     image::Image,
     modifier::{
-        modification::{Cacher, ModOutput},
+        modification::{CacheOutput, Cacher},
         traits::Modifier,
     },
     view::View,
@@ -34,7 +34,7 @@ impl Bucket {
 }
 
 impl Modifier for Bucket {
-    fn apply(&mut self, input: ModOutput) -> Option<Image> {
+    fn apply(&mut self, input: CacheOutput) -> Option<Image> {
         self.wand.apply(input)
     }
 

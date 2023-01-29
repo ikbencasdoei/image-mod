@@ -5,7 +5,7 @@ use crate::{
     editor::Editor,
     image::Image,
     modifier::{
-        modification::{Cacher, DynMod, ModOutput},
+        modification::{CacheOutput, Cacher, DynMod},
         traits::{Modifier, ModifierIndex},
     },
 };
@@ -150,7 +150,7 @@ impl List {
 }
 
 impl Modifier for List {
-    fn apply(&mut self, mut output: ModOutput) -> Option<Image> {
+    fn apply(&mut self, mut output: CacheOutput) -> Option<Image> {
         {
             let mut borrow = &output;
             for modification in self.contents.iter_mut() {

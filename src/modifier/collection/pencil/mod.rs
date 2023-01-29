@@ -5,7 +5,7 @@ use crate::{
     color::Color,
     editor::Editor,
     image::Image,
-    modifier::{modification::ModOutput, traits::Modifier},
+    modifier::{modification::CacheOutput, traits::Modifier},
     view::View,
 };
 
@@ -26,7 +26,7 @@ pub struct PencilMod<T> {
 }
 
 impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T> {
-    fn apply(&mut self, mut input: ModOutput) -> Option<Image> {
+    fn apply(&mut self, mut input: CacheOutput) -> Option<Image> {
         if let Some(image) = &mut input.image {
             let mut pencil = self.pencil.clone();
             for pixel in self.pixels.iter() {
