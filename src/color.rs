@@ -27,7 +27,7 @@ impl Color {
         }
     }
 
-    pub fn as_rgba_u8(self) -> [u8; 4] {
+    pub fn into_rgba_u8(self) -> [u8; 4] {
         [
             (self.r * u8::MAX as f32) as u8,
             (self.g * u8::MAX as f32) as u8,
