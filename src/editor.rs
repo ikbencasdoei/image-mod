@@ -1,14 +1,16 @@
 use uuid::Uuid;
 
-use crate::modifier::traits::ModifierIndex;
+use crate::modifier::{
+    modification::{Cacher, DynMod},
+    traits::ModifierIndex,
+};
 
 #[derive(Default)]
 pub struct Editor {
     pub index: Vec<ModifierIndex>,
     pub selected: Option<Uuid>,
-    pub dragging: Option<Uuid>,
-    pub removed: Option<Uuid>,
-    pub dropped: Option<usize>,
+    pub dragging: Option<Cacher<DynMod>>,
+    pub dropped: Option<Cacher<DynMod>>,
 }
 
 impl Editor {

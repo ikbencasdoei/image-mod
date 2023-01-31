@@ -7,7 +7,7 @@ use crate::{
     image::Image,
     modifier::{
         collection::{list::List, source::Source},
-        modification::{CacheOutput, Cacher, DynMod},
+        modification::{CacheOutput, Cacher},
         traits::Modifier,
     },
 };
@@ -27,9 +27,7 @@ impl Default for Project {
 impl Project {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
         Self {
-            root: Cacher::new(List {
-                contents: vec![Cacher::new(DynMod::new(Source::new(path)))],
-            }),
+            root: Cacher::new(List::from_vec_mods(vec![Source::new(path)])),
             ..Default::default()
         }
     }
@@ -69,5 +67,12 @@ impl Project {
                 ui.separator();
                 self.root.modifier.view(ui, editor);
             });
+
+        if !ctx.memory().is_anything_being_dragged() {
+            if editor.dragging.is_some() {
+                editor.dropped = editor.dragging.take();
+                ctx.request_repaint();
+            }
+        }
     }
 }

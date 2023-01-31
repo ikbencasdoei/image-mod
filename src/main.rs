@@ -22,6 +22,7 @@ mod keybinds;
 mod menu;
 mod modifier;
 mod project;
+mod slot;
 mod view;
 
 #[derive(Default)]
