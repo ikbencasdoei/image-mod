@@ -94,22 +94,27 @@ impl Modifier for List {
                 let current = std::mem::replace(&mut self.contents, Vec::new());
                 let slots = current
                     .into_iter()
+                    .enumerate()
                     .rev()
                     .enumerate()
-                    .map(|(i, slot)| {
+                    .map(|(i, (from_bottom, slot))| {
                         if i > 0 {
-                            vec![slot, ModifierSlot::default()]
+                            vec![(from_bottom, slot), (from_bottom, ModifierSlot::default())]
                         } else {
-                            vec![ModifierSlot::default(), slot, ModifierSlot::default()]
+                            vec![
+                                (from_bottom, ModifierSlot::default()),
+                                (from_bottom, slot),
+                                (from_bottom, ModifierSlot::default()),
+                            ]
                         }
                     })
                     .flatten()
-                    .collect::<Vec<ModifierSlot>>();
+                    .collect::<Vec<(usize, ModifierSlot)>>();
 
                 let mut new = slots
                     .into_iter()
-                    .map(|mut slot| {
-                        slot.view(ui, editor);
+                    .map(|(i, mut slot)| {
+                        slot.view(ui, editor, Some(&format!("#{i}")));
 
                         if slot.is_empty() {
                             None

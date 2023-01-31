@@ -97,15 +97,21 @@ impl ModifierSlot {
         });
     }
 
-    fn view_modifier(&mut self, ui: &mut Ui, editor: &mut Editor) {
+    fn view_modifier(&mut self, ui: &mut Ui, editor: &mut Editor, prefix: Option<&str>) {
         egui::collapsing_header::CollapsingState::load_with_default_open(
             ui.ctx(),
             ui.make_persistent_id(self.get_mod().unwrap().id),
             true,
         )
         .show_header(ui, |ui| {
+            let prefix = if let Some(prefix) = prefix {
+                prefix
+            } else {
+                "✋"
+            };
+
             if ui
-                .add(Label::new(format!("grab")).sense(Sense::drag()))
+                .add(Label::new(prefix).sense(Sense::drag()))
                 .drag_started()
             {
                 editor.dragging = self.drag();
@@ -147,9 +153,9 @@ impl ModifierSlot {
         }
     }
 
-    pub fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
+    pub fn view(&mut self, ui: &mut Ui, editor: &mut Editor, prefix: Option<&str>) {
         match self {
-            Self::Modifier(_) => self.view_modifier(ui, editor),
+            Self::Modifier(_) => self.view_modifier(ui, editor, prefix),
             Self::Empty => {
                 if editor.dragging.is_some() {
                     self.view_slot(ui, editor);
