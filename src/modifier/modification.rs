@@ -1,20 +1,17 @@
 use egui::Ui;
 use uuid::Uuid;
 
-use super::{
-    collection::ModifierIndex,
-    traits::{DynPartialEq, Modifier},
-};
-use crate::image::Image;
+use super::traits::{DynPartialEq, Modifier, ModifierIndex};
+use crate::{editor::Editor, image::Image};
 
 #[derive(Clone)]
-pub struct Modification<T> {
+pub struct Cacher<T> {
     pub id: Uuid,
     pub modifier: T,
-    pub cache: Option<ModCache<T>>,
+    cache: Option<ModCache<T>>,
 }
 
-impl<T: Modifier + Clone + PartialEq> Modification<T> {
+impl<T: Modifier + Clone + PartialEq> Cacher<T> {
     pub fn new(modifier: T) -> Self {
         Self {
             id: Uuid::new_v4(),
@@ -23,13 +20,13 @@ impl<T: Modifier + Clone + PartialEq> Modification<T> {
         }
     }
 
-    pub fn check_cache(&self, input: &ModOutput) -> bool {
+    pub fn check_cache(&self, input: &CacheOutput) -> bool {
         self.cache
             .as_ref()
             .is_some_and(|cache| !cache.changed(&self.modifier) && cache.input_id == input.id)
     }
 
-    pub fn get_output(&mut self, input: &ModOutput) -> &ModOutput {
+    pub fn get_output(&mut self, input: &CacheOutput) -> &CacheOutput {
         if self.check_cache(input) {
             return &self.cache.as_ref().unwrap().output;
         }
@@ -37,8 +34,8 @@ impl<T: Modifier + Clone + PartialEq> Modification<T> {
         self.apply(input)
     }
 
-    fn apply(&mut self, input: &ModOutput) -> &ModOutput {
-        let output = ModOutput::new(self.modifier.apply(input.image.clone()));
+    fn apply(&mut self, input: &CacheOutput) -> &CacheOutput {
+        let output = CacheOutput::new(self.modifier.apply(input.clone()));
 
         self.cache = Some(ModCache {
             modifier: self.modifier.clone(),
@@ -50,7 +47,7 @@ impl<T: Modifier + Clone + PartialEq> Modification<T> {
     }
 }
 
-impl<T: PartialEq> PartialEq for Modification<T> {
+impl<T: PartialEq> PartialEq for Cacher<T> {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id && self.modifier == other.modifier
     }
@@ -106,22 +103,22 @@ impl PartialEq for DynMod {
 }
 
 impl Modifier for DynMod {
-    fn apply(&mut self, input: Option<Image>) -> Option<Image> {
+    fn apply(&mut self, input: CacheOutput) -> Option<Image> {
         self.modifier.apply(input)
     }
 
-    fn view(&mut self, ui: &mut Ui) {
-        self.modifier.view(ui)
+    fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
+        self.modifier.view(ui, editor);
     }
 }
 
 #[derive(Clone)]
-pub struct ModOutput {
+pub struct CacheOutput {
     pub image: Option<Image>,
     id: Uuid,
 }
 
-impl ModOutput {
+impl CacheOutput {
     pub fn new(image: Option<Image>) -> Self {
         Self {
             image,
@@ -138,9 +135,9 @@ impl ModOutput {
 }
 
 #[derive(Clone)]
-pub struct ModCache<T> {
+struct ModCache<T> {
     modifier: T,
-    pub output: ModOutput,
+    pub output: CacheOutput,
     input_id: Uuid,
 }
 

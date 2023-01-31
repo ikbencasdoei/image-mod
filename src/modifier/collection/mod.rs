@@ -1,12 +1,11 @@
-use std::any::TypeId;
-
-use dyn_clone::DynClone;
 use egui::Context;
 
 use self::{
     blur::Blur,
     brighten::Brighten,
+    bucket::Bucket,
     contrast::Contrast,
+    fill::Fill,
     grayscale::GrayScaleFilter,
     hue::Hue,
     invert::Invert,
@@ -14,39 +13,41 @@ use self::{
     resize::Resize,
     source::Source,
 };
-use super::{
-    traits::{init_modifier, Modifier},
-    ui::ModifierUi,
-};
-use crate::{project::Project, view::View};
+use super::traits::Modifier;
+use crate::{editor::Editor, project::Project, view::View};
 
 pub mod blur;
 pub mod brighten;
+pub mod bucket;
 pub mod contrast;
+pub mod fill;
 pub mod grayscale;
 pub mod hue;
 pub mod invert;
 pub mod list;
+pub mod magic_wand;
 pub mod pencil;
 pub mod resize;
 pub mod source;
 
-pub fn init_modifiers_collection(mod_ui: &mut ModifierUi) {
-    init_modifier::<GrayScaleFilter>(mod_ui);
-    init_modifier::<Source>(mod_ui);
-    init_modifier::<Hue>(mod_ui);
-    init_modifier::<Brighten>(mod_ui);
-    init_modifier::<Contrast>(mod_ui);
-    init_modifier::<Invert>(mod_ui);
-    init_modifier::<Blur>(mod_ui);
-    init_modifier::<Resize>(mod_ui);
-    init_modifier::<PencilMod<SimplePencil>>(mod_ui);
-    init_modifier::<PencilMod<RainbowPencil>>(mod_ui);
-    init_modifier::<PencilMod<PixelSorter>>(mod_ui);
+pub fn init_modifiers_collection(editor: &mut Editor) {
+    init_modifier::<GrayScaleFilter>(editor);
+    init_modifier::<Source>(editor);
+    init_modifier::<Hue>(editor);
+    init_modifier::<Brighten>(editor);
+    init_modifier::<Contrast>(editor);
+    init_modifier::<Invert>(editor);
+    init_modifier::<Blur>(editor);
+    init_modifier::<Resize>(editor);
+    init_modifier::<Bucket>(editor);
+    init_modifier::<Fill>(editor);
+    init_modifier::<PencilMod<SimplePencil>>(editor);
+    init_modifier::<PencilMod<RainbowPencil>>(editor);
+    init_modifier::<PencilMod<PixelSorter>>(editor);
 }
 
-pub fn process_modifiers(project: &mut Project, ctx: &Context, view: &View) {
-    if let Some(modification) = project.get_selected_mod_mut() {
+pub fn process_modifiers(project: &mut Project, ctx: &Context, view: &View, editor: &Editor) {
+    if let Some(modification) = project.root.modifier.get_selected_mod_mut(editor) {
         if let Some(modifier) = modification
             .modifier
             .get_modifier_mut::<PencilMod<SimplePencil>>()
@@ -67,30 +68,13 @@ pub fn process_modifiers(project: &mut Project, ctx: &Context, view: &View) {
         {
             modifier.update(ctx, view);
         }
+
+        if let Some(modifier) = modification.modifier.get_modifier_mut::<Bucket>() {
+            modifier.update(ctx, view);
+        }
     }
 }
 
-pub trait ModInstancer: Fn() -> Box<dyn Modifier> + DynClone {
-    fn instance(&self) -> Box<dyn Modifier>;
-}
-
-impl<T: Fn() -> Box<dyn Modifier> + DynClone> ModInstancer for T {
-    fn instance(&self) -> Box<dyn Modifier> {
-        self()
-    }
-}
-
-dyn_clone::clone_trait_object!(ModInstancer);
-
-#[derive(Clone)]
-pub struct ModifierIndex {
-    pub name: String,
-    pub id: TypeId,
-    pub instancer: Box<dyn ModInstancer>,
-}
-
-impl PartialEq for ModifierIndex {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
-    }
+pub fn init_modifier<T: Modifier + Default + 'static>(editor: &mut Editor) {
+    editor.add_index(T::get_index());
 }

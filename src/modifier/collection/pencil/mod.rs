@@ -1,7 +1,13 @@
 use egui::{Context, Ui};
 use glam::{UVec2, Vec2};
 
-use crate::{color::Color, image::Image, modifier::traits::Modifier, view::View};
+use crate::{
+    color::Color,
+    editor::Editor,
+    image::Image,
+    modifier::{modification::CacheOutput, traits::Modifier},
+    view::View,
+};
 
 pub mod rainbow;
 pub mod simple;
@@ -20,8 +26,8 @@ pub struct PencilMod<T> {
 }
 
 impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T> {
-    fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
-        if let Some(image) = &mut input {
+    fn apply(&mut self, mut input: CacheOutput) -> Option<Image> {
+        if let Some(image) = &mut input.image {
             let mut pencil = self.pencil.clone();
             for pixel in self.pixels.iter() {
                 if let Some(color) = pencil.get_pixel(*pixel, image) {
@@ -29,10 +35,10 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
                 }
             }
         }
-        input
+        input.image
     }
 
-    fn view(&mut self, ui: &mut Ui) {
+    fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
         self.pencil.view(ui);
     }
 }
@@ -40,27 +46,27 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
 impl<T: Pencil + Default + PartialEq + Clone> PencilMod<T> {
     pub fn update(&mut self, ctx: &Context, view: &View) {
         if (ctx.input().pointer.primary_down()) && !ctx.wants_pointer_input() {
-            let pixel = {
-                let egui::Vec2 { x, y } = view.hovered_pixel(ctx);
-                Vec2::new(x, y)
-            };
+            if let Some(pos) = view.hovered_pixel(ctx) {
+                let egui::Vec2 { x, y } = pos;
+                let pixel = Vec2::new(x, y);
 
-            if let Some(last_pixel) = self.last_pixel {
-                let delta: Vec2 = pixel - last_pixel;
+                if let Some(last_pixel) = self.last_pixel {
+                    let delta: Vec2 = pixel - last_pixel;
 
-                if delta.length() > 1.0 {
-                    for i in 1..delta.length().ceil() as i32 {
-                        let position =
-                            last_pixel.lerp(pixel, 1.0 / delta.length().ceil() * (i as f32));
+                    if delta.length() > 1.0 {
+                        for i in 1..delta.length().ceil() as i32 {
+                            let position =
+                                last_pixel.lerp(pixel, 1.0 / delta.length().ceil() * (i as f32));
 
-                        self.pixels.push(position.as_uvec2());
+                            self.pixels.push(position.as_uvec2());
+                        }
                     }
                 }
+
+                self.pixels.push(pixel.as_uvec2());
+
+                self.last_pixel = Some(pixel);
             }
-
-            self.pixels.push(pixel.as_uvec2());
-
-            self.last_pixel = Some(pixel);
         } else {
             self.last_pixel = None;
         }

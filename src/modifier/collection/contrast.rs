@@ -1,6 +1,10 @@
 use egui::Ui;
 
-use crate::{image::Image, modifier::traits::Modifier};
+use crate::{
+    editor::Editor,
+    image::Image,
+    modifier::{modification::CacheOutput, traits::Modifier},
+};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Contrast {
@@ -8,14 +12,14 @@ pub struct Contrast {
 }
 
 impl Modifier for Contrast {
-    fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
-        if let Some(image) = &mut input {
+    fn apply(&mut self, mut input: CacheOutput) -> Option<Image> {
+        if let Some(image) = &mut input.image {
             image.contrast(self.value);
         }
-        input
+        input.image
     }
 
-    fn view(&mut self, ui: &mut Ui) {
+    fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
         ui.horizontal(|ui| {
             ui.label("amount:");
             ui.add(egui::DragValue::new(&mut self.value).clamp_range(-100.0..=f32::MAX));

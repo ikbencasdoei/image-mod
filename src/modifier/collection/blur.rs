@@ -1,6 +1,10 @@
 use egui::Ui;
 
-use crate::{image::Image, modifier::traits::Modifier};
+use crate::{
+    editor::Editor,
+    image::Image,
+    modifier::{modification::CacheOutput, traits::Modifier},
+};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Blur {
@@ -8,14 +12,14 @@ pub struct Blur {
 }
 
 impl Modifier for Blur {
-    fn apply(&mut self, mut input: Option<Image>) -> Option<Image> {
-        if let Some(image) = &mut input {
+    fn apply(&mut self, mut input: CacheOutput) -> Option<Image> {
+        if let Some(image) = &mut input.image {
             image.blur(self.sigma);
         }
-        input
+        input.image
     }
 
-    fn view(&mut self, ui: &mut Ui) {
+    fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
         ui.horizontal(|ui| {
             ui.label("sigma:");
             ui.add(
