@@ -49,7 +49,7 @@ impl eframe::App for App {
 
         menu(ctx, view, project, file_picker);
 
-        project.view(ctx, editor);
+        editor.view(ctx, project);
 
         process_modifiers(project, ctx, view, editor);
 

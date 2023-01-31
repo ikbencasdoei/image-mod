@@ -1,14 +1,10 @@
 use std::path::{Path, PathBuf};
 
-use egui::Context;
-
 use crate::{
-    editor::Editor,
     image::Image,
     modifier::{
         collection::{list::List, source::Source},
         modification::{CacheOutput, Cacher},
-        traits::Modifier,
     },
 };
 
@@ -55,24 +51,5 @@ impl Project {
             .get_mods_of_type::<Source>()
             .last()
             .map(|source| source.path.clone())
-    }
-
-    pub fn view(&mut self, ctx: &Context, editor: &mut Editor) {
-        egui::SidePanel::left("Modifiers")
-            .resizable(true)
-            .show(ctx, |ui| {
-                ui.vertical_centered(|ui| {
-                    ui.heading(format!("Modifiers ({})", self.root.modifier.contents.len()));
-                });
-                ui.separator();
-                self.root.modifier.view(ui, editor);
-            });
-
-        if !ctx.memory().is_anything_being_dragged() {
-            if editor.dragging.is_some() {
-                editor.dropped = editor.dragging.take();
-                ctx.request_repaint();
-            }
-        }
     }
 }
