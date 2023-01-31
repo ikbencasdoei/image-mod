@@ -128,7 +128,7 @@ impl ModifierSlot {
                     editor.selected = Some(modifier.id);
                 }
 
-                ui.menu_button("remove", |ui| {
+                ui.menu_button("🗑", |ui| {
                     if ui.button("sure?").clicked() {
                         self.take(Self::Empty);
                         ui.close_menu();
