@@ -11,11 +11,21 @@ use crate::{
     view::View,
 };
 
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq)]
 pub struct MagicWand<T> {
     pub target: Option<UVec2>,
-    pub threshold: f32,
     pub child: Option<Cacher<T>>,
+    pub threshold: f32,
+}
+
+impl<T> Default for MagicWand<T> {
+    fn default() -> Self {
+        Self {
+            target: Default::default(),
+            child: Default::default(),
+            threshold: 0.1,
+        }
+    }
 }
 
 impl<T> MagicWand<T> {
