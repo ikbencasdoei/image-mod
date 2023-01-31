@@ -1,4 +1,4 @@
-use egui::{Align2, Color32, Label, LayerId, Order, Sense, TextStyle, Ui};
+use egui::{Align2, Button, Color32, LayerId, Order, Sense, TextStyle, Ui};
 use uuid::Uuid;
 
 use crate::{
@@ -111,7 +111,7 @@ impl ModifierSlot {
             };
 
             if ui
-                .add(Label::new(prefix).sense(Sense::drag()))
+                .add(Button::new(prefix).sense(Sense::drag()))
                 .drag_started()
             {
                 editor.dragging = self.drag();
