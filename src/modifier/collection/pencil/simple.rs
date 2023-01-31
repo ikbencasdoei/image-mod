@@ -23,7 +23,9 @@ impl Pencil for SimplePencil {
     }
 
     fn view(&mut self, ui: &mut Ui) {
-        ui.label("color");
-        ui.color_edit_button_srgba(&mut self.color);
+        ui.horizontal(|ui| {
+            ui.label("color");
+            ui.color_edit_button_srgba(&mut self.color);
+        });
     }
 }
