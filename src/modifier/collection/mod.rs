@@ -14,7 +14,7 @@ use self::{
     source::Source,
 };
 use super::traits::Modifier;
-use crate::{editor::Editor, project::Project, view::View};
+use crate::{editor::Editor, project::Project};
 
 pub mod blur;
 pub mod brighten;
@@ -46,31 +46,31 @@ pub fn init_modifiers_collection(editor: &mut Editor) {
     init_modifier::<PencilMod<PixelSorter>>(editor);
 }
 
-pub fn process_modifiers(project: &mut Project, ctx: &Context, view: &View, editor: &Editor) {
+pub fn process_modifiers(project: &mut Project, ctx: &Context, editor: &Editor) {
     if let Some(modification) = project.root.modifier.get_selected_mod_mut(editor) {
         if let Some(modifier) = modification
             .modifier
             .get_modifier_mut::<PencilMod<SimplePencil>>()
         {
-            modifier.update(ctx, view);
+            modifier.update(ctx, &editor.view);
         }
 
         if let Some(modifier) = modification
             .modifier
             .get_modifier_mut::<PencilMod<RainbowPencil>>()
         {
-            modifier.update(ctx, view);
+            modifier.update(ctx, &editor.view);
         }
 
         if let Some(modifier) = modification
             .modifier
             .get_modifier_mut::<PencilMod<PixelSorter>>()
         {
-            modifier.update(ctx, view);
+            modifier.update(ctx, &editor.view);
         }
 
         if let Some(modifier) = modification.modifier.get_modifier_mut::<Bucket>() {
-            modifier.update(ctx, view);
+            modifier.update(ctx, &editor.view);
         }
     }
 }

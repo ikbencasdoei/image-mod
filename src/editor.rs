@@ -7,6 +7,7 @@ use crate::{
         traits::{Modifier, ModifierIndex},
     },
     project::Project,
+    view::View,
 };
 
 #[derive(Default)]
@@ -15,6 +16,7 @@ pub struct Editor {
     pub selected: Option<Uuid>,
     pub dragging: Option<Cacher<DynMod>>,
     pub dropped: Option<Cacher<DynMod>>,
+    pub view: View,
 }
 
 impl Editor {

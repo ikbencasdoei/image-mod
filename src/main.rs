@@ -12,7 +12,6 @@ use file_picker::FilePicker;
 use menu::menu;
 use modifier::collection::process_modifiers;
 use project::Project;
-use view::View;
 
 mod color;
 mod editor;
@@ -29,7 +28,6 @@ mod view;
 struct App {
     project: Project,
     file_picker: FilePicker,
-    view: View,
     editor: Editor,
 }
 
@@ -38,7 +36,6 @@ impl eframe::App for App {
         let App {
             project,
             file_picker,
-            view,
             editor,
         } = self;
 
@@ -47,19 +44,19 @@ impl eframe::App for App {
 
         file_picker.update(project);
 
-        menu(ctx, view, project, file_picker);
+        menu(ctx, &mut editor.view, project, file_picker);
 
         editor.view(ctx, project);
 
-        process_modifiers(project, ctx, view, editor);
+        process_modifiers(project, ctx, editor);
 
         if project.output_changed() {
             if let Some(output) = project.get_output() {
-                view.update(ctx, output);
+                editor.view.update(ctx, output);
             }
         }
 
-        view.process(ctx);
+        editor.view.process(ctx);
     }
 }
 
