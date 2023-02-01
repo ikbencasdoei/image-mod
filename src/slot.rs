@@ -1,4 +1,7 @@
-use egui::{Align2, Button, Color32, LayerId, Order, Sense, TextStyle, Ui};
+use egui::{
+    style::Margin, Align2, Button, Color32, Frame, LayerId, Order, Rounding, Sense, Stroke,
+    TextStyle, Ui,
+};
 use uuid::Uuid;
 
 use crate::{
@@ -179,5 +182,25 @@ impl ModifierSlot {
                 }
             }
         }
+    }
+
+    pub fn view_with_frame(&mut self, ui: &mut Ui, editor: &mut Editor, prefix: Option<&str>) {
+        Frame {
+            inner_margin: Margin::same(3.0),
+            rounding: Rounding::same(3.0),
+            stroke: Stroke::new(1.0, ui.style().visuals.text_color()),
+            ..Default::default()
+        }
+        .show(ui, |ui| {
+            if let Self::Empty = self {
+                if editor.dragging.is_none() {
+                    ui.vertical_centered_justified(|ui| {
+                        ui.label("empty");
+                    });
+                }
+            }
+
+            self.view(ui, editor, prefix);
+        });
     }
 }
