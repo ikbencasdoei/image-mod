@@ -57,9 +57,9 @@ impl Modifier for MagicWand {
                     if let Some(input) = &mut input.image {
                         let mut pixels = Vec::new();
 
-                        if let Ok(target) = input.pixel(target) {
+                        if let Ok(target) = input.pixel_at(target) {
                             for pixel in input.iter_coords() {
-                                let color = input.pixel(pixel).unwrap();
+                                let color = input.pixel_at(pixel).unwrap();
                                 if (target.sum_rgb() - color.sum_rgb()).abs() < self.threshold {
                                     pixels.push(pixel);
                                 }
@@ -67,7 +67,7 @@ impl Modifier for MagicWand {
                         }
 
                         for pixel in pixels {
-                            let color = output.pixel(pixel).unwrap();
+                            let color = output.pixel_at(pixel).unwrap();
                             input.set_pixel(pixel, color).ok();
                         }
                     }
