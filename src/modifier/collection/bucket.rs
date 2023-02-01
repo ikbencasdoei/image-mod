@@ -4,23 +4,21 @@ use super::{fill::Fill, magic_wand::MagicWand};
 use crate::{
     editor::Editor,
     image::Image,
-    modifier::{
-        modification::{Cation, Output},
-        traits::Modifier,
-    },
+    modifier::{modification::Output, traits::Modifier},
+    slot::ModifierSlot,
     view::View,
 };
 
 #[derive(Clone, PartialEq)]
 pub struct Bucket {
-    wand: MagicWand<Fill>,
+    wand: MagicWand,
 }
 
 impl Default for Bucket {
     fn default() -> Self {
         Self {
             wand: MagicWand {
-                child: Some(Cation::new(Fill::default())),
+                child: ModifierSlot::from_mod(Fill::default()),
                 ..Default::default()
             },
         }
@@ -39,7 +37,12 @@ impl Modifier for Bucket {
     }
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
-        self.wand.child.as_mut().unwrap().modifier.view(ui, editor);
+        self.wand
+            .child
+            .get_mod_mut()
+            .unwrap()
+            .modifier
+            .view(ui, editor);
         self.wand.view_threshold(ui);
     }
 }

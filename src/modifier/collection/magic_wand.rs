@@ -4,21 +4,19 @@ use glam::UVec2;
 use crate::{
     color::Color,
     image::Image,
-    modifier::{
-        modification::{Cation, Output},
-        traits::Modifier,
-    },
+    modifier::{modification::Output, traits::Modifier},
+    slot::ModifierSlot,
     view::View,
 };
 
 #[derive(Clone, PartialEq)]
-pub struct MagicWand<T> {
+pub struct MagicWand {
     pub target: Option<UVec2>,
-    pub child: Option<Cation<T>>,
+    pub child: ModifierSlot,
     pub threshold: f32,
 }
 
-impl<T> Default for MagicWand<T> {
+impl Default for MagicWand {
     fn default() -> Self {
         Self {
             target: Default::default(),
@@ -28,7 +26,7 @@ impl<T> Default for MagicWand<T> {
     }
 }
 
-impl<T> MagicWand<T> {
+impl MagicWand {
     pub fn update(&mut self, ctx: &Context, view: &View) {
         if ctx.input().pointer.primary_clicked() && !ctx.wants_pointer_input() {
             if let Some(pos) = view.hovered_pixel(ctx) {
@@ -50,10 +48,10 @@ impl<T> MagicWand<T> {
     }
 }
 
-impl<T: Modifier + Clone + PartialEq + 'static> Modifier for MagicWand<T> {
+impl Modifier for MagicWand {
     fn apply(&mut self, mut input: Output) -> Option<Image> {
         if let Some(target) = self.target {
-            if let Some(child) = &mut self.child {
+            if let Some(child) = self.child.get_mod_mut() {
                 if let Some(output) = child.get_output(&input).image.clone() {
                     if let Some(input) = &mut input.image {
                         let mut pixels = Vec::new();
