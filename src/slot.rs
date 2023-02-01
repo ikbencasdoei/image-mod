@@ -104,20 +104,11 @@ impl ModifierSlot {
             true,
         )
         .show_header(ui, |ui| {
-            let prefix = if let Some(prefix) = prefix {
-                prefix
-            } else {
-                "✋"
-            };
-
-            if ui
-                .add(Button::new(prefix).sense(Sense::drag()))
-                .drag_started()
-            {
-                editor.dragging = self.drag();
-            }
-
             if let Some(modifier) = self.get_mod() {
+                if let Some(text) = prefix {
+                    ui.label(text);
+                }
+
                 if ui
                     .toggle_value(
                         &mut (editor.selected == Some(modifier.id)),
@@ -134,6 +125,13 @@ impl ModifierSlot {
                         ui.close_menu();
                     }
                 });
+
+                if ui
+                    .add(Button::new("✋").sense(Sense::drag()))
+                    .drag_started()
+                {
+                    editor.dragging = self.drag();
+                }
             }
         })
         .body(|ui| {
