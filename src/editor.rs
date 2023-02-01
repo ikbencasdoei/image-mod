@@ -13,10 +13,24 @@ use crate::{
 #[derive(Default)]
 pub struct Editor {
     pub index: Vec<ModifierIndex>,
-    pub selected: Option<Uuid>,
+    pub selected: Option<ModId>,
     pub dragging: Option<Cation<DynMod>>,
     pub dropped: Option<Cation<DynMod>>,
     pub view: View,
+}
+
+pub struct ModId {
+    id: Uuid,
+    index: ModifierIndex,
+}
+
+impl ModId {
+    pub fn from_dyn_cation(cation: &Cation<DynMod>) -> Self {
+        ModId {
+            id: cation.id,
+            index: cation.modifier.index.clone(),
+        }
+    }
 }
 
 impl Editor {
@@ -45,5 +59,13 @@ impl Editor {
                 ctx.request_repaint();
             }
         }
+    }
+
+    pub fn select_cation(&mut self, cation: &Cation<DynMod>) {
+        self.selected = Some(ModId::from_dyn_cation(cation));
+    }
+
+    pub fn selected_id(&self) -> Option<Uuid> {
+        self.selected.as_ref().map(|selected| selected.id)
     }
 }

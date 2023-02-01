@@ -43,12 +43,12 @@ impl List {
 
     pub fn add_mod_from_index(&mut self, index: &ModifierIndex, editor: &mut Editor) {
         let new = Cation::new(DynMod::from_index(index.clone()));
-        editor.selected = Some(new.id);
+        editor.select_cation(&new);
         self.contents.push(ModifierSlot::from_cacher(new));
     }
 
     pub fn get_selected_mod_mut(&mut self, editor: &Editor) -> Option<&mut Cation<DynMod>> {
-        editor.selected.and_then(|id| self.get_mod_mut(id))
+        editor.selected_id().and_then(|id| self.get_mod_mut(id))
     }
 
     pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Cation<DynMod>> {

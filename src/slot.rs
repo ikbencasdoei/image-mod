@@ -114,12 +114,12 @@ impl ModifierSlot {
 
                 if ui
                     .toggle_value(
-                        &mut (editor.selected == Some(modifier.id)),
+                        &mut (editor.selected_id() == Some(modifier.id)),
                         &self.get_mod().unwrap().modifier.index.name,
                     )
                     .clicked()
                 {
-                    editor.selected = Some(modifier.id);
+                    editor.select_cation(modifier);
                 }
 
                 ui.menu_button("🗑", |ui| {
