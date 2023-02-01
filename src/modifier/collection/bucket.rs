@@ -18,7 +18,7 @@ impl Default for Bucket {
     fn default() -> Self {
         Self {
             wand: MagicWand {
-                child: ModifierSlot::from_mod(Fill::default()),
+                input: ModifierSlot::from_mod(Fill::default()),
                 ..Default::default()
             },
         }
@@ -38,7 +38,7 @@ impl Modifier for Bucket {
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
         self.wand
-            .child
+            .input
             .get_mod_mut()
             .unwrap()
             .modifier

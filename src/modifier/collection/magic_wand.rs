@@ -3,6 +3,7 @@ use glam::UVec2;
 
 use crate::{
     color::Color,
+    editor::Editor,
     image::Image,
     modifier::{modification::Output, traits::Modifier},
     slot::ModifierSlot,
@@ -12,7 +13,7 @@ use crate::{
 #[derive(Clone, PartialEq)]
 pub struct MagicWand {
     pub target: Option<UVec2>,
-    pub child: ModifierSlot,
+    pub input: ModifierSlot,
     pub threshold: f32,
 }
 
@@ -20,7 +21,7 @@ impl Default for MagicWand {
     fn default() -> Self {
         Self {
             target: Default::default(),
-            child: Default::default(),
+            input: Default::default(),
             threshold: 0.1,
         }
     }
@@ -51,7 +52,7 @@ impl MagicWand {
 impl Modifier for MagicWand {
     fn apply(&mut self, mut input: Output) -> Option<Image> {
         if let Some(target) = self.target {
-            if let Some(child) = self.child.get_mod_mut() {
+            if let Some(child) = self.input.get_mod_mut() {
                 if let Some(output) = child.get_output(&input).image.clone() {
                     if let Some(input) = &mut input.image {
                         let mut pixels = Vec::new();
@@ -75,5 +76,11 @@ impl Modifier for MagicWand {
         }
 
         input.image
+    }
+
+    fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
+        self.view_threshold(ui);
+        ui.label("input:");
+        self.input.view_with_frame(ui, editor, None);
     }
 }

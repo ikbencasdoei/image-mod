@@ -9,6 +9,7 @@ use self::{
     grayscale::GrayScaleFilter,
     hue::Hue,
     invert::Invert,
+    magic_wand::MagicWand,
     pencil::{rainbow::RainbowPencil, simple::SimplePencil, sort::PixelSorter, PencilMod},
     resize::Resize,
     source::Source,
@@ -41,6 +42,7 @@ pub fn init_modifiers_collection(editor: &mut Editor) {
     init_modifier::<Resize>(editor);
     init_modifier::<Bucket>(editor);
     init_modifier::<Fill>(editor);
+    init_modifier::<MagicWand>(editor);
     init_modifier::<PencilMod<SimplePencil>>(editor);
     init_modifier::<PencilMod<RainbowPencil>>(editor);
     init_modifier::<PencilMod<PixelSorter>>(editor);
@@ -70,6 +72,10 @@ pub fn process_modifiers(project: &mut Project, ctx: &Context, editor: &Editor) 
         }
 
         if let Some(modifier) = modification.modifier.get_modifier_mut::<Bucket>() {
+            modifier.update(ctx, &editor.view);
+        }
+
+        if let Some(modifier) = modification.modifier.get_modifier_mut::<MagicWand>() {
             modifier.update(ctx, &editor.view);
         }
     }
