@@ -41,15 +41,15 @@ impl ModifierSlot {
         }
     }
 
-    pub fn get_output<'a>(&'a mut self, input: &'a Output) -> &'a Output {
+    pub fn output<'a>(&'a mut self, input: &'a Output) -> &'a Output {
         if let Self::Modifier(content) = self {
-            content.get_output(input)
+            content.output(input)
         } else {
             input
         }
     }
 
-    pub fn get_mod(&self) -> Option<&Cation<DynMod>> {
+    pub fn mod_ref(&self) -> Option<&Cation<DynMod>> {
         if let Self::Modifier(modifier) = self {
             Some(modifier)
         } else {
@@ -57,7 +57,7 @@ impl ModifierSlot {
         }
     }
 
-    pub fn get_mod_mut(&mut self) -> Option<&mut Cation<DynMod>> {
+    pub fn mod_mut(&mut self) -> Option<&mut Cation<DynMod>> {
         if let Self::Modifier(modifier) = self {
             Some(modifier)
         } else {
@@ -66,7 +66,7 @@ impl ModifierSlot {
     }
 
     fn drag(&mut self) -> Option<Cation<DynMod>> {
-        self.take(Self::Dragged(self.get_mod()?.id))
+        self.take(Self::Dragged(self.mod_ref()?.id))
     }
 
     fn take(&mut self, replacement: Self) -> Option<Cation<DynMod>> {
@@ -103,11 +103,11 @@ impl ModifierSlot {
     fn view_modifier(&mut self, ui: &mut Ui, editor: &mut Editor, prefix: Option<&str>) {
         egui::collapsing_header::CollapsingState::load_with_default_open(
             ui.ctx(),
-            ui.make_persistent_id(self.get_mod().unwrap().id),
+            ui.make_persistent_id(self.mod_ref().unwrap().id),
             true,
         )
         .show_header(ui, |ui| {
-            if let Some(modifier) = self.get_mod() {
+            if let Some(modifier) = self.mod_ref() {
                 if let Some(text) = prefix {
                     ui.label(text);
                 }
@@ -115,7 +115,7 @@ impl ModifierSlot {
                 if ui
                     .toggle_value(
                         &mut (editor.selected_id() == Some(modifier.id)),
-                        &self.get_mod().unwrap().modifier.index.name,
+                        &self.mod_ref().unwrap().modifier.index.name,
                     )
                     .clicked()
                 {
@@ -138,7 +138,7 @@ impl ModifierSlot {
             }
         })
         .body(|ui| {
-            if let Some(modifier) = self.get_mod_mut() {
+            if let Some(modifier) = self.mod_mut() {
                 modifier.modifier.view(ui, editor)
             }
         });

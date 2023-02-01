@@ -49,38 +49,38 @@ pub fn init_modifiers_collection(editor: &mut Editor) {
 }
 
 pub fn process_modifiers(project: &mut Project, ctx: &Context, editor: &Editor) {
-    if let Some(modification) = project.root.modifier.get_selected_mod_mut(editor) {
+    if let Some(modification) = project.root.modifier.selected_mod_mut(editor) {
         if let Some(modifier) = modification
             .modifier
-            .get_modifier_mut::<PencilMod<SimplePencil>>()
+            .modifier_mut::<PencilMod<SimplePencil>>()
         {
             modifier.update(ctx, &editor.view);
         }
 
         if let Some(modifier) = modification
             .modifier
-            .get_modifier_mut::<PencilMod<RainbowPencil>>()
+            .modifier_mut::<PencilMod<RainbowPencil>>()
         {
             modifier.update(ctx, &editor.view);
         }
 
         if let Some(modifier) = modification
             .modifier
-            .get_modifier_mut::<PencilMod<PixelSorter>>()
+            .modifier_mut::<PencilMod<PixelSorter>>()
         {
             modifier.update(ctx, &editor.view);
         }
 
-        if let Some(modifier) = modification.modifier.get_modifier_mut::<Bucket>() {
+        if let Some(modifier) = modification.modifier.modifier_mut::<Bucket>() {
             modifier.update(ctx, &editor.view);
         }
 
-        if let Some(modifier) = modification.modifier.get_modifier_mut::<MagicWand>() {
+        if let Some(modifier) = modification.modifier.modifier_mut::<MagicWand>() {
             modifier.update(ctx, &editor.view);
         }
     }
 }
 
 pub fn init_modifier<T: Modifier + Default + 'static>(editor: &mut Editor) {
-    editor.add_index(T::get_index());
+    editor.add_index(T::index());
 }

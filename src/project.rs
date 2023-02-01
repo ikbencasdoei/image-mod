@@ -29,26 +29,26 @@ impl Project {
     }
 
     pub fn export(&mut self, path: impl AsRef<Path>) -> Result<(), String> {
-        if let Some(output) = self.get_output() {
+        if let Some(output) = self.output() {
             output.save(path).map_err(|err| err.to_string())
         } else {
             Err("no output to save".to_string())
         }
     }
 
-    pub fn get_output(&mut self) -> &Option<Image> {
+    pub fn output(&mut self) -> &Option<Image> {
         let input = Output::new_empty();
-        &self.root.get_output(&input).image
+        &self.root.output(&input).image
     }
 
     pub fn output_changed(&self) -> bool {
         !self.root.check_cache(&Output::new_empty())
     }
 
-    pub fn get_path(&self) -> Option<PathBuf> {
+    pub fn path(&self) -> Option<PathBuf> {
         self.root
             .modifier
-            .get_mods_of_type::<Source>()
+            .mods_of_type::<Source>()
             .last()
             .map(|source| source.path.clone())
     }

@@ -18,7 +18,7 @@ impl Default for SimplePencil {
 }
 
 impl Pencil for SimplePencil {
-    fn get_pixel(&mut self, _: UVec2, _: &mut Image) -> Option<Color> {
+    fn pixel(&mut self, _: UVec2, _: &mut Image) -> Option<Color> {
         Some(Color::from(self.color))
     }
 

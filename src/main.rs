@@ -51,7 +51,7 @@ impl eframe::App for App {
         process_modifiers(project, ctx, editor);
 
         if project.output_changed() {
-            if let Some(output) = project.get_output() {
+            if let Some(output) = project.output() {
                 editor.view.update(ctx, output);
             }
         }

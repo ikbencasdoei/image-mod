@@ -31,14 +31,14 @@ impl Default for PixelSorter {
 }
 
 impl Pencil for PixelSorter {
-    fn get_pixel(&mut self, pixel: UVec2, image: &mut Image) -> Option<Color> {
+    fn pixel(&mut self, pixel: UVec2, image: &mut Image) -> Option<Color> {
         let mut positions = Vec::<Vec2>::new();
 
         let direction = Vec2::new(self.angle.cos(), self.angle.sin());
 
         let mut current_position = pixel.as_vec2();
 
-        if image.get_pixel(current_position.as_uvec2()).is_ok() {
+        if image.pixel(current_position.as_uvec2()).is_ok() {
             positions.push(current_position);
         }
 
@@ -46,11 +46,11 @@ impl Pencil for PixelSorter {
             loop {
                 let next_position = current_position - direction;
 
-                let Ok(current_color) = image.get_pixel_vec(current_position) else {
+                let Ok(current_color) = image.pixel_vec(current_position) else {
                     break;
                 };
 
-                let Ok(next_color) = image.get_pixel_vec(next_position) else {
+                let Ok(next_color) = image.pixel_vec(next_position) else {
                     break;
                 };
 
@@ -69,11 +69,11 @@ impl Pencil for PixelSorter {
             loop {
                 let next_position = current_position + direction;
 
-                let Ok(current_color) = image.get_pixel_vec(current_position) else {
+                let Ok(current_color) = image.pixel_vec(current_position) else {
                     break;
                 };
 
-                let Ok(next_color) = image.get_pixel_vec(next_position) else {
+                let Ok(next_color) = image.pixel_vec(next_position) else {
                     break;
                 };
 
@@ -96,7 +96,7 @@ impl Pencil for PixelSorter {
         let mut colors = Vec::<Color>::new();
 
         for position in &positions {
-            colors.push(image.get_pixel_vec(*position).unwrap());
+            colors.push(image.pixel_vec(*position).unwrap());
         }
 
         colors.sort_by(|a, b| a.sum_rgb().total_cmp(&b.sum_rgb()));

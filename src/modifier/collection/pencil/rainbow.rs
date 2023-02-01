@@ -21,7 +21,7 @@ impl Default for RainbowPencil {
 }
 
 impl Pencil for RainbowPencil {
-    fn get_pixel(&mut self, pixel: UVec2, _: &mut Image) -> Option<Color> {
+    fn pixel(&mut self, pixel: UVec2, _: &mut Image) -> Option<Color> {
         let color = hsv2rgb(self.color_hsv);
 
         if let Some(last_pixel) = self.last_pixel {

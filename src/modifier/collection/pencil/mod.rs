@@ -14,7 +14,7 @@ pub mod simple;
 pub mod sort;
 
 pub trait Pencil {
-    fn get_pixel(&mut self, pixel: UVec2, image: &mut Image) -> Option<Color>;
+    fn pixel(&mut self, pixel: UVec2, image: &mut Image) -> Option<Color>;
     fn view(&mut self, _ui: &mut Ui) {}
 }
 
@@ -30,7 +30,7 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
         if let Some(image) = &mut input.image {
             let mut pencil = self.pencil.clone();
             for pixel in self.pixels.iter() {
-                if let Some(color) = pencil.get_pixel(*pixel, image) {
+                if let Some(color) = pencil.pixel(*pixel, image) {
                     image.set_pixel(*pixel, color).ok();
                 }
             }

@@ -14,10 +14,10 @@ pub fn menu(ctx: &Context, view: &mut View, project: &Project, file_picker: &mut
             });
 
             ui.add_enabled_ui(
-                project.get_path().is_some() && file_picker.open.is_none(),
+                project.path().is_some() && file_picker.open.is_none(),
                 |ui| {
                     if ui.button("export").clicked() {
-                        let directory = if let Some(path) = project.get_path() {
+                        let directory = if let Some(path) = project.path() {
                             path
                         } else {
                             PathBuf::new()
@@ -60,7 +60,7 @@ pub fn menu(ctx: &Context, view: &mut View, project: &Project, file_picker: &mut
             ui.separator();
 
             {
-                if let Some(image_path) = project.get_path() {
+                if let Some(image_path) = project.path() {
                     ui.label(image_path.to_string_lossy());
                 } else {
                     ui.label("(no image)");

@@ -9,7 +9,7 @@ use crate::{editor::Editor, image::Image};
 pub trait Modifier: DynClone + DynPartialEq {
     fn apply(&mut self, input: Output) -> Option<Image>;
 
-    fn get_name() -> String
+    fn name() -> String
     where
         Self: Sized,
     {
@@ -20,12 +20,12 @@ pub trait Modifier: DynClone + DynPartialEq {
             .concat()
     }
 
-    fn get_index() -> ModifierIndex
+    fn index() -> ModifierIndex
     where
         Self: Sized + Default + 'static,
     {
         ModifierIndex {
-            name: Self::get_name(),
+            name: Self::name(),
             id: TypeId::of::<Self>(),
             instancer: Box::new(|| Box::<Self>::default()),
         }

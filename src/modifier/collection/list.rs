@@ -47,25 +47,25 @@ impl List {
         self.contents.push(ModifierSlot::from_cacher(new));
     }
 
-    pub fn get_selected_mod_mut(&mut self, editor: &Editor) -> Option<&mut Cation<DynMod>> {
-        editor.selected_id().and_then(|id| self.get_mod_mut(id))
+    pub fn selected_mod_mut(&mut self, editor: &Editor) -> Option<&mut Cation<DynMod>> {
+        editor.selected_id().and_then(|id| self.mod_mut(id))
     }
 
-    pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Cation<DynMod>> {
+    pub fn mod_mut(&mut self, id: Uuid) -> Option<&mut Cation<DynMod>> {
         self.iter_mods_mut().find(|item| item.id == id)
     }
 
     pub fn iter_mods(&self) -> impl Iterator<Item = &Cation<DynMod>> {
-        self.contents.iter().flat_map(|slot| slot.get_mod())
+        self.contents.iter().flat_map(|slot| slot.mod_ref())
     }
 
     pub fn iter_mods_mut(&mut self) -> impl Iterator<Item = &mut Cation<DynMod>> {
-        self.contents.iter_mut().flat_map(|slot| slot.get_mod_mut())
+        self.contents.iter_mut().flat_map(|slot| slot.mod_mut())
     }
 
-    pub fn get_mods_of_type<T: Modifier + Default + 'static>(&self) -> Vec<&T> {
+    pub fn mods_of_type<T: Modifier + Default + 'static>(&self) -> Vec<&T> {
         self.iter_mods()
-            .map(|modification| modification.modifier.get_modifier())
+            .map(|modification| modification.modifier.modifier())
             .flatten()
             .collect()
     }
@@ -76,7 +76,7 @@ impl Modifier for List {
         {
             let mut borrow = &output;
             for modification in self.contents.iter_mut() {
-                borrow = modification.get_output(borrow);
+                borrow = modification.output(borrow);
             }
             output = borrow.clone();
         }

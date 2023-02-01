@@ -77,22 +77,22 @@ impl Image {
         (0..(size.x * size.y)).map(move |a| UVec2::new(a % size.x, a / size.x))
     }
 
-    pub fn get_pixel_vec(&self, position: Vec2) -> Result<Color, &str> {
-        self.get_pixel_ivec(IVec2::new(
+    pub fn pixel_vec(&self, position: Vec2) -> Result<Color, &str> {
+        self.pixel_ivec(IVec2::new(
             position.x.round() as i32,
             position.y.round() as i32,
         ))
     }
 
-    pub fn get_pixel_ivec(&self, position: IVec2) -> Result<Color, &str> {
+    pub fn pixel_ivec(&self, position: IVec2) -> Result<Color, &str> {
         if position.x.is_negative() || position.y.is_negative() {
             Err("negative value")
         } else {
-            self.get_pixel(position.as_uvec2())
+            self.pixel(position.as_uvec2())
         }
     }
 
-    pub fn get_pixel(&self, position: UVec2) -> Result<Color, &str> {
+    pub fn pixel(&self, position: UVec2) -> Result<Color, &str> {
         if self.contains_pixel(position) {
             let Rgba([r, g, b, a]) = *self.image.get_pixel(position.x, position.y);
             Ok(Color::from_rgba_u8(r, g, b, a))

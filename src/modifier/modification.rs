@@ -26,7 +26,7 @@ impl<T: Modifier + Clone + PartialEq> Cation<T> {
             .is_some_and(|cache| !cache.changed(&self.modifier) && cache.input_id == input.id)
     }
 
-    pub fn get_output(&mut self, input: &Output) -> &Output {
+    pub fn output(&mut self, input: &Output) -> &Output {
         if self.check_cache(input) {
             return &self.cache.as_ref().unwrap().output;
         }
@@ -65,7 +65,7 @@ impl DynMod {
         M: Modifier + Default + 'static,
     {
         Self {
-            index: M::get_index(),
+            index: M::index(),
             modifier: Box::new(modifier),
         }
     }
@@ -77,8 +77,8 @@ impl DynMod {
         }
     }
 
-    pub fn get_modifier<M: Modifier + Default + 'static>(&self) -> Option<&M> {
-        if self.index == M::get_index() {
+    pub fn modifier<M: Modifier + Default + 'static>(&self) -> Option<&M> {
+        if self.index == M::index() {
             let ptr: *const _ = &*self.modifier;
             unsafe { Some(&*ptr.cast()) }
         } else {
@@ -86,8 +86,8 @@ impl DynMod {
         }
     }
 
-    pub fn get_modifier_mut<M: Modifier + Default + 'static>(&mut self) -> Option<&mut M> {
-        if self.index == M::get_index() {
+    pub fn modifier_mut<M: Modifier + Default + 'static>(&mut self) -> Option<&mut M> {
+        if self.index == M::index() {
             let ptr: *mut _ = &mut *self.modifier;
             unsafe { Some(&mut *ptr.cast()) }
         } else {

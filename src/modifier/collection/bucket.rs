@@ -37,12 +37,7 @@ impl Modifier for Bucket {
     }
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
-        self.wand
-            .input
-            .get_mod_mut()
-            .unwrap()
-            .modifier
-            .view(ui, editor);
+        self.wand.input.mod_mut().unwrap().modifier.view(ui, editor);
         self.wand.view_threshold(ui);
     }
 }
