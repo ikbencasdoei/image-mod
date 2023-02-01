@@ -4,18 +4,18 @@ use crate::{
     image::Image,
     modifier::{
         collection::{list::List, source::Source},
-        modification::{CacheOutput, Cacher},
+        modification::{Cation, Output},
     },
 };
 
 pub struct Project {
-    pub root: Cacher<List>,
+    pub root: Cation<List>,
 }
 
 impl Default for Project {
     fn default() -> Self {
         Self {
-            root: Cacher::new(List::default()),
+            root: Cation::new(List::default()),
         }
     }
 }
@@ -23,7 +23,7 @@ impl Default for Project {
 impl Project {
     pub fn new_from_input_path(path: impl AsRef<Path>) -> Self {
         Self {
-            root: Cacher::new(List::from_vec_mods(vec![Source::new(path)])),
+            root: Cation::new(List::from_vec_mods(vec![Source::new(path)])),
             ..Default::default()
         }
     }
@@ -37,12 +37,12 @@ impl Project {
     }
 
     pub fn get_output(&mut self) -> &Option<Image> {
-        let input = CacheOutput::new_empty();
+        let input = Output::new_empty();
         &self.root.get_output(&input).image
     }
 
     pub fn output_changed(&self) -> bool {
-        !self.root.check_cache(&CacheOutput::new_empty())
+        !self.root.check_cache(&Output::new_empty())
     }
 
     pub fn get_path(&self) -> Option<PathBuf> {

@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::{
     modifier::{
-        modification::{Cacher, DynMod},
+        modification::{Cation, DynMod},
         traits::{Modifier, ModifierIndex},
     },
     project::Project,
@@ -14,8 +14,8 @@ use crate::{
 pub struct Editor {
     pub index: Vec<ModifierIndex>,
     pub selected: Option<Uuid>,
-    pub dragging: Option<Cacher<DynMod>>,
-    pub dropped: Option<Cacher<DynMod>>,
+    pub dragging: Option<Cation<DynMod>>,
+    pub dropped: Option<Cation<DynMod>>,
     pub view: View,
 }
 

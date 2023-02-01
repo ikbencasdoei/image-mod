@@ -4,14 +4,14 @@ use uuid::Uuid;
 use crate::{
     editor::Editor,
     modifier::{
-        modification::{CacheOutput, Cacher, DynMod},
+        modification::{Cation, DynMod, Output},
         traits::Modifier,
     },
 };
 
 #[derive(Clone, PartialEq)]
 pub enum ModifierSlot {
-    Modifier(Cacher<DynMod>),
+    Modifier(Cation<DynMod>),
     Dragged(Uuid),
     Empty,
 }
@@ -24,10 +24,10 @@ impl Default for ModifierSlot {
 
 impl ModifierSlot {
     pub fn from_mod<T: Modifier + Default + 'static>(modifier: T) -> Self {
-        Self::from_cacher(Cacher::new(DynMod::new(modifier)))
+        Self::from_cacher(Cation::new(DynMod::new(modifier)))
     }
 
-    pub fn from_cacher(cacher: Cacher<DynMod>) -> Self {
+    pub fn from_cacher(cacher: Cation<DynMod>) -> Self {
         Self::Modifier(cacher)
     }
 
@@ -38,7 +38,7 @@ impl ModifierSlot {
         }
     }
 
-    pub fn get_output<'a>(&'a mut self, input: &'a CacheOutput) -> &'a CacheOutput {
+    pub fn get_output<'a>(&'a mut self, input: &'a Output) -> &'a Output {
         if let Self::Modifier(content) = self {
             content.get_output(input)
         } else {
@@ -46,7 +46,7 @@ impl ModifierSlot {
         }
     }
 
-    pub fn get_mod(&self) -> Option<&Cacher<DynMod>> {
+    pub fn get_mod(&self) -> Option<&Cation<DynMod>> {
         if let Self::Modifier(modifier) = self {
             Some(modifier)
         } else {
@@ -54,7 +54,7 @@ impl ModifierSlot {
         }
     }
 
-    pub fn get_mod_mut(&mut self) -> Option<&mut Cacher<DynMod>> {
+    pub fn get_mod_mut(&mut self) -> Option<&mut Cation<DynMod>> {
         if let Self::Modifier(modifier) = self {
             Some(modifier)
         } else {
@@ -62,11 +62,11 @@ impl ModifierSlot {
         }
     }
 
-    fn drag(&mut self) -> Option<Cacher<DynMod>> {
+    fn drag(&mut self) -> Option<Cation<DynMod>> {
         self.take(Self::Dragged(self.get_mod()?.id))
     }
 
-    fn take(&mut self, replacement: Self) -> Option<Cacher<DynMod>> {
+    fn take(&mut self, replacement: Self) -> Option<Cation<DynMod>> {
         let Self::Modifier(modifier) = std::mem::replace(self, replacement) else {
                return None;
             };

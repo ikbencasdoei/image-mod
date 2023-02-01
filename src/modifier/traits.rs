@@ -3,11 +3,11 @@ use std::any::{type_name, Any, TypeId};
 use dyn_clone::DynClone;
 use egui::Ui;
 
-use super::modification::CacheOutput;
+use super::modification::Output;
 use crate::{editor::Editor, image::Image};
 
 pub trait Modifier: DynClone + DynPartialEq {
-    fn apply(&mut self, input: CacheOutput) -> Option<Image>;
+    fn apply(&mut self, input: Output) -> Option<Image>;
 
     fn get_name() -> String
     where

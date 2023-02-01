@@ -5,7 +5,7 @@ use crate::{
     color::Color,
     image::Image,
     modifier::{
-        modification::{CacheOutput, Cacher},
+        modification::{Cation, Output},
         traits::Modifier,
     },
     view::View,
@@ -14,7 +14,7 @@ use crate::{
 #[derive(Clone, PartialEq)]
 pub struct MagicWand<T> {
     pub target: Option<UVec2>,
-    pub child: Option<Cacher<T>>,
+    pub child: Option<Cation<T>>,
     pub threshold: f32,
 }
 
@@ -51,7 +51,7 @@ impl<T> MagicWand<T> {
 }
 
 impl<T: Modifier + Clone + PartialEq + 'static> Modifier for MagicWand<T> {
-    fn apply(&mut self, mut input: CacheOutput) -> Option<Image> {
+    fn apply(&mut self, mut input: Output) -> Option<Image> {
         if let Some(target) = self.target {
             if let Some(child) = &mut self.child {
                 if let Some(output) = child.get_output(&input).image.clone() {

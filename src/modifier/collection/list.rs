@@ -5,7 +5,7 @@ use crate::{
     editor::Editor,
     image::Image,
     modifier::{
-        modification::{CacheOutput, Cacher, DynMod},
+        modification::{Cation, DynMod, Output},
         traits::{Modifier, ModifierIndex},
     },
     slot::ModifierSlot,
@@ -42,24 +42,24 @@ impl List {
     }
 
     pub fn add_mod_from_index(&mut self, index: &ModifierIndex, editor: &mut Editor) {
-        let new = Cacher::new(DynMod::from_index(index.clone()));
+        let new = Cation::new(DynMod::from_index(index.clone()));
         editor.selected = Some(new.id);
         self.contents.push(ModifierSlot::from_cacher(new));
     }
 
-    pub fn get_selected_mod_mut(&mut self, editor: &Editor) -> Option<&mut Cacher<DynMod>> {
+    pub fn get_selected_mod_mut(&mut self, editor: &Editor) -> Option<&mut Cation<DynMod>> {
         editor.selected.and_then(|id| self.get_mod_mut(id))
     }
 
-    pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Cacher<DynMod>> {
+    pub fn get_mod_mut(&mut self, id: Uuid) -> Option<&mut Cation<DynMod>> {
         self.iter_mods_mut().find(|item| item.id == id)
     }
 
-    pub fn iter_mods(&self) -> impl Iterator<Item = &Cacher<DynMod>> {
+    pub fn iter_mods(&self) -> impl Iterator<Item = &Cation<DynMod>> {
         self.contents.iter().flat_map(|slot| slot.get_mod())
     }
 
-    pub fn iter_mods_mut(&mut self) -> impl Iterator<Item = &mut Cacher<DynMod>> {
+    pub fn iter_mods_mut(&mut self) -> impl Iterator<Item = &mut Cation<DynMod>> {
         self.contents.iter_mut().flat_map(|slot| slot.get_mod_mut())
     }
 
@@ -72,7 +72,7 @@ impl List {
 }
 
 impl Modifier for List {
-    fn apply(&mut self, mut output: CacheOutput) -> Option<Image> {
+    fn apply(&mut self, mut output: Output) -> Option<Image> {
         {
             let mut borrow = &output;
             for modification in self.contents.iter_mut() {

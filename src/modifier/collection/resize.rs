@@ -5,7 +5,7 @@ use image::imageops::FilterType;
 use crate::{
     editor::Editor,
     image::Image,
-    modifier::{modification::CacheOutput, traits::Modifier},
+    modifier::{modification::Output, traits::Modifier},
 };
 
 #[derive(Clone, PartialEq)]
@@ -30,7 +30,7 @@ impl Default for Resize {
 }
 
 impl Modifier for Resize {
-    fn apply(&mut self, mut input: CacheOutput) -> Option<Image> {
+    fn apply(&mut self, mut input: Output) -> Option<Image> {
         if let Some(image) = &mut input.image {
             match self.size {
                 Size::Absolute(size) => image.resize(size, self.filter),
