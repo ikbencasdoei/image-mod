@@ -8,7 +8,7 @@ use egui::{TextEdit, Ui};
 
 use crate::{
     editor::Editor,
-    file_picker::PickerResult,
+    file_picker::{FilePicker, PickerResult},
     image::Image,
     modifier::{modification::Output, traits::Modifier},
 };
@@ -16,7 +16,7 @@ use crate::{
 #[derive(Default)]
 pub struct Source {
     pub path: PathBuf,
-    receiver: Option<Receiver<Option<PickerResult>>>,
+    receiver: Option<Receiver<PickerResult>>,
 }
 
 impl Source {
@@ -50,7 +50,7 @@ impl Modifier for Source {
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
         if let Some(receiver) = &self.receiver {
-            if let Ok(Some(PickerResult::PickedLoad(result))) = receiver.try_recv() {
+            if let Ok(PickerResult::PickedLoad(result)) = receiver.try_recv() {
                 self.path = result;
             }
         }
@@ -65,7 +65,7 @@ impl Modifier for Source {
 
         ui.add_enabled_ui(!editor.picker.is_open(), |ui| {
             if ui.button("open file picker").clicked() {
-                self.receiver = editor.picker.picker_with_channel().ok();
+                self.receiver = editor.picker.picker_open(FilePicker::dialog_open()).ok();
             }
         });
     }

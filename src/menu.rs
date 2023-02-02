@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use egui::{Context, Vec2};
 
 use crate::{file_picker::FilePicker, project::Project, view::View};
@@ -7,27 +5,15 @@ use crate::{file_picker::FilePicker, project::Project, view::View};
 pub fn menu(ctx: &Context, view: &mut View, project: &Project, file_picker: &mut FilePicker) {
     egui::TopBottomPanel::top("panel").show(ctx, |ui| {
         egui::menu::bar(ui, |ui| {
-            ui.add_enabled_ui(file_picker.is_open(), |ui| {
+            ui.add_enabled_ui(!file_picker.is_open(), |ui| {
                 if ui.button("new").clicked() {
-                    file_picker.open_load().ok();
+                    file_picker.menu_new().ok();
                 }
             });
 
-            ui.add_enabled_ui(project.path().is_some() && file_picker.is_open(), |ui| {
+            ui.add_enabled_ui(project.path().is_some() && !file_picker.is_open(), |ui| {
                 if ui.button("export").clicked() {
-                    let directory = if let Some(path) = project.path() {
-                        path
-                    } else {
-                        PathBuf::new()
-                    };
-
-                    let file_name = directory
-                        .file_name()
-                        .unwrap_or_default()
-                        .to_string_lossy()
-                        .to_string();
-
-                    file_picker.open_export(directory, file_name).ok();
+                    file_picker.menu_export(project.path()).ok();
                 }
             });
 
