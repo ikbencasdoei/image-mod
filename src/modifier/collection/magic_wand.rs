@@ -82,5 +82,9 @@ impl Modifier for MagicWand {
         self.view_threshold(ui);
         ui.label("input:");
         self.input.view_with_frame(ui, editor, None);
+
+        if editor.is_modifier_selected::<Self>() {
+            self.update(ui.ctx(), &editor.view);
+        }
     }
 }

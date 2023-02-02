@@ -1,5 +1,3 @@
-use egui::Context;
-
 use self::{
     blur::Blur,
     brighten::Brighten,
@@ -15,7 +13,7 @@ use self::{
     source::Source,
 };
 use super::traits::Modifier;
-use crate::{editor::Editor, project::Project};
+use crate::editor::Editor;
 
 pub mod blur;
 pub mod brighten;
@@ -46,39 +44,6 @@ pub fn init_modifiers_collection(editor: &mut Editor) {
     init_modifier::<PencilMod<SimplePencil>>(editor);
     init_modifier::<PencilMod<RainbowPencil>>(editor);
     init_modifier::<PencilMod<PixelSorter>>(editor);
-}
-
-pub fn process_modifiers(project: &mut Project, ctx: &Context, editor: &Editor) {
-    if let Some(modification) = project.root.modifier.selected_mod_mut(editor) {
-        if let Some(modifier) = modification
-            .modifier
-            .modifier_mut::<PencilMod<SimplePencil>>()
-        {
-            modifier.update(ctx, &editor.view);
-        }
-
-        if let Some(modifier) = modification
-            .modifier
-            .modifier_mut::<PencilMod<RainbowPencil>>()
-        {
-            modifier.update(ctx, &editor.view);
-        }
-
-        if let Some(modifier) = modification
-            .modifier
-            .modifier_mut::<PencilMod<PixelSorter>>()
-        {
-            modifier.update(ctx, &editor.view);
-        }
-
-        if let Some(modifier) = modification.modifier.modifier_mut::<Bucket>() {
-            modifier.update(ctx, &editor.view);
-        }
-
-        if let Some(modifier) = modification.modifier.modifier_mut::<MagicWand>() {
-            modifier.update(ctx, &editor.view);
-        }
-    }
 }
 
 pub fn init_modifier<T: Modifier + Default + 'static>(editor: &mut Editor) {

@@ -10,7 +10,6 @@ use eframe::Frame;
 use egui::Context;
 use file_picker::FilePicker;
 use menu::menu;
-use modifier::collection::process_modifiers;
 use project::Project;
 
 mod color;
@@ -47,8 +46,6 @@ impl eframe::App for App {
         menu(ctx, &mut editor.view, project, file_picker);
 
         editor.view(ctx, project);
-
-        process_modifiers(project, ctx, editor);
 
         if project.output_changed() {
             if let Some(output) = project.output() {

@@ -39,5 +39,9 @@ impl Modifier for Bucket {
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
         self.wand.input.mod_mut().unwrap().modifier.view(ui, editor);
         self.wand.view_threshold(ui);
+
+        if editor.is_modifier_selected::<Self>() {
+            self.update(ui.ctx(), &editor.view);
+        }
     }
 }
