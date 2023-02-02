@@ -136,4 +136,13 @@ impl Image {
     pub fn resize(&mut self, new_size: UVec2, filter: FilterType) {
         self.image = imageops::resize(&self.image, new_size.x, new_size.y, filter);
     }
+
+    pub fn overlay(&mut self, overlay: &Image, position: IVec2) {
+        imageops::overlay(
+            &mut self.image,
+            &overlay.image,
+            position.x.into(),
+            position.y.into(),
+        )
+    }
 }

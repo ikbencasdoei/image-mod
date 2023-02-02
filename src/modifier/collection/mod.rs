@@ -8,6 +8,7 @@ use self::{
     hue::Hue,
     invert::Invert,
     magic_wand::MagicWand,
+    overlay::Overlay,
     pencil::{rainbow::RainbowPencil, simple::SimplePencil, sort::PixelSorter, PencilMod},
     resize::Resize,
     source::Source,
@@ -25,6 +26,7 @@ pub mod hue;
 pub mod invert;
 pub mod list;
 pub mod magic_wand;
+pub mod overlay;
 pub mod pencil;
 pub mod resize;
 pub mod source;
@@ -41,6 +43,7 @@ pub fn init_modifiers_collection(editor: &mut Editor) {
     init_modifier::<Bucket>(editor);
     init_modifier::<Fill>(editor);
     init_modifier::<MagicWand>(editor);
+    init_modifier::<Overlay>(editor);
     init_modifier::<PencilMod<SimplePencil>>(editor);
     init_modifier::<PencilMod<RainbowPencil>>(editor);
     init_modifier::<PencilMod<PixelSorter>>(editor);
