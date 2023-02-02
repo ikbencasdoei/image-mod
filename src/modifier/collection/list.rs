@@ -26,15 +26,6 @@ impl List {
         }
     }
 
-    fn add_mod_button(&mut self, ui: &mut Ui, editor: &mut Editor) {
-        let mut slot = ModifierSlot::Empty;
-        slot.add_mod_widget(ui, editor);
-        if let ModifierSlot::Modifier(_) = slot {
-            editor.try_select_slot(&slot).ok();
-            self.contents.push(slot);
-        }
-    }
-
     pub fn add_mod_from_index(&mut self, index: &ModifierIndex, editor: &mut Editor) {
         let new = Cation::new(DynMod::from_index(index.clone()));
         editor.select_cation(&new);
@@ -62,6 +53,15 @@ impl List {
             .map(|modification| modification.modifier.modifier())
             .flatten()
             .collect()
+    }
+
+    fn add_mod_button(&mut self, ui: &mut Ui, editor: &mut Editor) {
+        let mut slot = ModifierSlot::Empty;
+        slot.add_mod_widget(ui, editor);
+        if let ModifierSlot::Modifier(_) = slot {
+            editor.try_select_slot(&slot).ok();
+            self.contents.push(slot);
+        }
     }
 }
 
