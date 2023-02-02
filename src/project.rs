@@ -3,8 +3,8 @@ use std::path::{Path, PathBuf};
 use crate::{
     image::Image,
     modifier::{
+        cation::{Cation, Output},
         collection::{list::List, source::Source},
-        modification::{Cation, Output},
     },
 };
 

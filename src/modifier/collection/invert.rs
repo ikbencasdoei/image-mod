@@ -1,6 +1,6 @@
 use crate::{
     image::Image,
-    modifier::{modification::Output, traits::Modifier},
+    modifier::{cation::Output, traits::Modifier},
 };
 
 #[derive(Clone, Default, PartialEq)]

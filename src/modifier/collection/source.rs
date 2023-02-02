@@ -10,7 +10,7 @@ use crate::{
     editor::Editor,
     file_picker::{FilePicker, PickerResult},
     image::Image,
-    modifier::{modification::Output, traits::Modifier},
+    modifier::{cation::Output, traits::Modifier},
 };
 
 #[derive(Default)]

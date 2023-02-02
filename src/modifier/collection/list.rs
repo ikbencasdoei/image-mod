@@ -5,7 +5,7 @@ use crate::{
     editor::Editor,
     image::Image,
     modifier::{
-        modification::{Cation, DynMod, Output},
+        cation::{Cation, DynMod, Output},
         traits::{Modifier, ModifierIndex},
     },
     slot::ModifierSlot,

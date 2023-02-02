@@ -5,7 +5,7 @@ use crate::{
     color::Color,
     editor::Editor,
     image::Image,
-    modifier::{modification::Output, traits::Modifier},
+    modifier::{cation::Output, traits::Modifier},
 };
 
 pub mod rainbow;

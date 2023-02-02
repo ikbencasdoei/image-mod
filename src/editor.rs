@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::{
     file_picker::FilePicker,
     modifier::{
-        modification::{Cation, DynMod},
+        cation::{Cation, DynMod},
         traits::{Modifier, ModifierIndex},
     },
     project::Project,

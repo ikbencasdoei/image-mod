@@ -7,7 +7,7 @@ use uuid::Uuid;
 use crate::{
     editor::Editor,
     modifier::{
-        modification::{Cation, DynMod, Output},
+        cation::{Cation, DynMod, Output},
         traits::Modifier,
     },
 };

@@ -4,7 +4,7 @@ use glam::IVec2;
 use crate::{
     editor::Editor,
     image::Image,
-    modifier::{modification::Output, traits::Modifier},
+    modifier::{cation::Output, traits::Modifier},
     slot::ModifierSlot,
     view::View,
 };
