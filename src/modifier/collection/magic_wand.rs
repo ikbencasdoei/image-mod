@@ -39,7 +39,7 @@ impl MagicWand {
 
     pub fn view_threshold(&mut self, ui: &mut Ui) {
         ui.horizontal(|ui| {
-            ui.label("threshold");
+            ui.label("threshold:");
             ui.add(
                 egui::DragValue::new(&mut self.threshold)
                     .speed(0.001)

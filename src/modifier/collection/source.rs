@@ -31,7 +31,7 @@ impl Modifier for Source {
 
     fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
         ui.horizontal(|ui| {
-            ui.label("path");
+            ui.label("path:");
             let mut string = self.path.to_string_lossy().to_string();
             let response = ui.add(TextEdit::singleline(&mut string));
             if response.changed() {

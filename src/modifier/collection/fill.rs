@@ -32,7 +32,7 @@ impl Modifier for Fill {
 
     fn view(&mut self, ui: &mut Ui, _: &mut Editor) {
         ui.horizontal(|ui| {
-            ui.label("color");
+            ui.label("color:");
             ui.color_edit_button_srgba(&mut self.color);
         });
     }
