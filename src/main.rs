@@ -8,7 +8,6 @@ use std::path::Path;
 use editor::Editor;
 use eframe::Frame;
 use egui::Context;
-use file_picker::FilePicker;
 use menu::menu;
 use project::Project;
 
@@ -26,24 +25,19 @@ mod view;
 #[derive(Default)]
 struct App {
     project: Project,
-    file_picker: FilePicker,
     editor: Editor,
 }
 
 impl eframe::App for App {
     fn update(&mut self, ctx: &Context, frame: &mut Frame) {
-        let App {
-            project,
-            file_picker,
-            editor,
-        } = self;
+        let App { project, editor } = self;
 
         keybinds::fullscreen(ctx, frame);
         keybinds::exit(ctx, frame);
 
-        file_picker.update(project);
+        editor.picker.update(project);
 
-        menu(ctx, &mut editor.view, project, file_picker);
+        menu(ctx, &mut editor.view, project, &mut editor.picker);
 
         editor.view(ctx, project);
 

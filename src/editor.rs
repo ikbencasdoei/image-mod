@@ -2,6 +2,7 @@ use egui::Context;
 use uuid::Uuid;
 
 use crate::{
+    file_picker::FilePicker,
     modifier::{
         modification::{Cation, DynMod},
         traits::{Modifier, ModifierIndex},
@@ -17,6 +18,7 @@ pub struct Editor {
     pub dragging: Option<Cation<DynMod>>,
     pub dropped: Option<Cation<DynMod>>,
     pub view: View,
+    pub picker: FilePicker,
 }
 
 pub struct ModId {
