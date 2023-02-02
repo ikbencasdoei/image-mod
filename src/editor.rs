@@ -68,4 +68,10 @@ impl Editor {
     pub fn selected_id(&self) -> Option<Uuid> {
         self.selected.as_ref().map(|selected| selected.id)
     }
+
+    pub fn is_modifier_selected<T: Modifier + Default + 'static>(&self) -> bool {
+        self.selected
+            .as_ref()
+            .is_some_and(|selected| selected.index == T::index())
+    }
 }
