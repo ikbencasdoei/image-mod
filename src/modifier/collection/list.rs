@@ -33,8 +33,6 @@ impl List {
             editor.try_select_slot(&slot).ok();
             self.contents.push(slot);
         }
-
-        ui.separator();
     }
 
     pub fn add_mod_from_index(&mut self, index: &ModifierIndex, editor: &mut Editor) {
