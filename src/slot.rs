@@ -122,19 +122,19 @@ impl ModifierSlot {
                     editor.select_cation(modifier);
                 }
 
-                ui.menu_button("🗑", |ui| {
-                    if ui.button("sure?").clicked() {
-                        self.take(Self::Empty);
-                        ui.close_menu();
-                    }
-                });
-
                 if ui
                     .add(Button::new("✋").sense(Sense::drag()))
                     .drag_started()
                 {
                     editor.dragging = self.drag();
                 }
+
+                ui.menu_button("🗑", |ui| {
+                    if ui.button("sure?").clicked() {
+                        self.take(Self::Empty);
+                        ui.close_menu();
+                    }
+                });
             }
         })
         .body(|ui| {
