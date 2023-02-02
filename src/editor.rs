@@ -8,6 +8,7 @@ use crate::{
         traits::{Modifier, ModifierIndex},
     },
     project::Project,
+    slot::ModifierSlot,
     view::View,
 };
 
@@ -31,6 +32,17 @@ impl ModId {
         ModId {
             id: cation.id,
             index: cation.modifier.index.clone(),
+        }
+    }
+
+    pub fn try_from_slot(slot: &ModifierSlot) -> Result<Self, &str> {
+        if let Some(cation) = slot.mod_ref() {
+            Ok(ModId {
+                id: cation.id,
+                index: cation.modifier.index.clone(),
+            })
+        } else {
+            Err("slot is empty")
         }
     }
 }
@@ -65,6 +77,11 @@ impl Editor {
 
     pub fn select_cation(&mut self, cation: &Cation<DynMod>) {
         self.selected = Some(ModId::from_dyn_cation(cation));
+    }
+
+    pub fn try_select_slot<'a>(&'a mut self, slot: &'a ModifierSlot) -> Result<(), &str> {
+        self.selected = Some(ModId::try_from_slot(slot)?);
+        Ok(())
     }
 
     pub fn selected_id(&self) -> Option<Uuid> {

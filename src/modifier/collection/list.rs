@@ -27,16 +27,12 @@ impl List {
     }
 
     fn add_mod_button(&mut self, ui: &mut Ui, editor: &mut Editor) {
-        ui.vertical_centered(|ui| {
-            ui.menu_button("add modifier", |ui| {
-                for index in editor.index.clone().iter() {
-                    if ui.button(index.name.as_str()).clicked() {
-                        self.add_mod_from_index(index, editor);
-                        ui.close_menu();
-                    }
-                }
-            });
-        });
+        let mut slot = ModifierSlot::Empty;
+        slot.add_mod_widget(ui, editor);
+        if let ModifierSlot::Modifier(_) = slot {
+            editor.try_select_slot(&slot).ok();
+            self.contents.push(slot);
+        }
 
         ui.separator();
     }
