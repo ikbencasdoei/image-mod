@@ -9,10 +9,11 @@ use crate::project::Project;
 
 #[derive(Default)]
 pub struct FilePicker {
-    pub open: Option<JoinHandle<Option<FilePickerEvent>>>,
+    pub open: Option<JoinHandle<Option<PickerResult>>>,
 }
 
-pub enum FilePickerEvent {
+#[derive(Clone)]
+pub enum PickerResult {
     PickedLoad(PathBuf),
     PickedExport(PathBuf),
 }
@@ -21,7 +22,7 @@ impl FilePicker {
     pub fn open_load(&mut self) -> Result<(), &str> {
         let dialog = FileDialog::new().add_filter("image", &["png", "jpg"]);
 
-        self.spawn(|| dialog.pick_file().map(FilePickerEvent::PickedLoad))?;
+        self.spawn(|| dialog.pick_file().map(PickerResult::PickedLoad))?;
 
         Ok(())
     }
@@ -38,14 +39,14 @@ impl FilePicker {
             .set_directory(directory)
             .set_file_name(&file_name);
 
-        self.spawn(move || dialog.save_file().map(FilePickerEvent::PickedExport))?;
+        self.spawn(move || dialog.save_file().map(PickerResult::PickedExport))?;
 
         Ok(())
     }
 
     fn spawn(
         &mut self,
-        closure: impl FnOnce() -> Option<FilePickerEvent> + Send + 'static,
+        closure: impl FnOnce() -> Option<PickerResult> + Send + 'static,
     ) -> Result<(), &str> {
         if self.open.is_some() {
             return Err("file picker already open");
@@ -60,10 +61,8 @@ impl FilePicker {
         if self.open.is_some() && self.open.as_ref().unwrap().is_finished() {
             if let Ok(Some(event)) = self.open.take().unwrap().join() {
                 match event {
-                    FilePickerEvent::PickedLoad(path) => {
-                        *project = Project::new_from_input_path(path)
-                    }
-                    FilePickerEvent::PickedExport(path) => project.export(path).unwrap(),
+                    PickerResult::PickedLoad(path) => *project = Project::new_from_input_path(path),
+                    PickerResult::PickedExport(path) => project.export(path).unwrap(),
                 }
             }
         }
