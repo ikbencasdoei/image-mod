@@ -10,7 +10,7 @@ use crate::project::Project;
 
 #[derive(Default)]
 pub struct FilePicker {
-    pub open: Option<JoinHandle<Option<PickerResult>>>,
+    open: Option<JoinHandle<Option<PickerResult>>>,
 }
 
 #[derive(Clone)]
@@ -82,5 +82,9 @@ impl FilePicker {
                 }
             }
         }
+    }
+
+    pub fn is_open(&self) -> bool {
+        self.open.is_some()
     }
 }
