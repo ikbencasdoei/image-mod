@@ -208,7 +208,7 @@ impl ModifierSlot {
     }
 
     pub fn add_mod_widget(&mut self, ui: &mut Ui, editor: &mut Editor) {
-        ui.menu_button("+", |ui| {
+        ui.menu_button("➕", |ui| {
             for index in editor.index.clone().iter() {
                 if ui.button(index.name.as_str()).clicked() {
                     ui.close_menu();
