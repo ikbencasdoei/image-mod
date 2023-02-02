@@ -8,7 +8,7 @@ use crate::{
     editor::Editor,
     modifier::{
         cation::{Cation, DynMod, Output},
-        traits::Modifier,
+        traits::{Modifier, ModifierIndex},
     },
 };
 
@@ -32,6 +32,10 @@ impl ModifierSlot {
 
     pub fn from_cacher(cacher: Cation<DynMod>) -> Self {
         Self::Modifier(cacher)
+    }
+
+    pub fn from_index(index: &ModifierIndex) -> Self {
+        Self::from_cacher(Cation::new(DynMod::from_index(index.clone())))
     }
 
     pub fn is_empty(&self) -> bool {
@@ -190,13 +194,27 @@ impl ModifierSlot {
         .show(ui, |ui| {
             if let Self::Empty = self {
                 if editor.dragging.is_none() {
-                    ui.vertical_centered_justified(|ui| {
-                        ui.label("empty");
+                    ui.horizontal(|ui| {
+                        self.add_mod_widget(ui, editor);
+                        ui.centered_and_justified(|ui| {
+                            ui.label("empty");
+                        })
                     });
                 }
             }
 
             self.view(ui, editor, prefix);
+        });
+    }
+
+    pub fn add_mod_widget(&mut self, ui: &mut Ui, editor: &mut Editor) {
+        ui.menu_button("+", |ui| {
+            for index in editor.index.clone().iter() {
+                if ui.button(index.name.as_str()).clicked() {
+                    ui.close_menu();
+                    *self = ModifierSlot::from_index(index);
+                }
+            }
         });
     }
 }
