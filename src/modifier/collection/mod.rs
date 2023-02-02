@@ -7,6 +7,7 @@ use self::{
     grayscale::GrayScaleFilter,
     hue::Hue,
     invert::Invert,
+    list::List,
     magic_wand::MagicWand,
     overlay::Overlay,
     pencil::{rainbow::RainbowPencil, simple::SimplePencil, sort::PixelSorter, PencilMod},
@@ -44,6 +45,7 @@ pub fn init_modifiers_collection(editor: &mut Editor) {
     init_modifier::<Fill>(editor);
     init_modifier::<MagicWand>(editor);
     init_modifier::<Overlay>(editor);
+    init_modifier::<List>(editor);
     init_modifier::<PencilMod<SimplePencil>>(editor);
     init_modifier::<PencilMod<RainbowPencil>>(editor);
     init_modifier::<PencilMod<PixelSorter>>(editor);
