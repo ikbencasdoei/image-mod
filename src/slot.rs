@@ -93,11 +93,7 @@ impl ModifierSlot {
             );
         }
 
-        ui.add_enabled_ui(false, |ui| {
-            ui.collapsing(&index.name, |ui| {
-                ui.label("Body");
-            })
-        });
+        ui.add_enabled_ui(false, |ui| ui.collapsing(&index.name, |_| {}));
     }
 
     fn view_modifier(&mut self, ui: &mut Ui, editor: &mut Editor, prefix: Option<&str>) {
