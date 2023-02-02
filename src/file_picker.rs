@@ -1,5 +1,6 @@
 use std::{
     path::PathBuf,
+    sync::mpsc::{channel, Receiver},
     thread::{self, JoinHandle},
 };
 
@@ -19,6 +20,21 @@ pub enum PickerResult {
 }
 
 impl FilePicker {
+    pub fn picker_with_channel(&self) -> Result<Receiver<Option<PickerResult>>, &str> {
+        if self.open.is_some() {
+            return Err("file picker already open");
+        }
+
+        let dialog = FileDialog::new().add_filter("image", &["png", "jpg"]);
+        let (sender, receiver) = channel();
+        thread::spawn(move || {
+            let result = dialog.pick_file().map(PickerResult::PickedLoad);
+            sender.send(result.clone()).ok();
+        });
+
+        Ok(receiver)
+    }
+
     pub fn open_load(&mut self) -> Result<(), &str> {
         let dialog = FileDialog::new().add_filter("image", &["png", "jpg"]);
 
