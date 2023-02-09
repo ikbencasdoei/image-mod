@@ -17,11 +17,17 @@ pub trait Pencil {
     fn view(&mut self, _ui: &mut Ui) {}
 }
 
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, Default)]
 pub struct PencilMod<T> {
     pixels: Vec<UVec2>,
     pencil: T,
     last_pixel: Option<Vec2>,
+}
+
+impl<T: PartialEq> PartialEq for PencilMod<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.pixels == other.pixels && self.pencil == other.pencil
+    }
 }
 
 impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T> {
