@@ -115,7 +115,7 @@ impl Modifier for DynMod {
 #[derive(Clone)]
 pub struct Output {
     pub image: Option<Image>,
-    id: Uuid,
+    pub id: Uuid,
 }
 
 impl Output {

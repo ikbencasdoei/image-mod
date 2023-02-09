@@ -1,5 +1,6 @@
 use egui::Ui;
 use glam::{UVec2, Vec2};
+use uuid::Uuid;
 
 use crate::{
     color::Color,
@@ -22,6 +23,15 @@ pub struct PencilMod<T> {
     pixels: Vec<UVec2>,
     pencil: T,
     last_pixel: Option<Vec2>,
+    cached: Option<Cached<T>>,
+}
+
+#[derive(Clone)]
+struct Cached<T> {
+    pixels: Vec<UVec2>,
+    image: Option<Image>,
+    pencil: T,
+    input_id: Uuid,
 }
 
 impl<T: PartialEq> PartialEq for PencilMod<T> {
@@ -31,16 +41,42 @@ impl<T: PartialEq> PartialEq for PencilMod<T> {
 }
 
 impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T> {
-    fn apply(&mut self, mut input: Output) -> Option<Image> {
-        if let Some(image) = &mut input.image {
-            let mut pencil = self.pencil.clone();
-            for pixel in self.pixels.iter() {
-                if let Some(color) = pencil.pixel(*pixel, image) {
+    fn apply(&mut self, input: Output) -> Option<Image> {
+        let (mut prepared_pencil, mut prepared_image, prepared_pixels) =
+            if self.cached.as_ref().is_some_and(|cache| {
+                cache.input_id == input.id
+                    && cache.pixels == self.pixels[0..cache.pixels.len()]
+                    && cache.pencil == self.pencil
+            }) {
+                (
+                    self.cached.as_ref().unwrap().pencil.clone(),
+                    self.cached.as_ref().unwrap().image.clone(),
+                    &self.pixels[self.cached.as_ref().unwrap().pixels.len()..self.pixels.len()],
+                )
+            } else {
+                (
+                    self.pencil.clone(),
+                    input.image.clone(),
+                    self.pixels.as_slice(),
+                )
+            };
+
+        if let Some(image) = &mut prepared_image {
+            for pixel in prepared_pixels.iter() {
+                if let Some(color) = prepared_pencil.pixel(*pixel, image) {
                     image.set_pixel(*pixel, color).ok();
                 }
             }
         }
-        input.image
+
+        self.cached = Some(Cached {
+            pixels: self.pixels.clone(),
+            image: prepared_image.clone(),
+            input_id: input.id,
+            pencil: prepared_pencil,
+        });
+
+        prepared_image
     }
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
