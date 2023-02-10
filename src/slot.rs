@@ -213,18 +213,21 @@ impl ModifierSlot {
         let inner = ui.menu_button("➕", |ui| {
             let response = ui.text_edit_singleline(&mut editor.add_mod_text);
             text_edit_id = Some(response.id);
-            for index in editor.index.iter().filter(|index| {
-                editor.add_mod_text.is_empty()
-                    || index
-                        .name
-                        .to_lowercase()
-                        .contains(&editor.add_mod_text.to_lowercase())
-            }) {
-                if ui.button(index.name.as_str()).clicked() {
-                    ui.close_menu();
-                    *self = ModifierSlot::from_index(index);
+            ui.separator();
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                for index in editor.index.iter().filter(|index| {
+                    editor.add_mod_text.is_empty()
+                        || index
+                            .name
+                            .to_lowercase()
+                            .contains(&editor.add_mod_text.to_lowercase())
+                }) {
+                    if ui.button(index.name.as_str()).clicked() {
+                        ui.close_menu();
+                        *self = ModifierSlot::from_index(index);
+                    }
                 }
-            }
+            });
         });
         if inner.response.clicked() {
             if let Some(id) = text_edit_id {
