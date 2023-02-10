@@ -20,6 +20,7 @@ pub struct Editor {
     pub dropped: Option<Cation<DynMod>>,
     pub view: View,
     pub picker: FilePicker,
+    pub add_mod_text: String,
 }
 
 pub struct ModId {
