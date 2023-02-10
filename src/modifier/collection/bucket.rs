@@ -3,7 +3,7 @@ use egui::{Context, Ui};
 use super::{fill::Fill, magic_wand::MagicWand};
 use crate::{
     editor::Editor,
-    image::Image,
+    
     modifier::{cation::Output, traits::Modifier},
     slot::ModifierSlot,
     view::View,
@@ -32,7 +32,7 @@ impl Bucket {
 }
 
 impl Modifier for Bucket {
-    fn apply(&mut self, input: Output) -> Option<Image> {
+    fn apply(&mut self, input: &mut Output) {
         self.wand.apply(input)
     }
 

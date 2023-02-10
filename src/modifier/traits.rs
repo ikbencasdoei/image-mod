@@ -4,10 +4,10 @@ use dyn_clone::DynClone;
 use egui::Ui;
 
 use super::cation::Output;
-use crate::{editor::Editor, image::Image};
+use crate::editor::Editor;
 
 pub trait Modifier: DynClone + DynPartialEq {
-    fn apply(&mut self, input: Output) -> Option<Image>;
+    fn apply(&mut self, input: &mut Output);
 
     fn name() -> String
     where

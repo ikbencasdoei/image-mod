@@ -3,7 +3,7 @@ use glam::IVec2;
 
 use crate::{
     editor::Editor,
-    image::Image,
+    
     modifier::{cation::Output, traits::Modifier},
     slot::ModifierSlot,
     view::View,
@@ -36,7 +36,7 @@ impl Overlay {
 }
 
 impl Modifier for Overlay {
-    fn apply(&mut self, mut input: Output) -> Option<Image> {
+    fn apply(&mut self, input: &mut Output) {
         if let Some(target) = self.target {
             if let Some(wrapped) = self.input.mod_mut() {
                 if let Some(wrapped_output) = wrapped.output(&input).image.clone() {
@@ -47,7 +47,7 @@ impl Modifier for Overlay {
             }
         }
 
-        input.image
+        
     }
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {

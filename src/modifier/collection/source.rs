@@ -44,8 +44,8 @@ impl PartialEq for Source {
 }
 
 impl Modifier for Source {
-    fn apply(&mut self, _: Output) -> Option<Image> {
-        Image::open(&self.path).ok()
+    fn apply(&mut self, input: &mut Output) {
+        *input = Output::new(Image::open(&self.path).ok())
     }
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {

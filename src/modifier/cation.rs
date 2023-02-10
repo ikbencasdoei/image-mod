@@ -35,7 +35,9 @@ impl<T: Modifier + Clone + PartialEq> Cation<T> {
     }
 
     fn apply(&mut self, input: &Output) -> &Output {
-        let output = Output::new(self.modifier.apply(input.clone()));
+        let mut copy = input.clone();
+        self.modifier.apply(&mut copy);
+        let output = Output::new(copy.image);
 
         self.cache = Some(Cache {
             modifier: self.modifier.clone(),
@@ -103,7 +105,7 @@ impl PartialEq for DynMod {
 }
 
 impl Modifier for DynMod {
-    fn apply(&mut self, input: Output) -> Option<Image> {
+    fn apply(&mut self, input: &mut Output) {
         self.modifier.apply(input)
     }
 

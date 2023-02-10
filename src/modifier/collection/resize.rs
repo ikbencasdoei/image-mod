@@ -4,7 +4,6 @@ use image::imageops::FilterType;
 
 use crate::{
     editor::Editor,
-    image::Image,
     modifier::{cation::Output, traits::Modifier},
 };
 
@@ -30,7 +29,7 @@ impl Default for Resize {
 }
 
 impl Modifier for Resize {
-    fn apply(&mut self, mut input: Output) -> Option<Image> {
+    fn apply(&mut self, input: &mut Output) {
         if let Some(image) = &mut input.image {
             match self.size {
                 Size::Absolute(size) => image.resize(size, self.filter),
@@ -42,7 +41,6 @@ impl Modifier for Resize {
                 }
             }
         }
-        input.image
     }
 
     fn view(&mut self, ui: &mut Ui, _: &mut Editor) {

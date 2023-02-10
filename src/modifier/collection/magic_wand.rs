@@ -4,7 +4,7 @@ use glam::UVec2;
 use crate::{
     color::Color,
     editor::Editor,
-    image::Image,
+   
     modifier::{cation::Output, traits::Modifier},
     slot::ModifierSlot,
     view::View,
@@ -50,7 +50,7 @@ impl MagicWand {
 }
 
 impl Modifier for MagicWand {
-    fn apply(&mut self, mut input: Output) -> Option<Image> {
+    fn apply(&mut self, input: &mut Output) {
         if let Some(target) = self.target {
             if let Some(child) = self.input.mod_mut() {
                 if let Some(output) = child.output(&input).image.clone() {
@@ -74,8 +74,6 @@ impl Modifier for MagicWand {
                 }
             }
         }
-
-        input.image
     }
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {

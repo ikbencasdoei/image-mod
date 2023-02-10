@@ -2,7 +2,7 @@ use egui::{Color32, Ui};
 
 use crate::{
     editor::Editor,
-    image::Image,
+    
     modifier::{cation::Output, traits::Modifier},
 };
 
@@ -20,14 +20,12 @@ impl Default for Fill {
 }
 
 impl Modifier for Fill {
-    fn apply(&mut self, mut input: Output) -> Option<Image> {
+    fn apply(&mut self, input: &mut Output) {
         if let Some(image) = &mut input.image {
             for position in image.iter_coords() {
                 image.set_pixel(position, self.color.into()).ok();
             }
         }
-
-        input.image
     }
 
     fn view(&mut self, ui: &mut Ui, _: &mut Editor) {

@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::{
     editor::Editor,
-    image::Image,
+    
     modifier::{
         cation::{Cation, DynMod, Output},
         traits::{Modifier, ModifierIndex},
@@ -66,16 +66,14 @@ impl List {
 }
 
 impl Modifier for List {
-    fn apply(&mut self, mut output: Output) -> Option<Image> {
+    fn apply(&mut self, input: &mut Output) {
         {
-            let mut borrow = &output;
+            let mut borrow = &*input;
             for modification in self.contents.iter_mut() {
                 borrow = modification.output(borrow);
             }
-            output = borrow.clone();
+            *input = borrow.clone();
         }
-
-        output.image
     }
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {

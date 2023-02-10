@@ -2,7 +2,6 @@ use egui::Ui;
 
 use crate::{
     editor::Editor,
-    image::Image,
     modifier::{cation::Output, traits::Modifier},
 };
 
@@ -12,11 +11,10 @@ pub struct Blur {
 }
 
 impl Modifier for Blur {
-    fn apply(&mut self, mut input: Output) -> Option<Image> {
+    fn apply(&mut self, input: &mut Output) {
         if let Some(image) = &mut input.image {
             image.blur(self.sigma);
         }
-        input.image
     }
 
     fn view(&mut self, ui: &mut Ui, _: &mut Editor) {

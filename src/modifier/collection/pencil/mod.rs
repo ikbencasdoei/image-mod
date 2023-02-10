@@ -41,7 +41,7 @@ impl<T: PartialEq> PartialEq for PencilMod<T> {
 }
 
 impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T> {
-    fn apply(&mut self, input: Output) -> Option<Image> {
+    fn apply(&mut self, input: &mut Output) {
         let (mut prepared_pencil, mut prepared_image, prepared_pixels) =
             if self.cached.as_ref().is_some_and(|cache| {
                 cache.input_id == input.id
@@ -76,7 +76,7 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
             pencil: prepared_pencil,
         });
 
-        prepared_image
+        input.image = prepared_image;
     }
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
