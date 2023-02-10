@@ -4,7 +4,6 @@ use glam::UVec2;
 use crate::{
     color::Color,
     editor::Editor,
-   
     modifier::{cation::Output, traits::Modifier},
     slot::ModifierSlot,
     view::View,

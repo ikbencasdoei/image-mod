@@ -10,7 +10,7 @@ pub struct View {
     pub scale: f32,
     pub translation: Vec2,
     dragging: bool,
-    rect: Rect,
+    pub rect: Rect,
 }
 
 impl Default for View {

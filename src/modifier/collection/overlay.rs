@@ -1,53 +1,44 @@
-use egui::{Context, Ui};
-use glam::IVec2;
+use egui::Ui;
+use glam::Vec2;
 
 use crate::{
     editor::Editor,
-    
     modifier::{cation::Output, traits::Modifier},
     slot::ModifierSlot,
-    view::View,
 };
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone)]
 pub struct Overlay {
-    pub target: Option<IVec2>,
+    pub target: Vec2,
     pub input: ModifierSlot,
+    dragging: bool,
 }
 
 impl Default for Overlay {
     fn default() -> Self {
         Self {
-            target: Default::default(),
+            target: Vec2::ZERO,
             input: Default::default(),
+            dragging: false,
         }
     }
 }
 
-impl Overlay {
-    pub fn update(&mut self, ctx: &Context, view: &View) {
-        if ctx.input().pointer.primary_clicked() && !ctx.wants_pointer_input() {
-            if let Some(pos) = view.hovered_pixel(ctx) {
-                let egui::Vec2 { x, y } = pos;
-                self.target = Some(IVec2::new(x.round() as i32, y.round() as i32));
-            }
-        }
+impl PartialEq for Overlay {
+    fn eq(&self, other: &Self) -> bool {
+        self.target == other.target && self.input == other.input
     }
 }
 
 impl Modifier for Overlay {
     fn apply(&mut self, input: &mut Output) {
-        if let Some(target) = self.target {
-            if let Some(wrapped) = self.input.mod_mut() {
-                if let Some(wrapped_output) = wrapped.output(&input).image.clone() {
-                    if let Some(input) = &mut input.image {
-                        input.overlay(&wrapped_output, target)
-                    }
+        if let Some(wrapped) = self.input.mod_mut() {
+            if let Some(wrapped_output) = wrapped.output(&input).image.clone() {
+                if let Some(input) = &mut input.image {
+                    input.overlay(&wrapped_output, self.target.as_ivec2());
                 }
             }
         }
-
-        
     }
 
     fn view(&mut self, ui: &mut Ui, editor: &mut Editor) {
@@ -55,7 +46,23 @@ impl Modifier for Overlay {
         self.input.view_with_frame(ui, editor, None);
 
         if editor.is_modifier_selected::<Self>() {
-            self.update(ui.ctx(), &editor.view);
+            if ui.rect_contains_pointer(editor.view.rect) {
+                if ui.ctx().input().pointer.any_pressed() && ui.ctx().input().pointer.primary_down()
+                {
+                    self.dragging = true;
+                } else if ui.ctx().input().pointer.any_released() {
+                    self.dragging = false;
+                }
+            }
+
+            if self.dragging && ui.ctx().input().pointer.any_down() {
+                self.target += {
+                    let egui::Vec2 { x, y } = ui.ctx().input().pointer.delta();
+                    Vec2::new(x, y) * ui.ctx().pixels_per_point() / editor.view.scale
+                }
+            } else {
+                self.dragging = false;
+            }
         }
     }
 }
