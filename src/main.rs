@@ -11,6 +11,8 @@ use egui::Context;
 use menu::menu;
 use project::Project;
 
+use crate::image::Image;
+
 mod color;
 mod editor;
 mod file_picker;
@@ -42,9 +44,11 @@ impl eframe::App for App {
         editor.view(ctx, project);
 
         if project.output_changed() {
-            if let Some(output) = project.output() {
-                editor.view.update(ctx, output);
-            }
+            let default = Image::default();
+
+            editor
+                .view
+                .update(ctx, project.output().as_ref().unwrap_or(&default));
         }
 
         editor.view.process(ctx);
