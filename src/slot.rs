@@ -145,13 +145,23 @@ impl ModifierSlot {
     }
 
     fn view_slot(&mut self, ui: &mut Ui, editor: &mut Editor) {
-        if ui
-            .add(egui::Label::new("place here").sense(Sense::hover()))
-            .hovered()
-            && !ui.memory().is_anything_being_dragged()
-        {
-            *self = Self::Modifier(editor.dragging.take().unwrap());
+        Frame {
+            inner_margin: Margin::same(3.0),
+            rounding: Rounding::same(3.0),
+            stroke: Stroke::new(1.0, ui.style().visuals.text_color()),
+            ..Default::default()
         }
+        .show(ui, |ui| {
+            ui.vertical_centered(|ui| {
+                if ui
+                    .add(egui::Label::new("place here").sense(Sense::hover()))
+                    .hovered()
+                    && !ui.memory().is_anything_being_dragged()
+                {
+                    *self = Self::Modifier(editor.dragging.take().unwrap());
+                }
+            })
+        });
     }
 
     pub fn view(&mut self, ui: &mut Ui, editor: &mut Editor, prefix: Option<&str>) {
