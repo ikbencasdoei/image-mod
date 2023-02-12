@@ -13,6 +13,7 @@ use project::Project;
 
 use crate::image::Image;
 
+mod applied;
 mod color;
 mod editor;
 mod file_picker;
