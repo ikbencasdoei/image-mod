@@ -1,19 +1,17 @@
-use glam::{UVec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
-
 use super::Pencil;
-use crate::{color::Color, image::Image};
+use crate::{color::Color, image::Image, position::Position};
 
 #[derive(Clone, PartialEq)]
 pub struct RainbowPencil {
-    color_hsv: Vec3,
+    color_hsv: (f32, f32, f32),
     rotation_per_pixel: f32,
-    last_pixel: Option<UVec2>,
+    last_pixel: Option<Position>,
 }
 
 impl Default for RainbowPencil {
     fn default() -> Self {
         Self {
-            color_hsv: Vec3::new(0.0, 1.0, 1.0),
+            color_hsv: (0.0, 1.0, 1.0),
             rotation_per_pixel: 0.01,
             last_pixel: None,
         }
@@ -21,18 +19,20 @@ impl Default for RainbowPencil {
 }
 
 impl Pencil for RainbowPencil {
-    fn pixel(&mut self, pixel: UVec2, _: &mut Image) -> Option<Color> {
-        let color = hsv2rgb(self.color_hsv);
-
+    fn pixel(&mut self, pixel: Position, _: &mut Image) -> Option<Color> {
         if let Some(last_pixel) = self.last_pixel {
             if pixel != last_pixel {
-                self.color_hsv.x += self.rotation_per_pixel;
+                self.color_hsv.0 += self.rotation_per_pixel;
             }
         }
 
         self.last_pixel = Some(pixel);
 
-        Some(Color::from(Vec4::from((color, 1.0))))
+        Some(Color::from_hsv(
+            self.color_hsv.0,
+            self.color_hsv.2,
+            self.color_hsv.2,
+        ))
     }
 
     fn view(&mut self, ui: &mut egui::Ui) {
@@ -42,7 +42,7 @@ impl Pencil for RainbowPencil {
             .striped(true)
             .show(ui, |ui| {
                 {
-                    let mut degrees = self.color_hsv.x % 1.0 * 360.0;
+                    let mut degrees = self.color_hsv.0 % 1.0 * 360.0;
 
                     ui.label("current hue rotation:");
                     ui.add(
@@ -51,7 +51,7 @@ impl Pencil for RainbowPencil {
                             .clamp_range(360.0..=0.0)
                             .suffix("°"),
                     );
-                    self.color_hsv.x = degrees / 360.0;
+                    self.color_hsv.0 = degrees / 360.0;
                 }
                 ui.end_row();
 
@@ -71,12 +71,4 @@ impl Pencil for RainbowPencil {
                 ui.end_row();
             });
     }
-}
-
-fn hsv2rgb(hsv: Vec3) -> Vec3 {
-    let k = Vec4::from_array([1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0]);
-    let p = ((hsv.xxx() + k.xyz()).fract() * 6.0 - k.www()).abs();
-    hsv.z
-        * k.xxx()
-            .lerp((p - k.xxx()).clamp(Vec3::ZERO, Vec3::ONE), hsv.y)
 }

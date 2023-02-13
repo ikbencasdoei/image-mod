@@ -1,10 +1,10 @@
 use egui::Ui;
-use glam::{UVec2, Vec2};
 use image::imageops::FilterType;
 
 use crate::{
     editor::Editor,
     modifier::{cation::Output, traits::Modifier},
+    position::Position,
 };
 
 #[derive(Clone, PartialEq)]
@@ -15,14 +15,14 @@ pub struct Resize {
 
 #[derive(Clone, PartialEq)]
 enum Size {
-    Absolute(UVec2),
-    Relative(Vec2),
+    Absolute(Position),
+    Relative(Position),
 }
 
 impl Default for Resize {
     fn default() -> Self {
         Self {
-            size: Size::Relative(Vec2::new(100.0, 100.0)),
+            size: Size::Relative(Position::new(100.0, 100.0)),
             filter: FilterType::Gaussian,
         }
     }
@@ -32,12 +32,12 @@ impl Modifier for Resize {
     fn apply(&mut self, input: &mut Output) {
         if let Some(image) = &mut input.image {
             match self.size {
-                Size::Absolute(size) => image.resize(size, self.filter),
+                Size::Absolute(size) => {
+                    image.resize(size, self.filter).ok();
+                }
                 Size::Relative(size) => {
-                    let pixels = (image.size().as_vec2() * (size / 100.0))
-                        .as_uvec2()
-                        .max(UVec2::new(1, 1));
-                    image.resize(pixels, self.filter)
+                    let pixels = (image.size() * (size / 100.0)).max(Position::ONE);
+                    image.resize(pixels, self.filter).ok();
                 }
             }
         }
@@ -47,12 +47,12 @@ impl Modifier for Resize {
         match self.size {
             Size::Absolute(_) => {
                 if ui.checkbox(&mut false, "relative").changed() {
-                    self.size = Size::Relative(Vec2::new(100.0, 100.0))
+                    self.size = Size::Relative(Position::new(100.0, 100.0))
                 }
             }
             Size::Relative(_) => {
                 if ui.checkbox(&mut true, "relative").changed() {
-                    self.size = Size::Absolute(UVec2::new(100, 100))
+                    self.size = Size::Absolute(Position::new(100.0, 100.0))
                 }
             }
         }

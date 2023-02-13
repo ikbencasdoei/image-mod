@@ -1,5 +1,4 @@
 use egui::Ui;
-use glam::{UVec2, Vec2};
 use uuid::Uuid;
 
 use crate::{
@@ -7,6 +6,7 @@ use crate::{
     editor::Editor,
     image::Image,
     modifier::{cation::Output, traits::Modifier},
+    position::Position,
 };
 
 pub mod rainbow;
@@ -14,21 +14,21 @@ pub mod simple;
 pub mod sort;
 
 pub trait Pencil {
-    fn pixel(&mut self, pixel: UVec2, image: &mut Image) -> Option<Color>;
+    fn pixel(&mut self, pixel: Position, image: &mut Image) -> Option<Color>;
     fn view(&mut self, _ui: &mut Ui) {}
 }
 
 #[derive(Clone, Default)]
 pub struct PencilMod<T> {
-    pixels: Vec<UVec2>,
+    pixels: Vec<Position>,
     pencil: T,
-    last_pixel: Option<Vec2>,
+    last_pixel: Option<Position>,
     cached: Option<Cached<T>>,
 }
 
 #[derive(Clone)]
 struct Cached<T> {
-    pixels: Vec<UVec2>,
+    pixels: Vec<Position>,
     image: Option<Image>,
     pencil: T,
     input_id: Uuid,
@@ -85,23 +85,22 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
         if editor.is_modifier_selected::<Self>() {
             if (ui.ctx().input().pointer.primary_down()) && !ui.ctx().wants_pointer_input() {
                 if let Some(pos) = editor.view.hovered_pixel(ui.ctx()) {
-                    let egui::Vec2 { x, y } = pos;
-                    let pixel = Vec2::new(x, y);
+                    let pixel = Position::from(pos);
 
                     if let Some(last_pixel) = self.last_pixel {
-                        let delta: Vec2 = pixel - last_pixel;
+                        let delta = pixel - last_pixel;
 
                         if delta.length() > 1.0 {
                             for i in 1..delta.length().ceil() as i32 {
                                 let position = last_pixel
                                     .lerp(pixel, 1.0 / delta.length().ceil() * (i as f32));
 
-                                self.pixels.push(position.as_uvec2());
+                                self.pixels.push(position);
                             }
                         }
                     }
 
-                    self.pixels.push(pixel.as_uvec2());
+                    self.pixels.push(pixel);
 
                     self.last_pixel = Some(pixel);
                 }

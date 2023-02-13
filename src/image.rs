@@ -1,12 +1,11 @@
 use std::path::Path;
 
-use glam::{IVec2, UVec2, Vec2};
 use image::{
     imageops::{self, FilterType},
     DynamicImage, ImageError, Rgba, RgbaImage,
 };
 
-use crate::color::Color;
+use crate::{color::Color, position::Position};
 
 #[derive(Clone)]
 pub struct Image {
@@ -36,65 +35,41 @@ impl Image {
         &self.image
     }
 
-    pub fn set_pixel_vec(&mut self, position: Vec2, color: Color) -> Result<(), &str> {
-        self.set_pixel_ivec(
-            IVec2::new(position.x.round() as i32, position.y.round() as i32),
-            color,
-        )
-    }
-
-    pub fn set_pixel_ivec(&mut self, position: IVec2, color: Color) -> Result<(), &str> {
-        if position.x.is_negative() || position.y.is_negative() {
-            Err("negative value")
-        } else {
-            self.set_pixel(position.as_uvec2(), color)
-        }
-    }
-
-    pub fn set_pixel(&mut self, position: UVec2, color: Color) -> Result<(), &str> {
+    pub fn set_pixel(&mut self, position: Position, color: Color) -> Result<(), &str> {
+        let (x, y) = position.try_into_u32()?;
         if self.contains_pixel(position) {
-            self.image
-                .put_pixel(position.x, position.y, Rgba(color.into_rgba_u8()));
+            self.image.put_pixel(x, y, Rgba(color.into_rgba_u8()));
             Ok(())
         } else {
             Err("pixel outside image")
         }
     }
 
-    pub fn contains_pixel(&self, position: UVec2) -> bool {
-        let size = self.size();
-        (0..size.x).contains(&position.x) && (0..size.y).contains(&position.y)
-    }
-
-    pub fn size(&self) -> UVec2 {
-        let (x, y) = self.image.dimensions();
-        UVec2::new(x, y)
-    }
-
-    pub fn iter_coords(&self) -> impl Iterator<Item = UVec2> {
-        let size = self.size();
-
-        (0..(size.x * size.y)).map(move |a| UVec2::new(a % size.x, a / size.x))
-    }
-
-    pub fn pixel_at_vec2(&self, position: Vec2) -> Result<Color, &str> {
-        self.pixel_at_ivec(IVec2::new(
-            position.x.round() as i32,
-            position.y.round() as i32,
-        ))
-    }
-
-    pub fn pixel_at_ivec(&self, position: IVec2) -> Result<Color, &str> {
-        if position.x.is_negative() || position.y.is_negative() {
-            Err("negative value")
+    pub fn contains_pixel(&self, position: Position) -> bool {
+        let (x, y) = if let Ok(position) = position.try_into_u32() {
+            position
         } else {
-            self.pixel_at(position.as_uvec2())
-        }
+            return false;
+        };
+
+        let (size_x, size_y) = self.size().try_into_u32().unwrap();
+        (0..size_x).contains(&x) && (0..size_y).contains(&y)
     }
 
-    pub fn pixel_at(&self, position: UVec2) -> Result<Color, &str> {
+    pub fn size(&self) -> Position {
+        let (x, y) = self.image.dimensions();
+        Position::from_u32(x, y)
+    }
+
+    pub fn iter_coords(&self) -> impl Iterator<Item = Position> {
+        let (size_x, size_y) = self.size().into_i32();
+        (0..(size_x * size_y)).map(move |a| Position::from_i32(a % size_x, a / size_x))
+    }
+
+    pub fn pixel_at(&self, position: Position) -> Result<Color, &str> {
         if self.contains_pixel(position) {
-            let Rgba([r, g, b, a]) = *self.image.get_pixel(position.x, position.y);
+            let (x, y) = position.try_into_u32()?;
+            let Rgba([r, g, b, a]) = *self.image.get_pixel(x, y);
             Ok(Color::from_rgba_u8(r, g, b, a))
         } else {
             Err("pixel outside image")
@@ -133,16 +108,14 @@ impl Image {
         self.image = imageops::blur(&self.image, sigma)
     }
 
-    pub fn resize(&mut self, new_size: UVec2, filter: FilterType) {
-        self.image = imageops::resize(&self.image, new_size.x, new_size.y, filter);
+    pub fn resize(&mut self, new_size: Position, filter: FilterType) -> Result<(), &str> {
+        let (x, y) = new_size.try_into_u32()?;
+        self.image = imageops::resize(&self.image, x, y, filter);
+        Ok(())
     }
 
-    pub fn overlay(&mut self, overlay: &Image, position: IVec2) {
-        imageops::overlay(
-            &mut self.image,
-            &overlay.image,
-            position.x.into(),
-            position.y.into(),
-        )
+    pub fn overlay(&mut self, overlay: &Image, position: Position) {
+        let (x, y) = position.into_i32();
+        imageops::overlay(&mut self.image, &overlay.image, x.into(), y.into())
     }
 }

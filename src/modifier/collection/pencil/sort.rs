@@ -1,10 +1,9 @@
 use std::f32::consts::PI;
 
 use egui::{Color32, Ui};
-use glam::{UVec2, Vec2};
 
 use super::Pencil;
-use crate::{applied::AppliedValue, color::Color, image::Image};
+use crate::{applied::AppliedValue, color::Color, image::Image, position::Position};
 
 #[derive(Clone, PartialEq)]
 enum SortDirection {
@@ -31,14 +30,14 @@ impl Default for PixelSorter {
 }
 
 impl Pencil for PixelSorter {
-    fn pixel(&mut self, pixel: UVec2, image: &mut Image) -> Option<Color> {
-        let mut positions = Vec::<Vec2>::new();
+    fn pixel(&mut self, pixel: Position, image: &mut Image) -> Option<Color> {
+        let mut positions = Vec::<Position>::new();
 
-        let direction = Vec2::new(self.angle.cos(), self.angle.sin());
+        let direction = Position::new(self.angle.cos(), self.angle.sin());
 
-        let mut current_position = pixel.as_vec2();
+        let mut current_position = pixel;
 
-        if image.pixel_at(current_position.as_uvec2()).is_ok() {
+        if image.pixel_at(current_position).is_ok() {
             positions.push(current_position);
         }
 
@@ -46,11 +45,11 @@ impl Pencil for PixelSorter {
             loop {
                 let next_position = current_position - direction;
 
-                let Ok(current_color) = image.pixel_at_vec2(current_position) else {
+                let Ok(current_color) = image.pixel_at(current_position) else {
                     break;
                 };
 
-                let Ok(next_color) = image.pixel_at_vec2(next_position) else {
+                let Ok(next_color) = image.pixel_at(next_position) else {
                     break;
                 };
 
@@ -65,15 +64,15 @@ impl Pencil for PixelSorter {
         }
 
         if self.direction == SortDirection::Backward || self.direction == SortDirection::Both {
-            current_position = pixel.as_vec2();
+            current_position = pixel;
             loop {
                 let next_position = current_position + direction;
 
-                let Ok(current_color) = image.pixel_at_vec2(current_position) else {
+                let Ok(current_color) = image.pixel_at(current_position) else {
                     break;
                 };
 
-                let Ok(next_color) = image.pixel_at_vec2(next_position) else {
+                let Ok(next_color) = image.pixel_at(next_position) else {
                     break;
                 };
 
@@ -96,13 +95,13 @@ impl Pencil for PixelSorter {
         let mut colors = Vec::<Color>::new();
 
         for position in &positions {
-            colors.push(image.pixel_at_vec2(*position).unwrap());
+            colors.push(image.pixel_at(*position).unwrap());
         }
 
         colors.sort_by(|a, b| a.sum_rgb().total_cmp(&b.sum_rgb()));
 
         for (position, color) in positions.iter().zip(colors.iter()) {
-            image.set_pixel_vec(*position, *color).unwrap();
+            image.set_pixel(*position, *color).unwrap();
         }
 
         None

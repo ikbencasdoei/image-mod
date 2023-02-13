@@ -1,5 +1,4 @@
 use egui::Color32;
-use glam::Vec4;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct Color {
@@ -35,6 +34,24 @@ impl Color {
             (self.a * u8::MAX as f32) as u8,
         ]
     }
+
+    pub fn from_hsv(h: f32, s: f32, v: f32) -> Self {
+        let h = h.to_degrees();
+        let c = v * s;
+        let x = c * (1.0 - f32::abs((h / 60.0) % 2.0 - 1.0));
+        let m = v - c;
+
+        let (r, g, b) = match h as u32 % 360 {
+            0..=59 => (c, x, 0.0),
+            60..=119 => (x, c, 0.0),
+            120..=179 => (0.0, c, x),
+            180..=239 => (0.0, x, c),
+            240..=299 => (x, 0.0, c),
+            300..=u32::MAX => (c, 0.0, x),
+        };
+
+        Self::from_rgba(r + m, g + m, b + m, 1.0)
+    }
 }
 
 impl From<Color32> for Color {
@@ -42,11 +59,5 @@ impl From<Color32> for Color {
         let (r, g, b, a) = color.to_tuple();
 
         Self::from_rgba_u8(r, g, b, a)
-    }
-}
-
-impl From<Vec4> for Color {
-    fn from(color: Vec4) -> Self {
-        Self::from_rgba(color.x, color.y, color.z, color.w)
     }
 }

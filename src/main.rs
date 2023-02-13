@@ -21,6 +21,7 @@ mod image;
 mod keybinds;
 mod menu;
 mod modifier;
+mod position;
 mod project;
 mod slot;
 mod view;

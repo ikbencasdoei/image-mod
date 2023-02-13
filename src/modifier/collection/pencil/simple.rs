@@ -1,8 +1,7 @@
 use egui::{Color32, Ui};
-use glam::UVec2;
 
 use super::Pencil;
-use crate::{color::Color, image::Image};
+use crate::{color::Color, image::Image, position::Position};
 
 #[derive(Clone, PartialEq)]
 pub struct SimplePencil {
@@ -18,7 +17,7 @@ impl Default for SimplePencil {
 }
 
 impl Pencil for SimplePencil {
-    fn pixel(&mut self, _: UVec2, _: &mut Image) -> Option<Color> {
+    fn pixel(&mut self, _: Position, _: &mut Image) -> Option<Color> {
         Some(Color::from(self.color))
     }
 

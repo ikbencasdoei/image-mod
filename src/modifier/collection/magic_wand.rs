@@ -1,17 +1,17 @@
 use egui::{Color32, Context, Ui};
-use glam::UVec2;
 
 use crate::{
     color::Color,
     editor::Editor,
     modifier::{cation::Output, traits::Modifier},
+    position::Position,
     slot::ModifierSlot,
     view::View,
 };
 
 #[derive(Clone, PartialEq)]
 pub struct MagicWand {
-    pub target: Option<UVec2>,
+    pub target: Option<Position>,
     pub input: ModifierSlot,
     pub threshold: f32,
 }
@@ -30,8 +30,7 @@ impl MagicWand {
     pub fn update(&mut self, ctx: &Context, view: &View) {
         if ctx.input().pointer.primary_clicked() && !ctx.wants_pointer_input() {
             if let Some(pos) = view.hovered_pixel(ctx) {
-                let egui::Vec2 { x, y } = pos;
-                self.target = Some(UVec2::new(x.round() as u32, y.round() as u32));
+                self.target = Some(Position::from(pos));
             }
         }
     }

@@ -11,7 +11,6 @@ dotenvy = "0.15.6"
 dyn-clone = "1.0.9"
 eframe = "0.20.1"
 egui = "0.20.1"
-glam = "0.22.0"
 
 [dependencies.uuid]
 version = "1.2.2"

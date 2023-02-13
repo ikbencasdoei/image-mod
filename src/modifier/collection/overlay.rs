@@ -1,15 +1,15 @@
 use egui::Ui;
-use glam::Vec2;
 
 use crate::{
     editor::Editor,
     modifier::{cation::Output, traits::Modifier},
+    position::Position,
     slot::ModifierSlot,
 };
 
 #[derive(Clone)]
 pub struct Overlay {
-    pub target: Vec2,
+    pub target: Position,
     pub input: ModifierSlot,
     dragging: bool,
 }
@@ -17,7 +17,7 @@ pub struct Overlay {
 impl Default for Overlay {
     fn default() -> Self {
         Self {
-            target: Vec2::ZERO,
+            target: Position::ZERO,
             input: Default::default(),
             dragging: false,
         }
@@ -35,7 +35,7 @@ impl Modifier for Overlay {
         if let Some(wrapped) = self.input.mod_mut() {
             if let Some(wrapped_output) = wrapped.output(&input).image.clone() {
                 if let Some(input) = &mut input.image {
-                    input.overlay(&wrapped_output, self.target.as_ivec2());
+                    input.overlay(&wrapped_output, self.target);
                 }
             }
         }
@@ -56,10 +56,9 @@ impl Modifier for Overlay {
             }
 
             if self.dragging && ui.ctx().input().pointer.any_down() {
-                self.target += {
-                    let egui::Vec2 { x, y } = ui.ctx().input().pointer.delta();
-                    Vec2::new(x, y) * ui.ctx().pixels_per_point() / editor.view.scale
-                }
+                self.target += Position::from(ui.ctx().input().pointer.delta())
+                    * ui.ctx().pixels_per_point()
+                    / editor.view.scale;
             } else {
                 self.dragging = false;
             }
