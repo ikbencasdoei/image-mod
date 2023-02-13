@@ -33,24 +33,20 @@ pub mod resize;
 pub mod source;
 
 pub fn init_modifiers_collection(editor: &mut Editor) {
-    init_modifier::<GrayScaleFilter>(editor);
-    init_modifier::<Source>(editor);
-    init_modifier::<Hue>(editor);
-    init_modifier::<Brighten>(editor);
-    init_modifier::<Contrast>(editor);
-    init_modifier::<Invert>(editor);
-    init_modifier::<Blur>(editor);
-    init_modifier::<Resize>(editor);
-    init_modifier::<Bucket>(editor);
-    init_modifier::<Fill>(editor);
-    init_modifier::<MagicWand>(editor);
-    init_modifier::<Overlay>(editor);
-    init_modifier::<List>(editor);
-    init_modifier::<PencilMod<SimplePencil>>(editor);
-    init_modifier::<PencilMod<RainbowPencil>>(editor);
-    init_modifier::<PencilMod<PixelSorter>>(editor);
-}
-
-pub fn init_modifier<T: Modifier + Default + 'static>(editor: &mut Editor) {
-    editor.add_index(T::index());
+    editor.add_index(GrayScaleFilter::index());
+    editor.add_index(Source::index());
+    editor.add_index(Hue::index());
+    editor.add_index(Brighten::index());
+    editor.add_index(Contrast::index());
+    editor.add_index(Invert::index());
+    editor.add_index(Blur::index());
+    editor.add_index(Resize::index());
+    editor.add_index(Bucket::index());
+    editor.add_index(Fill::index());
+    editor.add_index(MagicWand::index());
+    editor.add_index(Overlay::index());
+    editor.add_index(List::index());
+    editor.add_index(PencilMod::<SimplePencil>::index());
+    editor.add_index(PencilMod::<RainbowPencil>::index());
+    editor.add_index(PencilMod::<PixelSorter>::index());
 }
