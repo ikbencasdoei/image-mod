@@ -68,7 +68,7 @@ impl Editor {
                 project.root.modifier.view(ui, self);
             });
 
-        if !ctx.memory().is_anything_being_dragged() {
+        if !ctx.memory(|memory| memory.is_anything_being_dragged()) {
             if self.dragging.is_some() {
                 self.dropped = self.dragging.take();
                 ctx.request_repaint();

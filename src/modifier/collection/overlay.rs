@@ -47,16 +47,18 @@ impl Modifier for Overlay {
 
         if editor.is_modifier_selected::<Self>() {
             if ui.rect_contains_pointer(editor.view.rect) {
-                if ui.ctx().input().pointer.any_pressed() && ui.ctx().input().pointer.primary_down()
+                if ui
+                    .ctx()
+                    .input(|input| input.pointer.any_pressed() && input.pointer.primary_down())
                 {
                     self.dragging = true;
-                } else if ui.ctx().input().pointer.any_released() {
+                } else if ui.ctx().input(|input| input.pointer.any_released()) {
                     self.dragging = false;
                 }
             }
 
-            if self.dragging && ui.ctx().input().pointer.any_down() {
-                self.target += Position::from(ui.ctx().input().pointer.delta())
+            if self.dragging && ui.ctx().input(|input| input.pointer.any_down()) {
+                self.target += Position::from(ui.ctx().input(|input| input.pointer.delta()))
                     * ui.ctx().pixels_per_point()
                     / editor.view.scale;
             } else {

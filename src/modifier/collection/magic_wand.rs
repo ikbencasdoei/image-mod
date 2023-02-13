@@ -28,7 +28,7 @@ impl Default for MagicWand {
 
 impl MagicWand {
     pub fn update(&mut self, ctx: &Context, view: &View) {
-        if ctx.input().pointer.primary_clicked() && !ctx.wants_pointer_input() {
+        if ctx.input(|input| input.pointer.primary_clicked()) && !ctx.wants_pointer_input() {
             if let Some(pos) = view.hovered_pixel(ctx) {
                 self.target = Some(Position::from(pos));
             }

@@ -156,7 +156,7 @@ impl ModifierSlot {
                 if ui
                     .add(egui::Label::new("place here").sense(Sense::hover()))
                     .hovered()
-                    && !ui.memory().is_anything_being_dragged()
+                    && !ui.memory(|memory| memory.is_anything_being_dragged())
                 {
                     *self = Self::Modifier(editor.dragging.take().unwrap());
                 }
@@ -241,7 +241,7 @@ impl ModifierSlot {
         });
         if inner.response.clicked() {
             if let Some(id) = text_edit_id {
-                ui.memory().request_focus(id)
+                ui.memory_mut(|memory| memory.request_focus(id))
             }
         };
     }

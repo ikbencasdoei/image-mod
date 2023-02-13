@@ -83,7 +83,9 @@ impl<T: Pencil + Default + PartialEq + Clone + 'static> Modifier for PencilMod<T
         self.pencil.view(ui);
 
         if editor.is_modifier_selected::<Self>() {
-            if (ui.ctx().input().pointer.primary_down()) && !ui.ctx().wants_pointer_input() {
+            if (ui.ctx().input(|input| input.pointer.primary_down()))
+                && !ui.ctx().wants_pointer_input()
+            {
                 if let Some(pos) = editor.view.hovered_pixel(ui.ctx()) {
                     let pixel = Position::from(pos);
 

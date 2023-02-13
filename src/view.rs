@@ -61,10 +61,10 @@ impl View {
         const FACTOR: f32 = 1.3;
 
         if ui.rect_contains_pointer(ui.max_rect()) {
-            let pointer = ui.input().pointer.interact_pos().unwrap();
+            let pointer = ui.input(|input| input.pointer.interact_pos().unwrap());
             let center_pointer = pointer.to_vec2() - self.rect.center().to_vec2();
 
-            let scrolled = ui.ctx().input().scroll_delta.y;
+            let scrolled = ui.ctx().input(|input| input.scroll_delta.y);
             if scrolled.is_normal() {
                 if scrolled.is_sign_positive() {
                     let diff = center_pointer * FACTOR - center_pointer;
@@ -81,15 +81,18 @@ impl View {
 
     fn input_drag(&mut self, ui: &mut Ui) {
         if ui.rect_contains_pointer(ui.max_rect()) {
-            if ui.ctx().input().pointer.any_pressed() && ui.ctx().input().pointer.middle_down() {
+            if ui
+                .ctx()
+                .input(|input| input.pointer.any_pressed() && input.pointer.middle_down())
+            {
                 self.dragging = true;
-            } else if ui.ctx().input().pointer.any_released() {
+            } else if ui.ctx().input(|input| input.pointer.any_released()) {
                 self.dragging = false;
             }
         }
 
-        if self.dragging && ui.ctx().input().pointer.any_down() {
-            self.translation += ui.ctx().input().pointer.delta();
+        if self.dragging && ui.ctx().input(|input| input.pointer.any_down()) {
+            self.translation += ui.ctx().input(|input| input.pointer.delta());
         } else {
             self.dragging = false;
         }
@@ -110,7 +113,7 @@ impl View {
     }
 
     pub fn hovered_pixel(&self, ctx: &Context) -> Option<Vec2> {
-        let pointer = ctx.input().pointer.interact_pos()?;
+        let pointer = ctx.input(|input| input.pointer.interact_pos())?;
         if self.rect.contains(pointer) {
             let pos = pointer - self.rect.left_top();
             Some(pos / self.scale * ctx.pixels_per_point())

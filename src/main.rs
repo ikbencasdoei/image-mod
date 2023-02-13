@@ -87,5 +87,6 @@ fn main() {
                 ..Default::default()
             })
         }),
-    );
+    )
+    .unwrap();
 }
