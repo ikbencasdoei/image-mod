@@ -1,4 +1,4 @@
-![preview image](./preview.jpg)
+![preview image](./preview.png)
 # image-mod
 A small simple image editor written in Rust.
 
