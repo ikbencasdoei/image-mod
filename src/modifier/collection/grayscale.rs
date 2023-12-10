@@ -1,7 +1,4 @@
-use crate::{
-    
-    modifier::{cation::Output, traits::Modifier},
-};
+use crate::modifier::{cation::Output, traits::Modifier};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct GrayScaleFilter;

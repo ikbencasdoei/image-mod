@@ -1,7 +1,4 @@
-use crate::{
-    
-    modifier::{cation::Output, traits::Modifier},
-};
+use crate::modifier::{cation::Output, traits::Modifier};
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Invert;
@@ -11,6 +8,5 @@ impl Modifier for Invert {
         if let Some(image) = &mut input.image {
             image.invert();
         }
-        
     }
 }
