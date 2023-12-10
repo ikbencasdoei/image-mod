@@ -1,4 +1,4 @@
-use egui::{Context, Vec2};
+use eframe::egui::{self, Context, Vec2};
 
 use crate::{file_picker::FilePicker, project::Project, view::View};
 

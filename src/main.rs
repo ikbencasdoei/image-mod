@@ -4,8 +4,11 @@
 use std::path::Path;
 
 use editor::Editor;
-use eframe::Frame;
-use egui::Context;
+use eframe::{
+    egui::{self, Context},
+    epaint::Vec2,
+    Frame,
+};
 use menu::menu;
 use project::Project;
 
@@ -31,11 +34,11 @@ struct App {
 }
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &Context, frame: &mut Frame) {
+    fn update(&mut self, ctx: &Context, _: &mut Frame) {
         let App { project, editor } = self;
 
-        keybinds::fullscreen(ctx, frame);
-        keybinds::exit(ctx, frame);
+        keybinds::fullscreen(ctx);
+        keybinds::exit(ctx);
 
         editor.picker.update(project);
 
@@ -59,7 +62,7 @@ fn main() {
     dotenvy::dotenv().ok();
 
     let options = eframe::NativeOptions {
-        initial_window_size: Some(egui::vec2(1280.0, 720.0)),
+        viewport: egui::ViewportBuilder::default().with_inner_size(Vec2::new(1280.0, 720.0)),
         centered: true,
         ..Default::default()
     };

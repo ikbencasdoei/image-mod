@@ -1,4 +1,4 @@
-use egui::Color32;
+use eframe::egui::Color32;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct Color {

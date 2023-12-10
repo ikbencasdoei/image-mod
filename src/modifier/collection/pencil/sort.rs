@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use egui::{Color32, Ui};
+use eframe::egui::{self, Color32, Ui};
 
 use super::Pencil;
 use crate::{applied::AppliedValue, color::Color, image::Image, position::Position};

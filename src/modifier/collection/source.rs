@@ -4,7 +4,7 @@ use std::{
     sync::mpsc::Receiver,
 };
 
-use egui::{TextEdit, Ui};
+use eframe::egui::{TextEdit, Ui};
 
 use crate::{
     editor::Editor,

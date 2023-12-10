@@ -1,4 +1,4 @@
-use egui::Ui;
+use eframe::egui::{self, Ui};
 use image::imageops::FilterType;
 
 use crate::{

@@ -1,4 +1,4 @@
-use egui::{Color32, Ui};
+use eframe::egui::{Color32, Ui};
 
 use super::Pencil;
 use crate::{color::Color, image::Image, position::Position};

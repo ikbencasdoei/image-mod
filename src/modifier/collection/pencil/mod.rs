@@ -1,4 +1,4 @@
-use egui::Ui;
+use eframe::egui::Ui;
 use uuid::Uuid;
 
 use crate::{

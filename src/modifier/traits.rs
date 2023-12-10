@@ -1,7 +1,7 @@
 use std::any::{type_name, Any, TypeId};
 
 use dyn_clone::DynClone;
-use egui::Ui;
+use eframe::egui::Ui;
 
 use super::cation::Output;
 use crate::editor::Editor;

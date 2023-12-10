@@ -1,8 +1,7 @@
-use egui::{Color32, Ui};
+use eframe::egui::{Color32, Ui};
 
 use crate::{
     editor::Editor,
-    
     modifier::{cation::Output, traits::Modifier},
 };
 

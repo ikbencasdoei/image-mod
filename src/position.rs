@@ -1,6 +1,6 @@
 use std::ops::{Add, AddAssign, Div, Mul, Sub};
 
-use egui::Vec2;
+use eframe::egui::Vec2;
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct Position {

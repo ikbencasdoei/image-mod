@@ -1,9 +1,8 @@
-use egui::{Context, Ui};
+use eframe::egui::{Context, Ui};
 
 use super::{fill::Fill, magic_wand::MagicWand};
 use crate::{
     editor::Editor,
-    
     modifier::{cation::Output, traits::Modifier},
     slot::ModifierSlot,
     view::View,

@@ -1,3 +1,5 @@
+use eframe::egui;
+
 use super::Pencil;
 use crate::{color::Color, image::Image, position::Position};
 

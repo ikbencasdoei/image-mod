@@ -1,8 +1,7 @@
-use egui::Ui;
+use eframe::egui::{self, Ui};
 
 use crate::{
     editor::Editor,
-   
     modifier::{cation::Output, traits::Modifier},
 };
 

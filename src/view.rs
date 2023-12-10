@@ -1,6 +1,6 @@
-use egui::{
+use eframe::egui::{
     Color32, ColorImage, Context, Frame, Pos2, Rect, TextureFilter, TextureHandle, TextureOptions,
-    Ui, Vec2,
+    Ui, Vec2, self,
 };
 
 use crate::image::Image;

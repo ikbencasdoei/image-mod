@@ -1,4 +1,4 @@
-use egui::Context;
+use eframe::egui::{self, Context};
 use uuid::Uuid;
 
 use crate::{

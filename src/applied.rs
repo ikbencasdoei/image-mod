@@ -1,7 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use eframe::emath::Numeric;
-use egui::Response;
+use eframe::{egui::Response, emath::Numeric};
 
 #[derive(Clone, Default)]
 pub struct AppliedValue<T> {

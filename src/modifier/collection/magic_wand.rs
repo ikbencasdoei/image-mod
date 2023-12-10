@@ -1,4 +1,4 @@
-use egui::{Color32, Context, Ui};
+use eframe::egui::{self, Color32, Context, Ui};
 
 use crate::{
     color::Color,

@@ -1,8 +1,7 @@
-use egui::Ui;
+use eframe::egui::{self, Ui};
 
 use crate::{
     editor::Editor,
-    
     modifier::{cation::Output, traits::Modifier},
 };
 
@@ -16,7 +15,6 @@ impl Modifier for Hue {
         if let Some(image) = &mut input.image {
             image.huerotate(self.degrees);
         }
-        
     }
 
     fn view(&mut self, ui: &mut Ui, _: &mut Editor) {

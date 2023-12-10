@@ -1,18 +1,22 @@
-use eframe::Frame;
-use egui::{Context, Key};
+use eframe::egui::{Context, Key, ViewportCommand};
 
-pub fn fullscreen(ctx: &Context, frame: &mut Frame) {
+pub fn fullscreen(ctx: &Context) {
     if ctx.input(|input| input.key_pressed(Key::F11)) {
-        if frame.info().window_info.fullscreen {
-            frame.set_fullscreen(false)
+        if ctx.input(|input| {
+            input
+                .viewport()
+                .fullscreen
+                .is_some_and(|fullscreen| fullscreen)
+        }) {
+            ctx.send_viewport_cmd(ViewportCommand::Fullscreen(false))
         } else {
-            frame.set_fullscreen(true)
+            ctx.send_viewport_cmd(ViewportCommand::Fullscreen(true))
         }
     }
 }
 
-pub fn exit(ctx: &Context, frame: &mut Frame) {
+pub fn exit(ctx: &Context) {
     if ctx.input(|input| input.key_pressed(Key::Escape)) {
-        frame.close();
+        ctx.send_viewport_cmd(ViewportCommand::Close);
     }
 }

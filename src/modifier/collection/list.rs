@@ -1,9 +1,8 @@
-use egui::Ui;
+use eframe::egui::{self, Ui};
 use uuid::Uuid;
 
 use crate::{
     editor::Editor,
-    
     modifier::{
         cation::{Cation, DynMod, Output},
         traits::{Modifier, ModifierIndex},

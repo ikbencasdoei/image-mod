@@ -1,5 +1,5 @@
-use egui::{
-    style::Margin, Align2, Button, Color32, Frame, LayerId, Order, Rounding, Sense, Stroke,
+use eframe::egui::{
+    self, style::Margin, Align2, Button, Color32, Frame, LayerId, Order, Rounding, Sense, Stroke,
     TextStyle, Ui,
 };
 use uuid::Uuid;
@@ -75,8 +75,8 @@ impl ModifierSlot {
 
     fn take(&mut self, replacement: Self) -> Option<Cation<DynMod>> {
         let Self::Modifier(modifier) = std::mem::replace(self, replacement) else {
-               return None;
-            };
+            return None;
+        };
         Some(modifier)
     }
 
